@@ -1,0 +1,11 @@
+kibana:
+  elasticsearchHosts: "http://elasticsearch-master-headless:9200"
+
+  replicas: 1
+
+  ingress:
+    enabled: true
+    hosts:
+      - host: kibana.mattgerega.net
+        paths:
+          - path: /
