@@ -1,10 +1,10 @@
 apiVersion: v2
-name: logstash
+name: kibana
 
 type: application
 
 dependencies:
-- name: logstash
+- name: kibana
   version: 7.17.1
   repository: https://helm.elastic.co
 
