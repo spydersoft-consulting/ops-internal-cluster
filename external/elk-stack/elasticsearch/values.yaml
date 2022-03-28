@@ -1,0 +1,14 @@
+elasticsearch:
+  volumeClaimTemplate:
+    accessModes: [ "ReadWriteOnce" ]
+    storageClassName: "nfs-client"
+    resources:
+      requests:
+        storage: 30Gi
+
+  persistence:
+    enabled: true
+    labels:
+      # Add default labels for the volumeClaimTemplate of the StatefulSet
+      enabled: false
+    annotations: {}
