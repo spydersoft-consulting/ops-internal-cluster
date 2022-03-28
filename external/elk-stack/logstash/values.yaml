@@ -1,0 +1,108 @@
+logstash:
+  image: "docker.elastic.co/logstash/logstash-oss"
+  logstashPipeline:
+    logstash.conf: |
+      input {
+        beats {
+          port => 5000
+          type => syslog
+        }
+      }
+
+      filter {
+        if [type] == "syslog" {
+          grok {
+            match => { "message" => "%{SYSLOGTIMESTAMP:syslog_timestamp} %{SYSLOGHOST:syslog_hostname} %{DATA:syslog_program}(?:\[%{POSINT:syslog_pid}\])?: %{GREEDYDATA:syslog_message}" }
+            add_field => [ "received_at", "%{@timestamp}" ]
+            add_field => [ "received_from", "%{host}" ]
+          }
+          date {
+            match => [ "syslog_timestamp", "MMM  d HH:mm:ss.SSS", "MMM dd HH:mm:ss.SSS" ]
+            timezone => "UTC"
+          }
+        }
+      }
+
+      output {
+        elasticsearch {
+          hosts => ["http://elasticsearch-master-headless:9200"]
+        }
+      }
+    nginx-beats.conf: |
+      input {
+        beats {
+            port => 5400
+        }
+      }
+
+      filter {
+        if [event][module] == "nginx" {
+          if [fileset][name] == "access" {
+            grok {
+              match => [ "message" , "%{COMMONAPACHELOG} %{QS:referrer} %{QS:useragent} %{NUMBER:requesttime} \"%{IPORHOST:custom_host}\" \"%{URIHOST:http_uri_host}\" \"(%{GREEDYDATA:server_name})?\""]
+              overwrite => [ "message" ]
+              add_field => {
+                "extra.requesttime" => "%{requesttime}"
+                "extra.host" => "%{custom_host}"
+                "extra.httphost" => "%{http_uri_host}"
+                "extra.servername" => "%{server_name}"
+              }
+            }
+            cidr {
+              add_tag => [ "internalIP" ]
+              address => [ "%{clientip}" ]
+              network => [ "192.0.0.0/8", "127.0.0.1" ]
+            }
+
+            if "internalIP" in [tags] {
+              drop { }
+            }
+            else {
+              mutate {
+                convert => ["response", "integer"]
+                convert => ["bytes", "integer"]
+                convert => ["responsetime", "float"]
+              }
+              date {
+                match => [ "timestamp" , "dd/MMM/YYYY:HH:mm:ss Z" ]
+                remove_field => [ "timestamp" ]
+              }
+              useragent {
+                source => "useragent"
+              }
+            }
+          }
+          else if [fileset][name] == "error" {
+            grok {
+              match => { "message" => ["%{DATA:[nginx][error][time]} \[%{DATA:[nginx][error][level]}\] %{NUMBER:[nginx][error][pid]}#%{NUMBER:[nginx][error][tid]}: (\*%{NUMBER:[nginx][error][connection_id]} )?%{GREEDYDATA:[nginx][error][message]}"] }
+              remove_field => "message"
+            }
+            mutate {
+              rename => { "@timestamp" => "read_timestamp" }
+            }
+            date {
+              match => [ "[nginx][error][time]", "YYYY/MM/dd H:m:s" ]
+              remove_field => "[nginx][error][time]"
+            }
+          }
+        }
+      }
+
+      output {
+        elasticsearch {
+          hosts => ["elasticsearch-master-headless:9200"]
+          index => "%{[@metadata][beat]}-%{[@metadata][version]}-%{+YYYY.MM.dd}"
+          manage_template => false
+        }
+      }
+  service:
+    type: NodePort
+    ports:
+      - name: syslog
+        port: 5000
+        protocol: UDP
+        targetPort: 5000
+      - name: nginx-beats
+        port: 5400
+        protocol: TCP
+        targetPort: 5400
