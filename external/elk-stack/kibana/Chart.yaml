@@ -1,10 +1,10 @@
 apiVersion: v2
-name: elasticsearch
+name: kibana
 
 type: application
 
 dependencies:
-- name: elasticsearch
+- name: kibana
   version: 7.17.1
   repository: https://helm.elastic.co
 
