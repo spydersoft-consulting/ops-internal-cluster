@@ -8,7 +8,7 @@ metadata:
 spec:
   generators:
   - git:
-      repoURL: https://bitbucket.org/spydersoftteam/ops-prod-cluster
+      repoURL: https://bitbucket.org/spydersoftteam/ops-internal-cluster
       revision: HEAD
       directories:
       - path: external/elk-stack/*
@@ -26,7 +26,7 @@ spec:
           valueFiles:
           - values.yaml
         path: '{{ path }}'
-        repoURL: https://bitbucket.org/spydersoftteam/ops-prod-cluster
+        repoURL: https://bitbucket.org/spydersoftteam/ops-internal-cluster
         targetRevision: main
       destination:
         server: https://192.168.1.46:6443
