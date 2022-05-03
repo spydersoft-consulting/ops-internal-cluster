@@ -12,3 +12,10 @@ elasticsearch:
       # Add default labels for the volumeClaimTemplate of the StatefulSet
       enabled: false
     annotations: {}
+  ingress:
+    enabled: true
+    pathtype: ImplementationSpecific
+    hosts:
+      - host: elastic.mattgerega.net
+        paths:
+          - path: /
