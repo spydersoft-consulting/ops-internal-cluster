@@ -32,8 +32,8 @@ spec:
         server: https://192.168.1.36:6443
         namespace: 'elk-stack'
       syncPolicy:
-        automated: 
-          prune: true 
-          selfHeal: true
+        # automated: 
+        #   prune: true 
+        #   selfHeal: true
         syncOptions:   
         - CreateNamespace=true
