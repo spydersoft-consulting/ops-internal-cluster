@@ -1,0 +1,39 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: elk-stack
+  labels:
+    spydersoft.io/environment: internal
+    spydersoft.io/category: app-set
+spec:
+  generators:
+  - git:
+      repoURL: https://bitbucket.org/spydersoftteam/ops-internal-cluster
+      revision: HEAD
+      directories:
+      - path: external/elk-stack/*
+  template:
+    metadata:
+      name: '{{path.basename}}'
+      labels:
+        spydersoft.io/environment: internal
+        spydersoft.io/category: 'elk'
+    spec:
+      project: external-apps
+      source:
+        helm:
+          version: v3
+          valueFiles:
+          - values.yaml
+        path: '{{ path }}'
+        repoURL: https://bitbucket.org/spydersoftteam/ops-internal-cluster
+        targetRevision: main
+      destination:
+        server: https://192.168.1.36:6443
+        namespace: 'elk-stack'
+      syncPolicy:
+        # automated: 
+        #   prune: true 
+        #   selfHeal: true
+        syncOptions:   
+        - CreateNamespace=true
