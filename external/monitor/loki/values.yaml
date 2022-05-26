@@ -55,8 +55,14 @@ loki-simple-scalable:
           priority: 1
           period: 24h
   write:
+    extraEnvFrom:
+      - secretRef:
+          name: cassandra-secret
     persistence:
       storageClass: "nfs-client"
   read:
+    extraEnvFrom:
+      - secretRef:
+          name: cassandra-secret
     persistence:
       storageClass: "nfs-client"
