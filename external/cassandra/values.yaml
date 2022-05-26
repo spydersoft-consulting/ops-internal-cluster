@@ -1,0 +1,4 @@
+cassandra:
+  persistance:
+    storageClass: "nfs-client"
+    size: "500Gi"
