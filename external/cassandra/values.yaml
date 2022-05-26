@@ -1,5 +1,6 @@
 cassandra:
   persistance:
+    enabled: true
     storageClass: "nfs-client"
     size: "500Gi"
   dbUser:
