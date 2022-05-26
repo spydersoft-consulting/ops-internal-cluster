@@ -48,7 +48,7 @@ loki-simple-scalable:
           schema: v11
           index:
             prefix: index_
-            period: 48h
+            period: 24h
 
       compactor:
         shared_store: cassandra
