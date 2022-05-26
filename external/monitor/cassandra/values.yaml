@@ -10,4 +10,4 @@ cassandra:
       name: cassandra-secret
       forcePassword: true
       keyMapping:
-        cassandra-password: password
+        cassandra-password: CASSANDRA_PASSWORD
