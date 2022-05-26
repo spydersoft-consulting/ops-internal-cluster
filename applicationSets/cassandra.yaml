@@ -12,7 +12,7 @@ spec:
       version: v3
       valueFiles:
       - values.yaml
-    path: '/external/cassandra/'
+    path: 'external/cassandra/'
     repoURL: https://bitbucket.org/spydersoftteam/ops-internal-cluster
     targetRevision: main
   destination:
