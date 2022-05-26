@@ -2,3 +2,9 @@ cassandra:
   persistance:
     storageClass: "nfs-client"
     size: "500Gi"
+  dbUser:
+    existingSecret:
+      name: cassandra-secret
+      forcePassword: true
+      keyMapping:
+        cassandra-password: password
