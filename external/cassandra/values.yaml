@@ -1,4 +1,6 @@
 cassandra:
+  global:
+    storageClass: "nfs-client"
   persistance:
     enabled: true
     storageClass: "nfs-client"
