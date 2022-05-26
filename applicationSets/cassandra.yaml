@@ -6,11 +6,6 @@ metadata:
     spydersoft.io/environment: internal
     spydersoft.io/category: application
 spec:
-  metadata:
-    name: 'cassandra'
-    labels:
-      spydersoft.io/environment: internal
-      spydersoft.io/category: 'monitoring'
   project: external-apps
   source:
     helm:
