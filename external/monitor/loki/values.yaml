@@ -1,4 +1,4 @@
-loki-simple-scalable:
+loki-distributed:
   querier:
     extraArgs:
       - -config.expand-env=true
