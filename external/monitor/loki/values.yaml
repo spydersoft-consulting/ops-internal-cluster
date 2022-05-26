@@ -23,6 +23,7 @@ loki-simple-scalable:
         kubernetes.io/ingress.class: nginx
       tls: []
   loki:
+    authEnabled: false
     revisionHistoryLimit: 1
     structuredConfig:
       storage_config:
