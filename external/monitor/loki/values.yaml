@@ -63,3 +63,9 @@ loki-simple-scalable:
         - selector: '{namespace="argocd"}'
           priority: 1
           period: 24h
+  write:
+    persistence:
+      storageClass: "nfs-client"
+  read:
+    persistence:
+      storageClass: "nfs-client"
