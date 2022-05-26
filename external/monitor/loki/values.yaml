@@ -36,15 +36,10 @@ loki-simple-scalable:
           auth: true
           keyspace: lokiindex
 
-        boltdb_shipper:
-          active_index_directory: /loki/index
-          shared_store: cassandra
-          cache_location: /loki/boltdb-cache
-
       schema_config:
         configs:
         - from: 2020-05-15
-          store: boltdb-shipper
+          store: cassandra
           object_store: filesystem
           schema: v11
           index:
@@ -53,13 +48,6 @@ loki-simple-scalable:
           chunks:
             prefix: chunk
 
-      compactor:
-        shared_store: cassandra
-        working_directory: /var/loki/retention
-        compaction_interval: 10m
-        retention_enabled: true
-        retention_delete_delay: 2h
-        retention_delete_worker_count: 150
       limits_config:
         retention_period: 48h
         retention_stream:
