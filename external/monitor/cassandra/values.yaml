@@ -1,10 +1,10 @@
 cassandra:
   global:
     storageClass: "nfs-client"
-  persistance:
+  persistence:
     enabled: true
     storageClass: "nfs-client"
-    size: "500Gi"
+    size: "250Gi"
   dbUser:
     existingSecret:
       name: cassandra-secret
