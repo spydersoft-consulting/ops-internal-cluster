@@ -32,7 +32,7 @@ loki-simple-scalable:
         cassandra:
           username: cassandra
           password: ${CASSANDRA_PASSWORD}
-          addresses: cassandra
+          addresses: cassandra-headless
           auth: true
           keyspace: lokiindex
 
