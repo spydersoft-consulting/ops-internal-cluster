@@ -52,19 +52,3 @@ loki-simple-scalable:
         - selector: '{namespace="argocd"}'
           priority: 1
           period: 24h
-  write:
-    extraArgs:
-      - -config.expand-env=true
-    extraEnvFrom:
-      - secretRef:
-          name: cassandra-secret
-    persistence:
-      storageClass: "nfs-client"
-  read:
-    extraArgs:
-      - -config.expand-env=true
-    extraEnvFrom:
-      - secretRef:
-          name: cassandra-secret
-    persistence:
-      storageClass: "nfs-client"
