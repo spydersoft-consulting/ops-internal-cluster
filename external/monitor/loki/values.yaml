@@ -5,12 +5,16 @@ loki-distributed:
     extraEnvFrom:
       - secretRef:
           name: cassandra-secret
+      - secretRef:
+          name: minio-secret
   ingester:
     extraArgs:
       - -config.expand-env=true
     extraEnvFrom:
       - secretRef:
           name: cassandra-secret
+      - secretRef:
+          name: minio-secret
   gateway:
     ingress:
       enabled: true
@@ -27,17 +31,23 @@ loki-distributed:
     revisionHistoryLimit: 1
     structuredConfig:
       storage_config:
-        cassandra:
-          username: cassandra
-          password: ${CASSANDRA_PASSWORD}
-          addresses: cassandra-headless
-          auth: true
-          keyspace: lokiindex
+        boltdb_shipper:
+          active_index_directory: /loki/index
+          cache_location: /loki/index_cache
+          cache_ttl: 24h         # Can be increased for faster performance over longer query periods, uses more disk space
+          shared_store: s3
+        aws:
+          s3: http://${MINIO_USERNAME}:${MINIO_PASSWORD}@192.168.1.46.:9000/loki
+          s3forcepathstyle: true
+
+      table_manager:
+        retention_deletes_enabled: true
+        retention_period: 168h
 
       schema_config:
         configs:
         - from: 2020-05-15
-          store: cassandra
+          store: boltdb-shipper
           object_store: filesystem
           schema: v11
           index:
