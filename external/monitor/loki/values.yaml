@@ -40,8 +40,8 @@ loki-distributed:
     structuredConfig:
       storage_config:
         boltdb_shipper:
-          active_index_directory: /loki/index
-          cache_location: /loki/index_cache
+          active_index_directory: /data/loki/index
+          cache_location: /data/loki/index_cache
           cache_ttl: 24h         # Can be increased for faster performance over longer query periods, uses more disk space
           shared_store: s3
         aws:
