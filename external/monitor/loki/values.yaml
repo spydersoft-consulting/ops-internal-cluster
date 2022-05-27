@@ -4,15 +4,23 @@ loki-distributed:
       - -config.expand-env=true
     extraEnvFrom:
       - secretRef:
-          name: cassandra-secret
-      - secretRef:
           name: minio-secret
   ingester:
     extraArgs:
       - -config.expand-env=true
     extraEnvFrom:
       - secretRef:
-          name: cassandra-secret
+          name: minio-secret
+  distributor:
+    extraArgs:
+      - -config.expand-env=true
+    extraEnvFrom:
+      - secretRef:
+          name: minio-secret
+  queryFrontend:
+    extraArgs:
+      - -config.expand-env=true
+    extraEnvFrom:
       - secretRef:
           name: minio-secret
   gateway:
