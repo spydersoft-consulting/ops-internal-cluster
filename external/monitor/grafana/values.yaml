@@ -1,6 +1,10 @@
 grafana:
   revisionHistoryLimit: 1
   envFromSecret: grafana-auth-secret
+  admin:
+    existingSecret: "grafana-admin-secret"
+    userKey: "GRAFANA_ADMIN_USER"
+    passwordKey: "GRAFANA_ADMIN_PASSWORD"
   grafana.ini:
     azure:
       managed_identity_enabled: true
