@@ -30,3 +30,5 @@ grafana:
     annotations:
       kubernetes.io/ingress.class: nginx
     tls: []
+  serviceMonitor:
+    enabled: true
