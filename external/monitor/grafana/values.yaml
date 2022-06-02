@@ -32,3 +32,5 @@ grafana:
     tls: []
   serviceMonitor:
     enabled: true
+  plugins:
+  - grafana-piechart-panel
