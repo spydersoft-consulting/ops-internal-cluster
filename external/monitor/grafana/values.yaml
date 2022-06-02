@@ -34,3 +34,6 @@ grafana:
     enabled: true
   plugins:
   - grafana-piechart-panel
+  persistence:
+    enabled: true
+    storageClassName: nfs-client
