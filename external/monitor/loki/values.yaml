@@ -41,7 +41,7 @@ loki-distributed:
         kubernetes.io/ingress.class: nginx
       tls: []
   ruler:
-    enabled: true
+    enabled: false
     persistence:
       enabled: true
       storageClass: nfs-client
