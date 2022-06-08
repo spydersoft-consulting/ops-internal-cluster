@@ -40,6 +40,16 @@ loki-distributed:
       annotations:
         kubernetes.io/ingress.class: nginx
       tls: []
+  ruler:
+    enabled: true
+    persistence:
+      enabled: true
+      storageClass: nfs-client
+    extraArgs:
+      - -config.expand-env=true
+    extraEnvFrom:
+      - secretRef:
+          name: minio-secret
   loki:
     authEnabled: false
     revisionHistoryLimit: 1
