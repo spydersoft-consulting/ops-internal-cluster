@@ -52,6 +52,8 @@ loki-distributed:
       - secretRef:
           name: minio-secret
   loki:
+    annotations: 
+      linkerd.io/inject: enabled
     authEnabled: false
     revisionHistoryLimit: 1
     structuredConfig:
