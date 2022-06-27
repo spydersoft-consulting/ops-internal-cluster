@@ -39,9 +39,10 @@ loki-distributed:
               pathType: Prefix
       annotations:
         kubernetes.io/ingress.class: nginx
+        nginx.ingress.kubernetes.io/service-upstream: "true"
       tls: []
   ruler:
-    enabled: false
+    enabled: true
     persistence:
       enabled: true
       storageClass: nfs-client
@@ -84,6 +85,13 @@ loki-distributed:
         - selector: '{namespace="argocd"}'
           priority: 1
           period: 24h
+      # ruler:
+      #   storage:
+      #     type: s3
+      #     s3:
+      #       s3: http://${MINIO_USERNAME}:${MINIO_PASSWORD}@192.168.1.46:9000/loki
+      #       s3forcepathstyle: true
+
   serviceMonitor:
     enabled: true
     interval: 1m
