@@ -38,3 +38,8 @@ grafana:
   persistence:
     enabled: true
     storageClassName: nfs-client
+  service:
+    annotations:
+      linkerd.io/inject: enabled
+  annotations: 
+    linkerd.io/inject: enabled
