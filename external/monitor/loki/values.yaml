@@ -52,7 +52,7 @@ loki-distributed:
       - secretRef:
           name: minio-secret
   loki:
-    annotations: 
+    podAnnotations: 
       linkerd.io/inject: enabled
     authEnabled: false
     revisionHistoryLimit: 1

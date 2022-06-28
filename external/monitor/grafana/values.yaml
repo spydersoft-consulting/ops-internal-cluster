@@ -41,5 +41,5 @@ grafana:
   service:
     annotations:
       linkerd.io/inject: enabled
-  annotations: 
+  podAnnotations: 
     linkerd.io/inject: enabled
