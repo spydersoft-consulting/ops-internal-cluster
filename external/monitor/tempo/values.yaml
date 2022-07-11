@@ -1,0 +1,63 @@
+tempo-distributed:
+  revisionHistoryLimit: 1
+  search:
+    enabled: true
+  distributor:
+    extraArgs:
+      - -config.expand-env=true
+    extraEnvFrom:
+      - secretRef:
+          name: tempo-secret
+  queryFrontend:
+    extraArgs:
+      - -config.expand-env=true
+    extraEnvFrom:
+      - secretRef:
+          name: tempo-secret
+  querier:
+    extraArgs:
+      - -config.expand-env=true
+    extraEnvFrom:
+      - secretRef:
+          name: tempo-secret
+  compactor:
+    extraArgs:
+      - -config.expand-env=true
+    extraEnvFrom:
+      - secretRef:
+          name: tempo-secret
+  ingester:
+    extraArgs:
+      - -config.expand-env=true
+    extraEnvFrom:
+      - secretRef:
+          name: tempo-secret
+  storage:
+    trace:
+      backend: s3
+      s3:
+        bucket: tempo
+        endpoint: http://${MINIO_USERNAME}:${MINIO_PASSWORD}@192.168.1.46:9000
+        forcepathstyle: true
+  traces:
+    jaeger:
+      grpc: true
+      thriftBinary: true
+      thriftCompact: true
+      thriftHttp: true
+    zipkin: true
+    otlp:
+      grpc: true
+      http: true
+  gateway:
+    enabled: true
+    ingress:
+      enabled: true
+      hosts:
+        - host: "tempo.mattgerega.net"
+          paths:
+            - path: /
+              pathType: Prefix
+      annotations:
+        kubernetes.io/ingress.class: nginx
+      tls: []
