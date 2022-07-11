@@ -37,7 +37,7 @@ tempo-distributed:
       backend: s3
       s3:
         bucket: tempo
-        endpoint: 192.168.1.46:9000
+        endpoint: http://192.168.1.46:9000
         access_key: ${MINIO_USERNAME}
         secret_key: ${MINIO_PASSWORD}
         forcepathstyle: true
