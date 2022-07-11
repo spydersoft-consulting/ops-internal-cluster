@@ -41,14 +41,21 @@ tempo-distributed:
         forcepathstyle: true
   traces:
     jaeger:
-      grpc: true
-      thriftBinary: true
-      thriftCompact: true
-      thriftHttp: true
-    zipkin: true
+      grpc: 
+        enabled: true
+      thriftBinary:
+        enabled: true
+      thriftCompact:
+        enabled: true
+      thriftHttp:
+        enabled: true
+    zipkin:
+      enabled: true
     otlp:
-      grpc: true
-      http: true
+      grpc:
+        enabled: true
+      http:
+        enabled: true
   gateway:
     enabled: true
     ingress:
