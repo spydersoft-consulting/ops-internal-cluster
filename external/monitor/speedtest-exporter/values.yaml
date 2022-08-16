@@ -1,13 +1,13 @@
 speedtest-exporter:
   service:
-  main:
-    ports:
-      http:
-        enabled: false
-      metrics:
-        enabled: true
-        protocol: TCP
-        port: 9798
+    main:
+      ports:
+        http:
+          enabled: false
+        metrics:
+          enabled: true
+          protocol: TCP
+          port: 9798
 
   metrics:
     # -- Enable and configure a Prometheus serviceMonitor for the chart under this key.
