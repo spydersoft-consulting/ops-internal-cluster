@@ -1,19 +1,11 @@
+type: application
+version: 6.34.0
 apiVersion: v2
 name: grafana
-
-type: application
-
 dependencies:
-- name: grafana
-  version: 6.32.14
+- version: 6.34.0
+  name: grafana
   repository: https://grafana.github.io/helm-charts
+appVersion: 9.1.1
 
-# This is the chart version. This version number should be incremented each time you make changes
-# to the chart and its templates, including the app version.
-# Versions are expected to follow Semantic Versioning (https://semver.org/)
-version: 6.32.14
 
-# This is the version number of the application being deployed. This version number should be
-# incremented each time you make changes to the application. Versions are not expected to
-# follow Semantic Versioning. They should reflect the version the application is using.
-appVersion: "9.0.5"
