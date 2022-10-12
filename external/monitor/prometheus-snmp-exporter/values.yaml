@@ -1,6 +1,7 @@
 prometheus-snmp-exporter:
-  ingress: false
-  hosts:
-  - snmpexporter.mattgerega.net
-  annotations: 
-    kubernetes.io/ingress.class: nginx
+  ingress: 
+    enabled: true
+    hosts:
+    - snmpexporter.mattgerega.net
+    annotations: 
+      kubernetes.io/ingress.class: nginx
