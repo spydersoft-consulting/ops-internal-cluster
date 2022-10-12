@@ -6,7 +6,7 @@ prometheus-snmp-exporter:
       - synology
       name: synology
       target: 192.168.1.30
-  config:
+  config: |
     synology:
       walk:
       - 1.3.6.1.2.1.2
@@ -35,8 +35,7 @@ prometheus-snmp-exporter:
       - name: sysUpTime
         oid: 1.3.6.1.2.1.1.3
         type: gauge
-        help: The time (in hundredths of a second) since the network management portion
-          of the system was last re-initialized. - 1.3.6.1.2.1.1.3
+        help: The time (in hundredths of a second) since the network management portion of the system was last re-initialized. - 1.3.6.1.2.1.1.3
       - name: ifNumber
         oid: 1.3.6.1.2.1.2.1
         type: gauge
