@@ -1,6 +1,8 @@
 prometheus-snmp-exporter:
   serviceMonitor:
     enabled: true
+    scrapeTimeout: 45s
+
     params:
     - module:
       - synology
