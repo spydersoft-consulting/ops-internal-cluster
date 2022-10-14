@@ -6,6 +6,7 @@ mimir-distributed:
   minio: 
     enabled: false
   alertmanager:
+    enabled: true
     persistentVolume:
       storageClass: nfs-client
   ingester:
@@ -17,6 +18,8 @@ mimir-distributed:
   compactor:
     persistentVolume:
       storageClass: nfs-client
+  ruler:
+    enabled: true
   nginx:
     ingress:
       enabled: true
@@ -54,6 +57,8 @@ mimir-distributed:
           endpoint: 192.168.1.46:9000
           insecure: true
           secret_access_key: ${MINIO_PASSWORD}
+      limits:
+        max-global-series-per-user: 0
 
   metaMonitoring:
     serviceMonitor:
