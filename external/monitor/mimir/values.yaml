@@ -6,37 +6,17 @@ mimir-distributed:
   minio: 
     enabled: false
   alertmanager:
-    extraArgs:
-      - -config.expand-env=true
     persistentVolume:
       storageClass: nfs-client
   ingester:
-    extraArgs:
-      - -config.expand-env=true
     persistentVolume:
       storageClass: nfs-client
-  querier:
-    extraArgs:
-      - -config.expand-env=true
-  query_frontend:
-    extraArgs:
-      - -config.expand-env=true
-  query_scheduler:
-    extraArgs:
-      - -config.expand-env=true
   store_gateway:
-    extraArgs:
-      - -config.expand-env=true
     persistentVolume:
       storageClass: nfs-client
   compactor:
-    extraArgs:
-      - -config.expand-env=true
     persistentVolume:
       storageClass: nfs-client
-  ruler:
-    extraArgs:
-      - -config.expand-env=true
   nginx:
     ingress:
       enabled: true
