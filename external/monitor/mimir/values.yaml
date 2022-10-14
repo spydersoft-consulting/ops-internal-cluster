@@ -10,17 +10,11 @@ mimir-distributed:
       - -config.expand-env=true
     persistentVolume:
       storageClass: nfs-client
-  distributor:
-    extraArgs:
-      - -config.expand-env=true
   ingester:
     extraArgs:
       - -config.expand-env=true
     persistentVolume:
       storageClass: nfs-client
-  overrides_exporter:
-    extraArgs:
-      - -config.expand-env=true
   querier:
     extraArgs:
       - -config.expand-env=true
