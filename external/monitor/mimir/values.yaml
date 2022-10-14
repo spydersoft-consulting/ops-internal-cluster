@@ -58,7 +58,7 @@ mimir-distributed:
           insecure: true
           secret_access_key: ${MINIO_PASSWORD}
       limits:
-        max-global-series-per-user: 0
+        max_global_series_per_user: 0
 
   metaMonitoring:
     serviceMonitor:
