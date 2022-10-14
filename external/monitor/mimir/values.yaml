@@ -1,0 +1,97 @@
+mimir-distributed:
+  global:
+    extraEnvFrom:
+      - secretRef:
+          name: mimir-minio-secret
+  minio: 
+    enabled: false
+  alertmanager:
+    extraArgs:
+      - -config.expand-env=true
+    persistentVolume:
+      storageClass: nfs-client
+  distributor:
+    extraArgs:
+      - -config.expand-env=true
+  ingester:
+    extraArgs:
+      - -config.expand-env=true
+    persistentVolume:
+      storageClass: nfs-client
+  overrides_exporter:
+    extraArgs:
+      - -config.expand-env=true
+  querier:
+    extraArgs:
+      - -config.expand-env=true
+  query_frontend:
+    extraArgs:
+      - -config.expand-env=true
+  query_scheduler:
+    extraArgs:
+      - -config.expand-env=true
+  store_gateway:
+    extraArgs:
+      - -config.expand-env=true
+    persistentVolume:
+      storageClass: nfs-client
+  compactor:
+    extraArgs:
+      - -config.expand-env=true
+    persistentVolume:
+      storageClass: nfs-client
+  ruler:
+    extraArgs:
+      - -config.expand-env=true
+  nginx:
+    ingress:
+      enabled: true
+      hosts:
+        - host: "mimir.mattgerega.net"
+          paths:
+            - path: /
+              pathType: Prefix
+      annotations:
+        kubernetes.io/ingress.class: nginx
+        nginx.ingress.kubernetes.io/service-upstream: "true"
+      tls: []
+  mimir:
+    structuredConfig:
+      admin_client:
+        storage:
+          type: s3
+          s3:
+            access_key_id: ${MINIO_USERNAME}
+            bucket_name: mimir-metrics-admin
+            endpoint: 192.168.1.46:9000
+            insecure: true
+            secret_access_key: ${MINIO_PASSWORD}
+      alertmanager_storage:
+        backend: s3
+        s3:
+          access_key_id: ${MINIO_USERNAME}
+          bucket_name: mimir-ruler
+          endpoint: 192.168.1.46:9000
+          insecure: true
+          secret_access_key: ${MINIO_PASSWORD}
+      blocks_storage:
+        s3:
+          access_key_id: ${MINIO_USERNAME}
+          bucket_name: mimir-tsdb
+          endpoint: 192.168.1.46:9000
+          insecure: true
+          secret_access_key: ${MINIO_PASSWORD}
+      ruler_storage:
+        backend: s3
+        s3:
+          access_key_id: ${MINIO_USERNAME}
+          bucket_name: mimir-ruler
+          endpoint: 192.168.1.46:9000
+          insecure: true
+          secret_access_key: ${MINIO_PASSWORD}
+
+  metaMonitoring:
+    serviceMonitor:
+      enabled: true
+      interval: 1m
+      scrapeTimeout: 30s
