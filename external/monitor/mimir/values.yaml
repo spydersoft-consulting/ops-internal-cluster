@@ -34,6 +34,8 @@ mimir-distributed:
       tls: []
   mimir:
     structuredConfig:
+      api:
+        prometheus_http_prefix: "/api/prom"
       alertmanager_storage:
         backend: s3
         s3:
