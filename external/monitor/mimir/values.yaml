@@ -102,20 +102,20 @@ mimir-distributed:
               proxy_pass      http://{{ template "mimir.fullname" . }}-alertmanager.{{ .Release.Namespace }}.svc.{{ .Values.global.clusterDomain }}:{{ include "mimir.serverHttpListenPort" . }}$request_uri;
             }
             # Ruler endpoints
-            location {{- template "mimir.prometheusHttpPrefix" . }}/config/v1/rules {
+            location {{- template "mimir.prometheusHttpPrefix" . -}}/config/v1/rules {
               proxy_pass      http://{{ template "mimir.fullname" . }}-ruler.{{ .Release.Namespace }}.svc.{{ .Values.global.clusterDomain }}:{{ include "mimir.serverHttpListenPort" . }}$request_uri;
             }
-            location {{- template "mimir.prometheusHttpPrefix" . }}/api/v1/rules {
+            location {{- template "mimir.prometheusHttpPrefix" . -}}/api/v1/rules {
               proxy_pass      http://{{ template "mimir.fullname" . }}-ruler.{{ .Release.Namespace }}.svc.{{ .Values.global.clusterDomain }}:{{ include "mimir.serverHttpListenPort" . }}$request_uri;
             }
-            location {{- template "mimir.prometheusHttpPrefix" . }}/api/v1/alerts {
+            location {{- template "mimir.prometheusHttpPrefix" . -}}/api/v1/alerts {
               proxy_pass      http://{{ template "mimir.fullname" . }}-ruler.{{ .Release.Namespace }}.svc.{{ .Values.global.clusterDomain }}:{{ include "mimir.serverHttpListenPort" . }}$request_uri;
             }
             location = /ruler/ring {
               proxy_pass      http://{{ template "mimir.fullname" . }}-ruler.{{ .Release.Namespace }}.svc.{{ .Values.global.clusterDomain }}:{{ include "mimir.serverHttpListenPort" . }}$request_uri;
             }
-            # Rest of {{- template "mimir.prometheusHttpPrefix" . }} goes to the query frontend
-            location {{- template "mimir.prometheusHttpPrefix" . }} {
+            # Rest of {{- template "mimir.prometheusHttpPrefix" . -}} goes to the query frontend
+            location {{- template "mimir.prometheusHttpPrefix" . -}} {
               proxy_pass      http://{{ template "mimir.fullname" . }}-query-frontend.{{ .Release.Namespace }}.svc.{{ .Values.global.clusterDomain }}:{{ include "mimir.serverHttpListenPort" . }}$request_uri;
             }
             # Buildinfo endpoint can go to any component
