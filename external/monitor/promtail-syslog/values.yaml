@@ -6,7 +6,7 @@ promtail:
       scrapeConfigs: |
         - job_name: syslog-receiver
           syslog:
-            listen_address: 127.0.0.1:1514
+            listen_address: 0.0.0.0:1514
             # Don't disconnect the forwarder
             idle_timeout: 12h
             use_incoming_timestamp: true
