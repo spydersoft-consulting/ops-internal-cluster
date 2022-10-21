@@ -21,6 +21,9 @@ mimir-distributed:
   ruler:
     enabled: true
   nginx:
+    nginxConfig:
+      serverSnippet: |
+        add_header Access-Control-Allow-Origin *.mattgerega.net;
     ingress:
       enabled: true
       hosts:
