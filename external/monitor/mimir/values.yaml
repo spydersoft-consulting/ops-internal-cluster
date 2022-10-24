@@ -24,8 +24,10 @@ mimir-distributed:
     nginxConfig:
       serverSnippet: |
         add_header Access-Control-Allow-Origin grafana.mattgerega.net;
+        add_header Access-Control-Allow-Methods *;
       httpSnippet: |
         add_header Access-Control-Allow-Origin grafana.mattgerega.net;
+        add_header Access-Control-Allow-Methods *;
     ingress:
       enabled: true
       hosts:
