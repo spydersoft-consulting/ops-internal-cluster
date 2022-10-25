@@ -9,15 +9,28 @@ mimir-distributed:
     enabled: true
     persistentVolume:
       storageClass: nfs-client
+  distributor:
+    replicas: 2
   ingester:
+    replicas: 3
     persistentVolume:
       storageClass: nfs-client
   store_gateway:
+    replicas: 3
     persistentVolume:
       storageClass: nfs-client
   compactor:
     persistentVolume:
       storageClass: nfs-client
+  chunks-cache:
+    enabled: true
+    replicas: 2
+  index-cache:
+    enabled: true
+    replicas: 3
+  results-cache:
+    enabled: true
+    replicas: 2
   ruler:
     enabled: true
   nginx:
