@@ -72,8 +72,8 @@ mimir-distributed:
           secret_access_key: ${MINIO_PASSWORD}
       limits:
         max_global_series_per_user: 0
-        ingestion_rate: 40000
-        ingestion_burst_size: 100000
+        ingestion_rate: 400000
+        ingestion_burst_size: 1000000
         out_of_order_time_window: 
   metaMonitoring:
     serviceMonitor:
