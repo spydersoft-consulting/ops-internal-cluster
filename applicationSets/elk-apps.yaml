@@ -29,7 +29,7 @@
 #         repoURL: https://bitbucket.org/spydersoftteam/ops-internal-cluster
 #         targetRevision: main
 #       destination:
-#         server: https://192.168.1.36:6443
+#         server: https://kubernetes.default.svc
 #         namespace: 'elk-stack'
 #       syncPolicy:
 #         # automated: 
