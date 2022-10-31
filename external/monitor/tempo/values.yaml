@@ -32,6 +32,8 @@ tempo-distributed:
     extraEnvFrom:
       - secretRef:
           name: tempo-secret
+  minio:
+    enabled: false
   storage:
     trace:
       backend: s3
