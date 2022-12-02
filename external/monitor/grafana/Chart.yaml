@@ -1,11 +1,11 @@
-name: grafana
 apiVersion: v2
+type: application
+version: 6.45.0
 appVersion: 9.1.6
 dependencies:
-- repository: https://grafana.github.io/helm-charts
-  name: grafana
-  version: 6.44.8
-type: application
-version: 6.44.8
+- name: grafana
+  version: 6.45.0
+  repository: https://grafana.github.io/helm-charts
+name: grafana
 
 
