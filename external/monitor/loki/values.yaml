@@ -1,7 +1,7 @@
 loki-distributed:
   querier:
     autoscaling:
-      enabled: true
+      enabled: false
     extraArgs:
       - -config.expand-env=true
     extraEnvFrom:
@@ -12,7 +12,7 @@ loki-distributed:
       storageClass: nfs-client
   ingester:
     autoscaling:
-      enabled: true
+      enabled: false
     extraArgs:
       - -config.expand-env=true
     extraEnvFrom:
@@ -23,7 +23,7 @@ loki-distributed:
       storageClass: nfs-client
   distributor:
     autoscaling:
-      enabled: true
+      enabled: false
     extraArgs:
       - -config.expand-env=true
     extraEnvFrom:
@@ -31,7 +31,7 @@ loki-distributed:
           name: minio-secret
   queryFrontend:
     autoscaling:
-      enabled: true
+      enabled: false
     extraArgs:
       - -config.expand-env=true
     extraEnvFrom:
@@ -39,7 +39,7 @@ loki-distributed:
           name: minio-secret
   gateway:
     autoscaling:
-      enabled: true
+      enabled: false
     ingress:
       enabled: true
       hosts:
