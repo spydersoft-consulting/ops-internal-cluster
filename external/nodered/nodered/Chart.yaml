@@ -7,6 +7,6 @@ dependencies:
   version: 1.2.0
   repository: https://bjw-s.github.io/helm-charts
 apiVersion: v2
-name: node-red
+name: nodered
 
 
