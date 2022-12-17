@@ -44,5 +44,5 @@ persistence:
     enabled: true
     type: pvc
     accessMode: ReadWriteMany
-    size: 2GB
+    size: 2Gi
     storageClass: nfs-client
