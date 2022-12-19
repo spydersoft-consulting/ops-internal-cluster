@@ -7,7 +7,7 @@ strategy:
 
 env:
   # -- Set the container timezone
-  TZ: UTC
+  TZ: "America/New_York"
   # -- Node.js runtime arguments
   NODE_OPTIONS:
   # -- Setting to `true` starts Node-RED with the projects feature enabled
