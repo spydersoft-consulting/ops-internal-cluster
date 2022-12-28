@@ -1,4 +1,9 @@
 promtail:
+  daemonset:
+    enabled: false
+  deployment:
+    enabled: true
+    
   config:
     clients:
     - url: 'https://loki.mattgerega.net/loki/api/v1/push'
