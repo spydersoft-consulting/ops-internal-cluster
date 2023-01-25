@@ -101,7 +101,7 @@ loki-distributed:
         storage:
           type: s3
           s3:
-            s3: http://${MINIO_USERNAME}:${MINIO_PASSWORD}@192.168.1.46:9000/loki
+            s3: http://${MINIO_USERNAME}:${MINIO_PASSWORD}@cloud.gerega.net:39000/loki
             s3forcepathstyle: true
 
   serviceMonitor:
