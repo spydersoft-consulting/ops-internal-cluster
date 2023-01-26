@@ -1,10 +1,4 @@
-vault:
-  ingress:
-    enabled: true
-    ingressClassName: "nginx"
-    hosts:
-      - host: hcvault.mattgerega.net
-  
+vault:  
   server:
     standalone:
       config: |
@@ -32,3 +26,8 @@ vault:
     extraArgs: -config=/vault/userconfig/vault-storage-config/config.hcl
     dataStorage:
       enabled: false
+    ingress:
+      enabled: true
+      ingressClassName: "nginx"
+      hosts:
+        - host: hcvault.mattgerega.net
