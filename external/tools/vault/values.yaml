@@ -26,9 +26,9 @@ vault:
           defaultMode: 420
           secretName: vault-storage-config
     volumeMounts:
-      - mountPath: /vault/userconfig/vault-storage-config
-        name: vault-storage-config
-        readonly: true
+      - name: vault-storage-config
+        mountPath: /vault/userconfig/vault-storage-config
+        readOnly: true
     extraArgs: -config=/vault/userconfig/vault-storage-config/config.hcl
     dataStorage:
       enabled: false
