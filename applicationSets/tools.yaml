@@ -31,7 +31,15 @@ spec:
       destination:
         server: https://kubernetes.default.svc
         namespace: 'tools'
-      #syncPolicy:
-        # automated: 
-        #   prune: true 
-        #   selfHeal: true
+      ignoreDifferences:
+      - group: '*'
+        kind: 'MutatingWebhookConfiguration'
+        jqPathExpressions:
+        - '.webhooks[]?.clientConfig.caBundle'
+        - '.webhooks[]?.client'
+      syncPolicy:
+        # automated: # automated sync by default retries failed attempts 5 times with following delays between attempts ( 5s, 10s, 20s, 40s, 80s ); retry controlled using `retry` field.
+        #   prune: true # Specifies if resources should be pruned during auto-syncing ( false by default ).
+        #   selfHeal: false
+        syncOptions:     # Sync options which modifies sync behavior
+        - RespectIgnoreDifferences=true
