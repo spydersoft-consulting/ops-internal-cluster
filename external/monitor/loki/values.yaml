@@ -81,6 +81,10 @@ loki:
         nginx.ingress.kubernetes.io/service-upstream: "true"
       tls: []
   monitoring:
+    selfMonitoring:
+      enabled: false
+      grafanaAgent:
+        installOperator: false
     serviceMonitor:
       enabled: true
       interval: 1m
