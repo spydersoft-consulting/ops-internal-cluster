@@ -10,7 +10,7 @@ loki:
         accessKeyId: ${MINIO_USERNAME}
         secretAccessKey: ${MINIO_PASSWORD}
         endpoint: cloud.gerega.net:39000
-        s3forcepathstyle: true
+        s3ForcePathStyle: true
         insecure: true
     authEnabled: false
     structuredConfig:
