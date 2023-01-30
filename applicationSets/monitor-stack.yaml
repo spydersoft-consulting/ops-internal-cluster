@@ -36,6 +36,10 @@ spec:
         kind: "*"
         managedFieldsManagers:
         - argocd-controller
+      - group: "*"
+        kind: "StatefulSet"
+        jsonPointers:
+        - /spec/persistentVolumeClaimRetentionPolicy
       syncPolicy:
         # automated: 
         #   prune: true 
