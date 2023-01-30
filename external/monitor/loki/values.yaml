@@ -85,6 +85,8 @@ loki:
       enabled: false
       grafanaAgent:
         installOperator: false
+    lokiCanary:
+      enabled: false
     serviceMonitor:
       enabled: true
       interval: 1m
