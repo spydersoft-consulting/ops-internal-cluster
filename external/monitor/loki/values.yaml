@@ -56,6 +56,8 @@ loki:
       enabled: true
       storageClass: nfs-client
   backend:
+    extraArgs:
+      - -config.expand-env=true
     extraEnvFrom:
       - secretRef:
           name: minio-secret
