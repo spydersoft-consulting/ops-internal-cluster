@@ -12,7 +12,7 @@ loki:
         endpoint: cloud.gerega.net:39000
         s3ForcePathStyle: true
         insecure: true
-    authEnabled: false
+    auth_enabled: false
     structuredConfig:
       table_manager:
         retention_deletes_enabled: true
