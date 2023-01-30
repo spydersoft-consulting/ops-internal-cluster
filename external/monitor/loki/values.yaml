@@ -7,7 +7,7 @@ loki:
         admin: loki-admin
       type: s3
       s3:
-        s3: http://${MINIO_USERNAME}:${MINIO_PASSWORD}@cloud.gerega.net:39000/loki
+        s3: http://${MINIO_USERNAME}:${MINIO_PASSWORD}@cloud.gerega.net:39000/
         s3forcepathstyle: true
         insecure: true
     authEnabled: false
