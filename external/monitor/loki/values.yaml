@@ -36,7 +36,8 @@ loki:
         - selector: '{namespace="argocd"}'
           priority: 1
           period: 24h
-
+    rulerConfig:
+      alertmanager_url: https://mimir.mattgerega.net
   minio:
     enabled: false
   write:
