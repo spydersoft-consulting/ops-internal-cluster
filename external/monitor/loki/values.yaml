@@ -38,6 +38,7 @@ loki:
           period: 24h
     rulerConfig:
       alertmanager_url: https://mimir.mattgerega.net
+      enable_alertmanager_v2: true
   minio:
     enabled: false
   write:
