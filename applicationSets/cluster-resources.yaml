@@ -4,7 +4,7 @@ metadata:
   name: internal-cluster-resources
   labels:
     spydersoft.io/environment: internal
-    spydersoft.io/category: app
+    spydersoft.io/category: resources
 spec:
   destination:
     namespace: cluster-tools
