@@ -1,0 +1,24 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: internal-cluster-resources
+  labels:
+    spydersoft.io/environment: internal
+    spydersoft.io/category: app
+spec:
+  destination:
+    namespace: cluster-tools
+    server: https://kubernetes.default.svc
+  project: cluster-tools
+  source:
+    path: cluster-resources
+    repoURL: https://bitbucket.org/spydersoftteam/ops-internal-cluster
+    targetRevision: HEAD
+
+    directory:
+      recurse: true
+      jsonnet: {}
+  syncPolicy:
+    automated:
+      selfHeal: true
+      prune: true
