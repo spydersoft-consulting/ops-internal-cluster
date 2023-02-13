@@ -1,46 +1,46 @@
-apiVersion: argoproj.io/v1alpha1
-kind: ApplicationSet
-metadata:
-  name: elastic-system
-  labels:
-    spydersoft.io/environment: internal
-    spydersoft.io/category: app-set
-spec:
-  generators:
-  - git:
-      repoURL: https://bitbucket.org/spydersoftteam/ops-internal-cluster
-      revision: HEAD
-      directories:
-      - path: external/elastic-system/*
-  template:
-    metadata:
-      name: '{{path.basename}}'
-      labels:
-        spydersoft.io/environment: internal
-        spydersoft.io/category: 'elastic-system'
-    spec:
-      project: external-apps
-      source:
-        helm:
-          version: v3
-          valueFiles:
-          - values.yaml
-        path: '{{ path }}'
-        repoURL: https://bitbucket.org/spydersoftteam/ops-internal-cluster
-        targetRevision: main
-      destination:
-        server: https://kubernetes.default.svc
-        namespace: 'elastic-system'
-      ignoreDifferences:
-      - group: "*"
-        kind: "*"
-        managedFieldsManagers:
-        - argocd-controller
-      syncPolicy:
-        # automated: 
-        #   prune: true 
-        #   selfHeal: true
-        syncOptions:   
-        - RespectIgnoreDifferences=true
+# apiVersion: argoproj.io/v1alpha1
+# kind: ApplicationSet
+# metadata:
+#   name: elastic-system
+#   labels:
+#     spydersoft.io/environment: internal
+#     spydersoft.io/category: app-set
+# spec:
+#   generators:
+#   - git:
+#       repoURL: https://bitbucket.org/spydersoftteam/ops-internal-cluster
+#       revision: HEAD
+#       directories:
+#       - path: external/elastic-system/*
+#   template:
+#     metadata:
+#       name: '{{path.basename}}'
+#       labels:
+#         spydersoft.io/environment: internal
+#         spydersoft.io/category: 'elastic-system'
+#     spec:
+#       project: external-apps
+#       source:
+#         helm:
+#           version: v3
+#           valueFiles:
+#           - values.yaml
+#         path: '{{ path }}'
+#         repoURL: https://bitbucket.org/spydersoftteam/ops-internal-cluster
+#         targetRevision: main
+#       destination:
+#         server: https://kubernetes.default.svc
+#         namespace: 'elastic-system'
+#       ignoreDifferences:
+#       - group: "*"
+#         kind: "*"
+#         managedFieldsManagers:
+#         - argocd-controller
+#       syncPolicy:
+#         # automated: 
+#         #   prune: true 
+#         #   selfHeal: true
+#         syncOptions:   
+#         - RespectIgnoreDifferences=true
 
         
