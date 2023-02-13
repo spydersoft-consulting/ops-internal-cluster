@@ -1,5 +1,7 @@
 mimir-distributed:
   global:
+    dnsServer: core-dns
+    dnsNamespace: kube-system
     extraEnvFrom:
       - secretRef:
           name: mimir-minio-secret
