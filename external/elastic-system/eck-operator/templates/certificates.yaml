@@ -1,0 +1,22 @@
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: selfsigned-issuer
+spec:
+  selfSigned: {}
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: elastic-webhook-server-cert
+  namespace: elastic-system
+spec:
+  dnsNames:
+    - elastic-webhook-server.elastic-system.svc
+  issuerRef:
+    kind: ClusterIssuer
+    name: self-signing-issuer
+  secretName: elastic-webhook-server-cert
+  subject:
+    organizations:
+      - spydersoft
