@@ -1,0 +1,5 @@
+eck-operator:
+  webhook:
+    manage-webhook-certs: false
+    certsSecret: elastic-webhook-server-cert
+    certManagerCert: elastic-webhook-server-cert
