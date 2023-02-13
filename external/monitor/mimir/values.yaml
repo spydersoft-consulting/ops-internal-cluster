@@ -1,6 +1,6 @@
 mimir-distributed:
   global:
-    dnsService: core-dns
+    dnsService: rke2-coredns-rke2-coredns
     dnsNamespace: kube-system
     extraEnvFrom:
       - secretRef:
