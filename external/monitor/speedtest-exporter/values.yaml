@@ -1,20 +1,25 @@
-speedtest-exporter:
-  service:
-    main:
-      ports:
-        http:
-          enabled: false
-        metrics:
-          enabled: true
-          protocol: TCP
-          port: 9798
+image:
+  repository: ghcr.io/miguelndecarvalho/speedtest-exporter
+  pullPolicy: IfNotPresent
 
-  metrics:
-    # -- Enable and configure a Prometheus serviceMonitor for the chart under this key.
-    # @default -- See values.yaml
+env:
+  TZ: "UTC"
+
+service:
+  main:
+    ports:
+      http:
+        enabled: false
+      metrics:
+        enabled: true
+        protocol: TCP
+        port: 9798
+
+serviceMonitor:
+  main:
     enabled: true
-    serviceMonitor:
-      # -- The interval field must use minutes for the padding to calculate properly.
-      interval: 30m
-      scrapeTimeout: 1m
-      labels: {}
+    endpoints:
+      - port: metrics
+        path: /metrics
+        interval: 1m
+        scrapeTimeout: 30s
