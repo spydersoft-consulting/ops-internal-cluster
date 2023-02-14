@@ -1,11 +1,11 @@
 type: application
-version: 5.4.2
+version: 3.5.3
 apiVersion: v2
-name: loki
+name: speedtest-exporter
 dependencies:
-- version: 5.4.2
-  name: speedtest-exporter
-  repository: https://k8s-at-home.com/charts/
-appVersion: v3.2.2
+- name: common
+  repository: https://bjw-s.github.io/helm-charts
+  version: 1.3.1
+appVersion: v3.5.3
 
 
