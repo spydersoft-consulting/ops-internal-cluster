@@ -1,11 +1,11 @@
-appVersion: 0.23.0
-type: application
 name: vault
-apiVersion: v2
+type: application
+version: 0.24.0
 dependencies:
-- repository: https://helm.releases.hashicorp.com
-  version: 0.23.0
+- version: 0.24.0
+  repository: https://helm.releases.hashicorp.com
   name: vault
-version: 0.23.0
+appVersion: 0.23.0
+apiVersion: v2
 
 
