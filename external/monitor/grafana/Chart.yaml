@@ -1,5 +1,5 @@
 type: application
-appVersion: 9.1.6
+appVersion: 9.4.7
 dependencies:
 - repository: https://grafana.github.io/helm-charts
   version: 6.53.0
