@@ -31,6 +31,12 @@ grafana:
       kubernetes.io/ingress.class: nginx
       nginx.ingress.kubernetes.io/service-upstream: "true"
     tls: []
+  # database:
+  #   type: mysql
+  #   host: "mysql"
+  #   name: "grafana"
+  #   user: grafanauser
+  #   password: ${GF_AUTH_DB_PASSWORD}
   serviceMonitor:
     enabled: true
   plugins:
@@ -43,3 +49,10 @@ grafana:
       linkerd.io/inject: enabled
   podAnnotations: 
     linkerd.io/inject: enabled
+mysql:
+  auth:
+    database: "grafana"
+    username: "grafanauser"
+    existingSecret: grafana-db-secret
+  global:
+    storageClass: nfs-client
