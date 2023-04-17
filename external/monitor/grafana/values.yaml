@@ -1,6 +1,4 @@
 grafana:
-  image:
-    tag: 9.2.1
   revisionHistoryLimit: 1
   envFromSecret: grafana-auth-secret
   admin:
