@@ -21,6 +21,12 @@ grafana:
     server:
       domain: grafana.mattgerega.net
       root_url: "https://grafana.mattgerega.net"
+    database:
+      type: mysql
+      host: "grafana-mysql-headless"
+      name: "grafana"
+      user: grafanauser
+      password: ${GF_AUTH_DB_PASSWORD}
   ingress:
     enabled: true
     path: /
@@ -31,12 +37,6 @@ grafana:
       kubernetes.io/ingress.class: nginx
       nginx.ingress.kubernetes.io/service-upstream: "true"
     tls: []
-  database:
-    type: mysql
-    host: "grafana-mysql-headless"
-    name: "grafana"
-    user: grafanauser
-    password: ${GF_AUTH_DB_PASSWORD}
   serviceMonitor:
     enabled: true
   plugins:
