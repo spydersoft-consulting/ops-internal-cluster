@@ -1,4 +1,6 @@
 tempo-distributed:
+  global:
+    dnsService: rke2-coredns-rke2-coredns
   revisionHistoryLimit: 1
   search:
     enabled: true
