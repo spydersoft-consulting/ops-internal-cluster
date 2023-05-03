@@ -65,8 +65,6 @@ tempo-distributed:
         enabled: true
   gateway:
     enabled: true
-    nginxConfig:
-      resolver: rke2-coredns-rke2-coredns.kube-system.svc.cluster.local
     ingress:
       enabled: true
       hosts:
