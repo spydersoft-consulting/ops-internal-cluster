@@ -85,7 +85,7 @@ loki:
         kubernetes.io/ingress.class: nginx
         nginx.ingress.kubernetes.io/service-upstream: "true"
       tls: []
-  table_manager:
+  tableManager:
     enabled: true
   monitoring:
     selfMonitoring:
