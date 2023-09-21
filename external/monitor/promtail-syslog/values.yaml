@@ -39,6 +39,7 @@ promtail:
       protocol: TCP
       service:
         type: NodePort
+        nodePort: 31050
 
   serviceMonitor:
     enabled: true
