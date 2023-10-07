@@ -3,12 +3,12 @@ name: grafana
 type: application
 dependencies:
 - name: grafana
-  version: 6.59.5
+  version: 6.60.2
   repository: https://grafana.github.io/helm-charts
 - name: mysql
   version: 9.12.3
   repository: https://charts.bitnami.com/bitnami
 appVersion: 9.4.7
-version: 9.12.3
+version: 6.60.2
 
 
