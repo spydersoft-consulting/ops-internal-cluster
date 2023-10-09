@@ -1,9 +1,15 @@
-image:
-  repository: ghcr.io/miguelndecarvalho/speedtest-exporter
-  pullPolicy: IfNotPresent
 
-env:
-  TZ: "UTC"
+controllers:
+  main:
+    containers:
+      main:
+        image:
+          repository: ghcr.io/miguelndecarvalho/speedtest-exporter
+          tag: v3.5.4
+          pullPolicy: IfNotPresent
+
+        env:
+          TZ: "UTC"
 
 service:
   main:
