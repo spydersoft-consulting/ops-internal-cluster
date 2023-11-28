@@ -12,7 +12,7 @@ spec:
   project: cluster-tools
   source:
     path: cluster-resources
-    repoURL: https://bitbucket.org/spydersoftteam/ops-internal-cluster
+    repoURL: https://github.com/spydersoft-consulting/ops-internal-cluster
     targetRevision: HEAD
 
     directory:
