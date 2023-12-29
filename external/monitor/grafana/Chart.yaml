@@ -3,10 +3,10 @@ dependencies:
 - version: 7.0.19
   name: grafana
   repository: https://grafana.github.io/helm-charts
-- version: 9.15.0
+- version: 9.16.0
   name: mysql
   repository: https://charts.bitnami.com/bitnami
-version: 7.0.19
+version: 9.16.0
 name: grafana
 apiVersion: v2
 appVersion: 9.4.7
