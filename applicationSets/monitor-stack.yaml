@@ -32,10 +32,10 @@ spec:
         server: https://kubernetes.default.svc
         namespace: 'monitoring'
       ignoreDifferences:
-      - group: "*"
-        kind: "*"
-        managedFieldsManagers:
-        - argocd-controller
+      # - group: "*"
+      #   kind: "*"
+      #   managedFieldsManagers:
+      #   - argocd-controller
       - group: "*"
         kind: "StatefulSet"
         jsonPointers:
@@ -45,7 +45,7 @@ spec:
         # automated: 
         #   prune: true 
         #   selfHeal: true
-        # syncOptions:   
-        # - RespectIgnoreDifferences=true
+        syncOptions:   
+        - RespectIgnoreDifferences=true
 
         
