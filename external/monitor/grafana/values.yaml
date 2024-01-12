@@ -12,8 +12,6 @@ grafana:
       name: Azure AD
       enabled: true
       allow_sign_up: true
-      client_id: ${GF_AUTH_AZUREAD_CLIENT_ID}
-      client_secret: ${GF_AUTH_AZUREAD_CLIENT_SECRET}
       scopes: openid email profile
       auth_url: https://login.microsoftonline.com/70965cdd-c60c-4109-9fcf-709b2f23bd0c/oauth2/v2.0/authorize
       token_url: https://login.microsoftonline.com/70965cdd-c60c-4109-9fcf-709b2f23bd0c/oauth2/v2.0/token
@@ -26,7 +24,6 @@ grafana:
       host: "grafana-mysql-headless"
       name: "grafana"
       user: grafanauser
-      password: ${GF_AUTH_DB_PASSWORD}
   ingress:
     enabled: true
     path: /
