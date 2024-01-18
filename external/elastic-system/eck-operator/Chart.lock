@@ -1,6 +1,6 @@
 dependencies:
 - name: eck-operator
   repository: https://helm.elastic.co
-  version: 2.10.0
-digest: sha256:8617067e3793074e4e3bbab11ddb449873fa2ec277224aac15a9d3fbe5f97ec3
-generated: "2023-11-08T16:21:38.6795612-05:00"
+  version: 2.11.0
+digest: sha256:912ffe6aa38af576dcae684cec206a32ebd07051b299eca1cce6b50350ca69c9
+generated: "2024-01-18T16:22:30.0150899-05:00"
