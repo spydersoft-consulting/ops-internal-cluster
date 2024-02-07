@@ -1,0 +1,5 @@
+{
+    "repository": "ysde/grafana-backup-tool",
+    "stripVFromVersion": false,
+    "tagPath": "backup.image.tag"
+}
