@@ -1,9 +1,10 @@
+{{ if .Values.grafanaBackup.enabled }}
 apiVersion: batch/v1
 kind: CronJob
 metadata:
   name: grafana-backup-tool
 spec:
-  schedule: "0 4 * * *"
+  schedule: {{ .Values.grafanaBackup.schedule }}
   jobTemplate:
     metadata:
       labels:
@@ -14,8 +15,9 @@ spec:
           restartPolicy: "Never"
           containers:
             - name: grafana-backup-tool
-              image: "ysde/docker-grafana-backup-tool:1.2.4"
+              image: {{ .Values.grafanaBackup.image.repository }}:{{ .Values.grafanaBackup.image.tag }}
               imagePullPolicy: Always
               envFrom:
                 - secretRef:
                     name: grafana-backup-secret
+{{ end }}
