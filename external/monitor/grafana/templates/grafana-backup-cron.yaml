@@ -1,0 +1,21 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: grafana-backup-tool
+spec:
+  schedule: "0 4 * * *"
+  jobTemplate:
+    metadata:
+      labels:
+        app: grafana-backup-tool
+    spec:
+      template:
+        spec:
+          restartPolicy: "Never"
+          containers:
+            - name: grafana-backup-tool
+              image: "ysde/docker-grafana-backup-tool:1.2.4"
+              imagePullPolicy: Always
+              envFrom:
+                - secretRef:
+                    name: grafana-backup-secret
