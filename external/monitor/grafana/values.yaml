@@ -1,61 +1,62 @@
 grafana:
-  revisionHistoryLimit: 1
-  envFromSecret: grafana-auth-secret
-  admin:
-    existingSecret: "grafana-admin-secret"
-    userKey: "GRAFANA_ADMIN_USER"
-    passwordKey: "GRAFANA_ADMIN_PASSWORD"
-  grafana.ini:
-    azure:
-      managed_identity_enabled: true
-    auth.azuread:
-      name: Azure AD
-      enabled: true
-      allow_sign_up: true
-      scopes: openid email profile
-      auth_url: https://login.microsoftonline.com/70965cdd-c60c-4109-9fcf-709b2f23bd0c/oauth2/v2.0/authorize
-      token_url: https://login.microsoftonline.com/70965cdd-c60c-4109-9fcf-709b2f23bd0c/oauth2/v2.0/token
-      role_attribute_strict: false
-    server:
-      domain: grafana.mattgerega.net
-      root_url: "https://grafana.mattgerega.net"
-    database:
-      type: mysql
-      host: "grafana-mysql-headless"
-      name: "grafana"
-      user: grafanauser
   ingress:
-    enabled: true
     path: /
-    pathType: Prefix
-    hosts:
-      - "grafana.mattgerega.net"
+    tls: []
     annotations:
       kubernetes.io/ingress.class: nginx
       nginx.ingress.kubernetes.io/service-upstream: "true"
-    tls: []
-  serviceMonitor:
+    hosts:
+    - grafana.mattgerega.net
     enabled: true
-  plugins:
-  - grafana-piechart-panel
-  persistence:
-    enabled: true
-    storageClassName: nfs-client
+    pathType: Prefix
+  admin:
+    passwordKey: GRAFANA_ADMIN_PASSWORD
+    userKey: GRAFANA_ADMIN_USER
+    existingSecret: grafana-admin-secret
+  podAnnotations:
+    linkerd.io/inject: enabled
+  envFromSecret: grafana-auth-secret
   service:
     annotations:
       linkerd.io/inject: enabled
-  podAnnotations: 
-    linkerd.io/inject: enabled
+  grafana.ini:
+    database:
+      type: mysql
+      host: grafana-mysql-headless
+      user: grafanauser
+      name: grafana
+    server:
+      domain: grafana.mattgerega.net
+      root_url: https://grafana.mattgerega.net
+    auth.azuread:
+      allow_sign_up: true
+      auth_url: https://login.microsoftonline.com/70965cdd-c60c-4109-9fcf-709b2f23bd0c/oauth2/v2.0/authorize
+      scopes: openid email profile
+      enabled: true
+      token_url: https://login.microsoftonline.com/70965cdd-c60c-4109-9fcf-709b2f23bd0c/oauth2/v2.0/token
+      name: Azure AD
+      role_attribute_strict: false
+    azure:
+      managed_identity_enabled: true
+  plugins:
+  - grafana-piechart-panel
+  serviceMonitor:
+    enabled: true
+  revisionHistoryLimit: 1
+  persistence:
+    storageClassName: nfs-client
+    enabled: true
 mysql:
-  auth:
-    database: "grafana"
-    username: "grafanauser"
-    existingSecret: grafana-db-secret
   global:
     storageClass: nfs-client
+  auth:
+    database: grafana
+    username: grafanauser
+    existingSecret: grafana-db-secret
 grafanaBackup:
-  enabled: true
-  schedule: "0 4 * * *" # 4am UTC
-  image: 
+  schedule: 0 4 * * *
+  image:
     repository: ysde/docker-grafana-backup-tool
     tag: 1.4.2
+  enabled: true
+
