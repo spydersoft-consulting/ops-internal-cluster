@@ -76,6 +76,7 @@ mimir-distributed:
         max_global_series_per_user: 0
         ingestion_rate: 400000
         ingestion_burst_size: 1000000
+        compactor_blocks_retention_period: 1y
         out_of_order_time_window: 
   metaMonitoring:
     serviceMonitor:
