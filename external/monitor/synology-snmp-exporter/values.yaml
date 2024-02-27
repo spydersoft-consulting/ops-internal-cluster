@@ -8,7 +8,7 @@ prometheus-snmp-exporter:
       name: synology
       target: 192.168.1.30
       auth:
-        auth
+        - auth
     
   config: |
     modules:  
