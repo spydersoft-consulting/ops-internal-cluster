@@ -1,18 +1,52 @@
-
 controllers:
   main:
+    enabled: true
+    type: deployment
+    replicas: 1
+    strategy: Recreate
+    revisionHistoryLimit: 3
     containers:
       main:
         image:
           repository: ghcr.io/miguelndecarvalho/speedtest-exporter
           tag: v3.5.4
           pullPolicy: IfNotPresent
-
         env:
           TZ: "UTC"
+        probes:
+          liveness:
+            enabled: true
+            custom: false
+            type: TCP
+            spec:
+              initialDelaySeconds: 0
+              periodSeconds: 10
+              timeoutSeconds: 1
+              failureThreshold: 3
+          readiness:
+            enabled: true
+            custom: false
+            type: TCP
+            spec:
+              initialDelaySeconds: 0
+              periodSeconds: 10
+              timeoutSeconds: 1
+              failureThreshold: 3
+          startup:
+            enabled: true
+            custom: false
+            type: TCP
+            spec:
+              initialDelaySeconds: 0
+              periodSeconds: 5
+              timeoutSeconds: 1
+              failureThreshold: 30
 
 service:
   main:
+    controller: main
+    primary: true
+    type: ClusterIP
     ports:
       http:
         enabled: false
@@ -24,8 +58,10 @@ service:
 serviceMonitor:
   main:
     enabled: true
+    serviceName: '{{ include "bjw-s.common.lib.chart.names.fullname" $ }}'
     endpoints:
       - port: metrics
         path: /metrics
         interval: 1h
         scrapeTimeout: 1m
+        scheme: http
