@@ -1,11 +1,11 @@
-dependencies:
-- repository: https://helm.elastic.co
-  name: eck-operator
-  version: 2.12.0
-version: 2.12.0
-apiVersion: v2
-name: eck-operator
 type: application
+name: eck-operator
+version: 2.12.1
 appVersion: 2.6.1
+dependencies:
+- name: eck-operator
+  version: 2.12.1
+  repository: https://helm.elastic.co
+apiVersion: v2
 
 
