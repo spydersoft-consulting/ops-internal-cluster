@@ -18,8 +18,8 @@ controllers:
       main:
         image:
           pullPolicy: IfNotPresent
-          repository: ghcr.io/donkie/spoolman
-          tag: 0.16.1
+          repository: ghcr.io/spyder007/spoolman
+          tag: edge
         env:
           TZ: America/New_York
         probes:
