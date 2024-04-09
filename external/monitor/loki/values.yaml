@@ -100,7 +100,7 @@ loki:
   test:
     enabled: false
   chunksCache:
-    allocatedMemory: 2Gi
+    enabled: false
 serviceMonitor:
   enabled: true
   interval: 1m
