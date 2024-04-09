@@ -99,7 +99,8 @@ loki:
     enabled: false
   test:
     enabled: false
-
+  chunksCache:
+    allocatedMemory: 2Gi
 serviceMonitor:
   enabled: true
   interval: 1m
