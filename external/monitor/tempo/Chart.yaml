@@ -1,11 +1,11 @@
-appVersion: 2.2.1
 dependencies:
-- repository: https://grafana.github.io/helm-charts
-  version: 1.9.4
+- version: 1.9.5
   name: tempo-distributed
-type: application
+  repository: https://grafana.github.io/helm-charts
+appVersion: 2.2.1
 apiVersion: v2
-version: 1.9.4
+type: application
 name: tempo
+version: 1.9.5
 
 
