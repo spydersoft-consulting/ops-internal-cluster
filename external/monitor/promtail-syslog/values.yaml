@@ -47,3 +47,8 @@ promtail:
     scrapeTimeout: 30s
   podAnnotations: 
       linkerd.io/inject: enabled
+  service:
+    labels:
+      fix: 'true'
+    annotations:
+      fix: 'true'
