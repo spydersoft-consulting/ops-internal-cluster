@@ -51,13 +51,13 @@ ingress:
       nginx.ingress.kubernetes.io/proxy-body-size: 500M
       nginx.ingress.kubernetes.io/rewrite-target: /
     hosts:
-    - paths:
-      - service:
-          identifier: main
-          port: http
-        path: /
-        pathType: Prefix
-      host: spoolman.mattgerega.net
+      - paths:
+          - service:
+              identifier: main
+              port: http
+            path: /
+            pathType: Prefix
+        host: spoolman.mattgerega.net
     enabled: true
 service:
   main:
@@ -74,9 +74,8 @@ persistence:
     enabled: true
     type: persistentVolumeClaim
     globalMounts:
-    - readOnly: false
-      path: /home/app/.local/share/spoolman
+      - readOnly: false
+        path: /home/app/.local/share/spoolman
     accessMode: ReadWriteMany
     storageClass: nfs-client
     size: 2Gi
-

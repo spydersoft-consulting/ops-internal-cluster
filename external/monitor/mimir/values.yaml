@@ -5,7 +5,7 @@ mimir-distributed:
     extraEnvFrom:
       - secretRef:
           name: mimir-minio-secret
-  minio: 
+  minio:
     enabled: false
   alertmanager:
     enabled: true
@@ -77,7 +77,7 @@ mimir-distributed:
         ingestion_rate: 400000
         ingestion_burst_size: 1000000
         compactor_blocks_retention_period: 1y
-        out_of_order_time_window: 
+        out_of_order_time_window:
   metaMonitoring:
     serviceMonitor:
       enabled: true

@@ -13,7 +13,7 @@ mysql:
     username: grafanauser
 grafana:
   plugins:
-  - grafana-piechart-panel
+    - grafana-piechart-panel
   grafana.ini:
     azure:
       managed_identity_enabled: true
@@ -40,7 +40,7 @@ grafana:
       nginx.ingress.kubernetes.io/service-upstream: "true"
     pathType: Prefix
     hosts:
-    - grafana.mattgerega.net
+      - grafana.mattgerega.net
     tls: []
     enabled: true
   revisionHistoryLimit: 1
@@ -59,4 +59,3 @@ grafana:
     userKey: GRAFANA_ADMIN_USER
     passwordKey: GRAFANA_ADMIN_PASSWORD
     existingSecret: grafana-admin-secret
-
