@@ -7,39 +7,39 @@ metadata:
     spydersoft.io/category: app-set
 spec:
   generators:
-  - git:
-      repoURL: https://github.com/spydersoft-consulting/ops-internal-cluster
-      revision: HEAD
-      directories:
-      - path: external/tools/*
+    - git:
+        repoURL: https://github.com/spydersoft-consulting/ops-internal-cluster
+        revision: HEAD
+        directories:
+          - path: external/tools/*
   template:
     metadata:
-      name: '{{path.basename}}'
+      name: "{{path.basename}}"
       labels:
         spydersoft.io/environment: internal
-        spydersoft.io/category: 'tools'
+        spydersoft.io/category: "tools"
     spec:
       project: external-apps
       source:
         helm:
           version: v3
           valueFiles:
-          - values.yaml
-        path: '{{ path }}'
+            - values.yaml
+        path: "{{ path }}"
         repoURL: https://github.com/spydersoft-consulting/ops-internal-cluster
         targetRevision: main
       destination:
         server: https://kubernetes.default.svc
-        namespace: 'tools'
+        namespace: "tools"
       ignoreDifferences:
-      - group: '*'
-        kind: 'MutatingWebhookConfiguration'
-        jqPathExpressions:
-        - '.webhooks[]?.clientConfig.caBundle'
-        - '.webhooks[]?.client'
+        - group: "*"
+          kind: "MutatingWebhookConfiguration"
+          jqPathExpressions:
+            - ".webhooks[]?.clientConfig.caBundle"
+            - ".webhooks[]?.client"
       syncPolicy:
         # automated: # automated sync by default retries failed attempts 5 times with following delays between attempts ( 5s, 10s, 20s, 40s, 80s ); retry controlled using `retry` field.
         #   prune: true # Specifies if resources should be pruned during auto-syncing ( false by default ).
         #   selfHeal: false
-        syncOptions:     # Sync options which modifies sync behavior
-        - RespectIgnoreDifferences=true
+        syncOptions: # Sync options which modifies sync behavior
+          - RespectIgnoreDifferences=true

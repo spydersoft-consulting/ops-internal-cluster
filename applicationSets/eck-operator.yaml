@@ -37,10 +37,9 @@
 #         managedFieldsManagers:
 #         - argocd-controller
 #       syncPolicy:
-#         # automated: 
-#         #   prune: true 
+#         # automated:
+#         #   prune: true
 #         #   selfHeal: true
-#         syncOptions:   
+#         syncOptions:
 #         - RespectIgnoreDifferences=true
 
-        

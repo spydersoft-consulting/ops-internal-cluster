@@ -49,7 +49,7 @@ tempo-distributed:
         insecure: true
   traces:
     jaeger:
-      grpc: 
+      grpc:
         enabled: true
       thriftBinary:
         enabled: true

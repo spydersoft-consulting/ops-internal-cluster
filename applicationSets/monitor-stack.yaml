@@ -7,45 +7,43 @@ metadata:
     spydersoft.io/category: app-set
 spec:
   generators:
-  - git:
-      repoURL: https://github.com/spydersoft-consulting/ops-internal-cluster
-      revision: HEAD
-      directories:
-      - path: external/monitor/*
+    - git:
+        repoURL: https://github.com/spydersoft-consulting/ops-internal-cluster
+        revision: HEAD
+        directories:
+          - path: external/monitor/*
   template:
     metadata:
-      name: '{{path.basename}}'
+      name: "{{path.basename}}"
       labels:
         spydersoft.io/environment: internal
-        spydersoft.io/category: 'monitor-stack'
+        spydersoft.io/category: "monitor-stack"
     spec:
       project: external-apps
       source:
         helm:
           version: v3
           valueFiles:
-          - values.yaml
-        path: '{{ path }}'
+            - values.yaml
+        path: "{{ path }}"
         repoURL: https://github.com/spydersoft-consulting/ops-internal-cluster
         targetRevision: main
       destination:
         server: https://kubernetes.default.svc
-        namespace: 'monitoring'
+        namespace: "monitoring"
       ignoreDifferences:
-      # - group: "*"
-      #   kind: "*"
-      #   managedFieldsManagers:
-      #   - argocd-controller
-      - group: "*"
-        kind: "StatefulSet"
-        jsonPointers:
-        - /spec/persistentVolumeClaimRetentionPolicy
-        - /spec/template/metadata/annotations/'kubectl.kubernetes.io/restartedAt'
+        # - group: "*"
+        #   kind: "*"
+        #   managedFieldsManagers:
+        #   - argocd-controller
+        - group: "*"
+          kind: "StatefulSet"
+          jsonPointers:
+            - /spec/persistentVolumeClaimRetentionPolicy
+            - /spec/template/metadata/annotations/'kubectl.kubernetes.io/restartedAt'
       syncPolicy:
-        # automated: 
-        #   prune: true 
+        # automated:
+        #   prune: true
         #   selfHeal: true
-        syncOptions:   
-        - RespectIgnoreDifferences=true
-
-        
+        syncOptions:
+          - RespectIgnoreDifferences=true
