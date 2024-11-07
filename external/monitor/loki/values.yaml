@@ -43,7 +43,7 @@ loki:
               prefix: chunk
 
       limits_config:
-        allow_structured_metadata: false
+        allow_structured_metadata: true
         retention_period: 48h
         retention_stream:
           - selector: '{namespace="argocd"}'
