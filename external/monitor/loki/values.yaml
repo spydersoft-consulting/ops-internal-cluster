@@ -16,10 +16,6 @@ loki:
         s3ForcePathStyle: true
         insecure: true
     auth_enabled: false
-    storage_config:
-      tsdb_shipper:
-        active_index_directory: /data/tsdb-index
-        cache_location: /data/tsdb-cache
     structuredConfig:
       table_manager:
         retention_deletes_enabled: true
