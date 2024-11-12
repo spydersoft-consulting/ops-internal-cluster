@@ -6,6 +6,8 @@ tempo-distributed:
   search:
     enabled: true
   distributor:
+    service:
+      type: NodePort
     extraArgs:
       - -config.expand-env=true
     extraEnvFrom:
