@@ -41,6 +41,10 @@ spec:
           jsonPointers:
             - /spec/persistentVolumeClaimRetentionPolicy
             - /spec/template/metadata/annotations/'kubectl.kubernetes.io/restartedAt'
+        - group: "apps"
+          kind: Deployment
+          jqPathExpressions:
+            - .spec.template.spec.hostUsers
       syncPolicy:
         # automated:
         #   prune: true
