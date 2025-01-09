@@ -1,0 +1,21 @@
+apiVersion: external-secrets.io/v1alpha1
+kind: ExternalSecret
+metadata:
+  name: unifi-poller-es
+
+spec:
+  refreshInterval: 1h0m0s
+  secretStoreRef:
+    name: vault-backend
+    kind: ClusterSecretStore
+  target:
+    name: unifi-poller
+  data:
+  - secretKey: UP_UNIFI_DEFAULT_USER
+    remoteRef:
+      key: secrets-k8/unifi
+      property: poller_name
+  - secretKey: UP_UNIFI_DEFAULT_PASS
+    remoteRef:
+      key: secrets-k8/unifi
+      property: poller_password
