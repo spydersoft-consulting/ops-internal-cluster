@@ -1,0 +1,5 @@
+{
+    "repository": "unpoller/unpoller",
+    "stripVFromVersion": false,
+    "tagPath": "controllers.main.containers.main.image.tag"
+}
