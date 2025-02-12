@@ -1,12 +1,12 @@
+type: application
 apiVersion: v2
-name: spoolman
 description: Spoolman
-version: 3.7.0
-appVersion: 0.16.1
 dependencies:
 - name: common
-  version: 3.7.0
   repository: https://bjw-s.github.io/helm-charts
-type: application
+  version: 3.7.1
+version: 3.7.1
+appVersion: 0.16.1
+name: spoolman
 
 
