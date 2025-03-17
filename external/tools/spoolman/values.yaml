@@ -1,82 +1,82 @@
 persistence:
   data:
-    size: 2Gi
+    accessMode: ReadWriteMany
+    type: persistentVolumeClaim
+    storageClass: nfs-client
     enabled: true
+    size: 2Gi
     globalMounts:
     - readOnly: false
       path: /home/app/.local/share/spoolman
-    type: persistentVolumeClaim
-    accessMode: ReadWriteMany
-    storageClass: nfs-client
+service:
+  main:
+    type: ClusterIP
+    primary: true
+    ports:
+      http:
+        primary: true
+        port: 8000
+        enabled: true
+    controller: main
+ingress:
+  main:
+    className: nginx
+    annotations:
+      nginx.ingress.kubernetes.io/rewrite-target: /
+      nginx.ingress.kubernetes.io/proxy-body-size: 500M
+      kubernetes.io/ingress.class: nginx
+    hosts:
+    - paths:
+      - pathType: Prefix
+        service:
+          identifier: main
+          port: http
+        path: /
+      host: spoolman.mattgerega.net
+    enabled: true
 controllers:
   main:
-    enabled: true
-    replicas: 1
     type: deployment
     revisionHistoryLimit: 3
+    replicas: 1
+    enabled: true
     strategy: Recreate
     containers:
       main:
-        env:
-          TZ: America/New_York
+        image:
+          tag: 0.22.0
+          repository: ghcr.io/donkie/spoolman
+          pullPolicy: IfNotPresent
         probes:
-          startup:
-            custom: false
+          liveness:
             type: TCP
+            custom: false
             spec:
               initialDelaySeconds: 0
+              periodSeconds: 10
+              failureThreshold: 3
               timeoutSeconds: 1
+            enabled: true
+          startup:
+            type: TCP
+            custom: false
+            spec:
+              initialDelaySeconds: 0
               periodSeconds: 5
               failureThreshold: 30
-            enabled: true
-          liveness:
-            custom: false
-            type: TCP
-            spec:
-              initialDelaySeconds: 0
               timeoutSeconds: 1
-              periodSeconds: 10
-              failureThreshold: 3
             enabled: true
           readiness:
-            custom: false
             type: TCP
+            custom: false
             spec:
               initialDelaySeconds: 0
-              timeoutSeconds: 1
               periodSeconds: 10
               failureThreshold: 3
+              timeoutSeconds: 1
             enabled: true
-        image:
-          pullPolicy: IfNotPresent
-          tag: 0.21.0
-          repository: ghcr.io/donkie/spoolman
         strategy:
           type: Recreate
-ingress:
-  main:
-    hosts:
-    - host: spoolman.mattgerega.net
-      paths:
-      - pathType: Prefix
-        path: /
-        service:
-          port: http
-          identifier: main
-    enabled: true
-    className: nginx
-    annotations:
-      kubernetes.io/ingress.class: nginx
-      nginx.ingress.kubernetes.io/proxy-body-size: 500M
-      nginx.ingress.kubernetes.io/rewrite-target: /
-service:
-  main:
-    primary: true
-    type: ClusterIP
-    ports:
-      http:
-        port: 8000
-        primary: true
-        enabled: true
-    controller: main
+        env:
+          TZ: America/New_York
 
