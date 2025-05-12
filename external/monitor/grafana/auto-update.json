@@ -1,5 +1,5 @@
 {
-    "repository": "ysde/grafana-backup-tool",
+    "repository": "dealfa/grafana-backup-tool",
     "stripVFromVersion": false,
     "tagPath": "grafanaBackup.image.tag"
 }

@@ -2,8 +2,8 @@ grafanaBackup:
   schedule: 0 4 * * *
   enabled: true
   image:
-    repository: ysde/docker-grafana-backup-tool
-    tag: 1.4.2
+    repository: dealfa/grafana-backup-tool
+    tag: v1.4.4
 mysql:
   global:
     storageClass: nfs-client
