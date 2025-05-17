@@ -1,5 +1,5 @@
 {
-    "repository": "dealfa/grafana-backup-tool",
+    "repository": "DuraCHYo/grafana-backup-tool",
     "stripVFromVersion": false,
     "tagPath": "grafanaBackup.image.tag"
 }
