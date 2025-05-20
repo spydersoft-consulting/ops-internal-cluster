@@ -1,6 +1,6 @@
 dependencies:
 - name: prometheus-snmp-exporter
   repository: https://prometheus-community.github.io/helm-charts
-  version: 9.3.0
-digest: sha256:59959813030e618c8faeb2ad97c7f00e795023caee8ac9119e1b8439942741b0
-generated: "2025-05-12T08:04:30.967191796Z"
+  version: 9.3.1
+digest: sha256:953be154ced710020b4cf8eb1063cae24b8d36f8d0ddcc4515c872b6bd0864cd
+generated: "2025-05-20T08:04:29.279648411Z"
