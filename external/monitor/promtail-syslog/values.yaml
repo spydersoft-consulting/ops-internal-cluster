@@ -42,7 +42,7 @@ promtail:
         nodePort: 31050
 
   serviceMonitor:
-    enabled: true
+    enabled: false
     interval: 1m
     scrapeTimeout: 30s
   podAnnotations:
