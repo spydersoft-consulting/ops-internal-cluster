@@ -58,6 +58,10 @@ loki:
           - selector: '{namespace="argocd"}'
             priority: 1
             period: 24h
+          - selector: '{cluster="nonproduction"}'
+            priority: 1
+            period: 24h
+        
     rulerConfig:
       alertmanager_url: https://mimir.mattgerega.net
       enable_alertmanager_v2: true
