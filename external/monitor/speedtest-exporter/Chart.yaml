@@ -1,11 +1,11 @@
-apiVersion: v2
-version: 4.0.1
-type: application
-appVersion: v3.5.4
 dependencies:
-- version: 4.0.1
+- repository: https://bjw-s-labs.github.io/helm-charts
+  version: 4.1.1
   name: common
-  repository: https://bjw-s-labs.github.io/helm-charts
+type: application
+version: 4.1.1
 name: speedtest-exporter
+appVersion: v3.5.4
+apiVersion: v2
 
 
