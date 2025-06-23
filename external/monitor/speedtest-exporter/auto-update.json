@@ -1,5 +1,4 @@
 {
     "repository": "miguelndecarvalho/speedtest-exporter",
-    "stripVFromVersion": false,
     "tagPath": "controllers.main.containers.main.image.tag"
 }
