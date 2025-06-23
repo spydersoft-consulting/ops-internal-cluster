@@ -2,6 +2,7 @@
     "repositories": [
         {
             "repository": "unpoller/unpoller",
+            "imagePrefix": "v",
             "tagPath": "controllers.main.containers.main.image.tag"
         }
     ]

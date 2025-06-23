@@ -2,6 +2,7 @@
     "repositories": [
         {
             "repository": "DuraCHYo/grafana-backup-tool",
+            "imagePrefix": "v",
             "tagPath": "grafanaBackup.image.tag"
         }
     ]
