@@ -1,4 +1,8 @@
 {
-    "repository": "DuraCHYo/grafana-backup-tool",
-    "tagPath": "grafanaBackup.image.tag"
+    "repositories": [
+        {
+            "repository": "DuraCHYo/grafana-backup-tool",
+            "tagPath": "grafanaBackup.image.tag"
+        }
+    ]
 }

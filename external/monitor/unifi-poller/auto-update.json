@@ -1,4 +1,8 @@
 {
-    "repository": "unpoller/unpoller",
-    "tagPath": "controllers.main.containers.main.image.tag"
+    "repositories": [
+        {
+            "repository": "unpoller/unpoller",
+            "tagPath": "controllers.main.containers.main.image.tag"
+        }
+    ]
 }
