@@ -1,5 +1,9 @@
 {
-    "repository": "donkie/spoolman",
-    "imagePrefix": "v",
-    "tagPath": "controllers.main.containers.main.image.tag"
+    "repositories": [
+        {
+            "repository": "donkie/spoolman",
+            "imagePrefix": "v",
+            "tagPath": "controllers.main.containers.main.image.tag"
+        }
+    ]
 }
