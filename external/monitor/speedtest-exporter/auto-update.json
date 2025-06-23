@@ -2,7 +2,8 @@
     "repositories": [
         {
             "repository": "miguelndecarvalho/speedtest-exporter",
-            "tagPath": "controllers.main.containers.main.image.tag"
+            "tagPath": "controllers.main.containers.main.image.tag",
+            "imagePrefix": "v"
         }
     ]
 }
