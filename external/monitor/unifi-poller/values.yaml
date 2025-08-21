@@ -1,82 +1,82 @@
-controllers:
+serviceMonitor:
   main:
     enabled: true
-    revisionHistoryLimit: 3
+    serviceName: '{{ include "bjw-s.common.lib.chart.names.fullname" $ }}'
+    endpoints:
+    - scheme: http
+      port: metrics
+      path: /metrics
+      scrapeTimeout: 30s
+      interval: 1m
+controllers:
+  main:
+    type: deployment
+    enabled: true
+    replicas: 1
     containers:
       main:
-        probes:
-          readiness:
-            type: TCP
-            custom: false
-            enabled: true
-            spec:
-              periodSeconds: 10
-              initialDelaySeconds: 0
-              failureThreshold: 3
-              timeoutSeconds: 1
-          startup:
-            type: TCP
-            custom: false
-            enabled: true
-            spec:
-              periodSeconds: 5
-              initialDelaySeconds: 0
-              failureThreshold: 30
-              timeoutSeconds: 1
-          liveness:
-            type: TCP
-            custom: false
-            enabled: true
-            spec:
-              periodSeconds: 10
-              initialDelaySeconds: 0
-              failureThreshold: 3
-              timeoutSeconds: 1
-        env:
-          UP_UNIFI_DEFAULT_URL: https://unifi
-          TZ: America/New_York
-          UP_INFLUXDB_DISABLE: true
-        image:
-          repository: ghcr.io/unpoller/unpoller
-          tag: v2.15.3
-          pullPolicy: IfNotPresent
         envFrom:
         - secretRef:
             name: unifi-poller
-    type: deployment
-    replicas: 1
+        image:
+          pullPolicy: IfNotPresent
+          repository: ghcr.io/unpoller/unpoller
+          tag: 2.15.4
+        probes:
+          liveness:
+            type: TCP
+            enabled: true
+            custom: false
+            spec:
+              timeoutSeconds: 1
+              failureThreshold: 3
+              periodSeconds: 10
+              initialDelaySeconds: 0
+          readiness:
+            type: TCP
+            enabled: true
+            custom: false
+            spec:
+              timeoutSeconds: 1
+              failureThreshold: 3
+              periodSeconds: 10
+              initialDelaySeconds: 0
+          startup:
+            type: TCP
+            enabled: true
+            custom: false
+            spec:
+              timeoutSeconds: 1
+              failureThreshold: 30
+              periodSeconds: 5
+              initialDelaySeconds: 0
+        env:
+          TZ: America/New_York
+          UP_UNIFI_DEFAULT_URL: https://unifi
+          UP_INFLUXDB_DISABLE: true
     strategy: Recreate
+    revisionHistoryLimit: 3
 influxdb:
+  authEnabled: false
+  architecture: standalone
   enabled: false
   persistence:
     enabled: false
   database: unifi
-  architecture: standalone
-  authEnabled: false
-serviceMonitor:
-  main:
-    serviceName: '{{ include "bjw-s.common.lib.chart.names.fullname" $ }}'
-    enabled: true
-    endpoints:
-    - scrapeTimeout: 30s
-      port: metrics
-      scheme: http
-      path: /metrics
-      interval: 1m
-ingress:
-  main:
-    enabled: false
 service:
   main:
     type: ClusterIP
     primary: true
+    controller: main
     ports:
       metrics:
-        protocol: TCP
-        primary: true
-        port: 9130
         enabled: true
+        primary: true
+        protocol: TCP
+        port: 9130
       http:
         enabled: false
-    controller: main
+ingress:
+  main:
+    enabled: false
 
