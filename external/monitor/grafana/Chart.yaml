@@ -1,14 +1,14 @@
-type: application
-apiVersion: v2
-version: 14.0.3
-appVersion: 9.4.7
-dependencies:
-- repository: https://grafana.github.io/helm-charts
-  version: 9.3.2
-  name: grafana
-- repository: https://charts.bitnami.com/bitnami
-  version: 14.0.3
-  name: mysql
 name: grafana
+version: 9.3.3
+dependencies:
+- version: 9.3.3
+  repository: https://grafana.github.io/helm-charts
+  name: grafana
+- version: 14.0.3
+  repository: https://charts.bitnami.com/bitnami
+  name: mysql
+appVersion: 9.4.7
+apiVersion: v2
+type: application
 
 
