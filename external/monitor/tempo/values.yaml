@@ -37,6 +37,13 @@ tempo-distributed:
     extraEnvFrom:
       - secretRef:
           name: tempo-secret
+  metrics-generator:
+    enabled: true
+    extraArgs:
+      - -config.expand-env=true
+    extraEnvFrom:
+      - secretRef:
+          name: tempo-secret
   minio:
     enabled: false
   storage:
