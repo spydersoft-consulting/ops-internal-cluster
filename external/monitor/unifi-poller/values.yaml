@@ -21,7 +21,7 @@ controllers:
         image:
           pullPolicy: IfNotPresent
           repository: ghcr.io/unpoller/unpoller
-          tag: 2.15.4
+          tag: v2.15.4
         probes:
           liveness:
             type: TCP
