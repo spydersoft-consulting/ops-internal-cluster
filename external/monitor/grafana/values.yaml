@@ -60,6 +60,9 @@ grafana:
     passwordKey: GRAFANA_ADMIN_PASSWORD
     existingSecret: grafana-admin-secret
 
+global:
+  nameOverride: postgres
+
 controllers:
   main:
     enabled: false
