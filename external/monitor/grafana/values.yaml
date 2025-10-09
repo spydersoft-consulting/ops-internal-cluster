@@ -4,13 +4,7 @@ grafanaBackup:
   image:
     repository: dealfa/grafana-backup-tool
     tag: v1.4.4
-mysql:
-  global:
-    storageClass: nfs-client
-  auth:
-    database: grafana
-    existingSecret: grafana-db-secret
-    username: grafanauser
+
 grafana:
   plugins:
     - grafana-piechart-panel
