@@ -18,9 +18,8 @@ grafana:
     azure:
       managed_identity_enabled: true
     database:
-      host: grafana-mysql-headless
-      type: mysql
-      user: grafanauser
+      host: grafana-postgres
+      type: postgres
       name: grafana
     server:
       domain: grafana.mattgerega.net
