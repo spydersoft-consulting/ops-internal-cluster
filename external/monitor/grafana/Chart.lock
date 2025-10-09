@@ -5,5 +5,8 @@ dependencies:
 - name: mysql
   repository: https://charts.bitnami.com/bitnami
   version: 14.0.3
-digest: sha256:e03a23898d663c803158ca953b1d2683f9983af340b70ea051f3e377dd39043e
-generated: "2025-09-01T08:02:15.532761602Z"
+- name: common
+  repository: https://bjw-s-labs.github.io/helm-charts
+  version: 4.1.2
+digest: sha256:27e8c0cfa27400947e3fd7953cb93d821fd84c2936721641467f5effbca9c1eb
+generated: "2025-10-09T14:30:34.705175-04:00"
