@@ -124,7 +124,7 @@ persistence:
       postgres:
         main:
         - subPath: init-data.sh
-          path: /docker-entrypoint-initdb.d/init-techradar-user.sh
+          path: /docker-entrypoint-initdb.d/init-grafana-user.sh
     enabled: true
     identifier: postgres-init-data
   postgres-data:
