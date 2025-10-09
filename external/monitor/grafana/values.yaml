@@ -81,7 +81,7 @@ controllers:
           name: POSTGRES_PORT
         - value: postgres-service
           name: POSTGRES_HOST
-        - value: techradar
+        - value: grafana
           name: POSTGRES_DB
         strategy:
           type: Recreate
