@@ -1,12 +1,12 @@
 dependencies:
 - name: grafana
   repository: https://grafana.github.io/helm-charts
-  version: 9.4.4
+  version: 10.0.0
 - name: mysql
   repository: https://charts.bitnami.com/bitnami
   version: 14.0.3
 - name: common
   repository: https://bjw-s-labs.github.io/helm-charts
   version: 4.1.2
-digest: sha256:27e8c0cfa27400947e3fd7953cb93d821fd84c2936721641467f5effbca9c1eb
-generated: "2025-10-09T14:30:34.705175-04:00"
+digest: sha256:2a754937bfba6d097896a9952eafb53f90a58a87b39c486a0cfccb7bc3776716
+generated: "2025-10-09T14:34:07.5572666-04:00"
