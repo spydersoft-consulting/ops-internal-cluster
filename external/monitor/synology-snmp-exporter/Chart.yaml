@@ -1,12 +1,12 @@
-type: application
 description: SNMP Exporter for Synology
-apiVersion: v2
-dependencies:
-- repository: https://prometheus-community.github.io/helm-charts
-  name: prometheus-snmp-exporter
-  version: 9.6.2
-name: synology-snmp-exporter
-version: 9.6.2
+type: application
 appVersion: 1.2.1
+apiVersion: v2
+name: synology-snmp-exporter
+version: 9.8.1
+dependencies:
+- version: 9.8.1
+  repository: https://prometheus-community.github.io/helm-charts
+  name: prometheus-snmp-exporter
 
 
