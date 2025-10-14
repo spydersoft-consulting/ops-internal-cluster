@@ -3,7 +3,8 @@
         {
             "repository": "DuraCHYo/grafana-backup-tool",
             "imagePrefix": "v",
-            "tagPath": "grafanaBackup.image.tag"
+            "tagPath": "grafanaBackup.image.tag",
+            "keepImagePrefix": true
         }
     ]
 }
