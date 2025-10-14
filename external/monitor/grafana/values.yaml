@@ -127,7 +127,7 @@ service:
         enabled: true
 grafanaBackup:
   image:
-    tag: 1.4.5
+    tag: v1.4.5
     repository: dealfa/grafana-backup-tool
   enabled: true
   schedule: 0 4 * * *
