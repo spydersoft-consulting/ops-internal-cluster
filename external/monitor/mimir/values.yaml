@@ -11,6 +11,7 @@ mimir-distributed:
     enabled: true
     persistence:
       storageClassName: nfs-client
+      storageClass: nfs-client
   alertmanager:
     enabled: true
     persistentVolume:
