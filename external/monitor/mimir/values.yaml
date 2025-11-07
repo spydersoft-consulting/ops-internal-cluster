@@ -7,6 +7,10 @@ mimir-distributed:
           name: mimir-minio-secret
   minio:
     enabled: false
+  kafka:
+    enabled: true
+    persistence:
+      storageClassName: nfs-client
   alertmanager:
     enabled: true
     persistentVolume:
