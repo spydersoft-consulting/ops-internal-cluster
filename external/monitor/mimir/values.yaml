@@ -39,18 +39,14 @@ mimir-distributed:
     replicas: 2
   ruler:
     enabled: true
-  nginx:
-    ingress:
-      enabled: true
-      hosts:
-        - host: "mimir.mattgerega.net"
-          paths:
-            - path: /
-              pathType: Prefix
-      annotations:
-        kubernetes.io/ingress.class: nginx
-        nginx.ingress.kubernetes.io/service-upstream: "true"
-      tls: []
+  ingress:
+    enabled: true
+    hosts:
+      - mimir.mattgerega.net
+    annotations:
+      kubernetes.io/ingress.class: nginx
+      nginx.ingress.kubernetes.io/service-upstream: "true"
+    tls: []
   mimir:
     structuredConfig:
       alertmanager_storage:
