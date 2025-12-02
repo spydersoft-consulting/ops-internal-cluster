@@ -45,6 +45,14 @@ spec:
     gatewayClass:
       enabled: true
       name: traefik
+    gateway:
+      enabled: true
+      name: traefik-gateway
+      listeners:
+        web:
+          port: 8000
+          protocol: HTTP
+          namespacePolicy: All
     metrics:
       prometheus:
         enabled: true
