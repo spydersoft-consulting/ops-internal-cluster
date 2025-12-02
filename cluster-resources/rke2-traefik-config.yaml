@@ -1,0 +1,45 @@
+apiVersion: helm.cattle.io/v1
+kind: HelmChart
+metadata:
+  name: traefik
+  namespace: kube-system
+spec:
+  chart: traefik
+  repo: https://traefik.github.io/charts
+  targetNamespace: kube-system
+  version: 32.1.1
+  valuesContent: |-
+    deployment:
+      kind: DaemonSet
+    ports:
+      web:
+        hostPort: 8080
+      websecure:
+        hostPort: 8443
+    service:
+      type: ClusterIP
+    ingressClass:
+      enabled: true
+      isDefaultClass: false
+      name: traefik
+    providers:
+      kubernetesCRD:
+        enabled: true
+        allowCrossNamespace: true
+      kubernetesIngress:
+        enabled: true
+        allowExternalNameServices: true
+    metrics:
+      prometheus:
+        enabled: true
+        serviceMonitor:
+          enabled: true
+          additionalLabels:
+            cluster: internal
+    additionalArguments:
+      - "--serverstransport.insecureskipverify=true"
+    logs:
+      general:
+        level: INFO
+      access:
+        enabled: true
