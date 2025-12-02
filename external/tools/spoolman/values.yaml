@@ -53,22 +53,23 @@ controllers:
             enabled: true
     strategy: Recreate
     enabled: true
-ingress:
+route:
   main:
-    hosts:
-    - paths:
-      - pathType: Prefix
-        path: /
-        service:
-          port: http
-          identifier: main
-      host: spoolman.mattgerega.net
-    annotations:
-      nginx.ingress.kubernetes.io/proxy-body-size: 500M
-      nginx.ingress.kubernetes.io/rewrite-target: /
-      kubernetes.io/ingress.class: nginx
     enabled: true
-    className: nginx
+    kind: HTTPRoute
+    parentRefs:
+      - name: traefik-gateway
+        namespace: kube-system
+    hostnames:
+      - spoolman.mattgerega.net
+    rules:
+      - matches:
+          - path:
+              type: PathPrefix
+              value: /
+        backendRefs:
+          - name: spoolman
+            port: 8000
 service:
   main:
     primary: true
