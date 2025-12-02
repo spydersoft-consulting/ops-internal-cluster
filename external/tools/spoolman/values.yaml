@@ -58,8 +58,10 @@ route:
     enabled: true
     kind: HTTPRoute
     parentRefs:
-      - name: traefik-gateway
+      - name: envoy-gateway
         namespace: kube-system
+        group: gateway.networking.k8s.io
+        kind: Gateway
     hostnames:
       - spoolman.mattgerega.net
     rules:
