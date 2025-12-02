@@ -26,9 +26,14 @@ spec:
       kubernetesCRD:
         enabled: true
         allowCrossNamespace: true
-      kubernetesIngress:
+      kubernetesGateway:
         enabled: true
-        allowExternalNameServices: true
+        experimentalChannel: true
+      kubernetesIngress:
+        enabled: false
+    gatewayClass:
+      enabled: true
+      name: traefik
     metrics:
       prometheus:
         enabled: true
