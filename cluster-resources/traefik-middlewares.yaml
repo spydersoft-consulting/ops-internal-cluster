@@ -1,0 +1,44 @@
+---
+# Middleware for services that need large request body size (500MB)
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: large-body-size
+  namespace: kube-system
+spec:
+  buffering:
+    maxRequestBodyBytes: 524288000  # 500MB
+---
+# Middleware for long-lived connections (like WebSocket or SSE)
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: long-timeout
+  namespace: kube-system
+spec:
+  forwardAuth:
+    address: ""
+    # Note: For long timeouts, configure at entrypoint level in Traefik config
+    # or use IngressRoute with custom timeout configuration
+---
+# Middleware for adding custom headers (useful for upstream-vhost replacement)
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: custom-request-headers
+  namespace: kube-system
+spec:
+  headers:
+    customRequestHeaders:
+      X-Forwarded-Proto: "https"
+---
+# Middleware for stripping path prefix
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: strip-prefix
+  namespace: kube-system
+spec:
+  stripPrefix:
+    prefixes:
+      - "/api"
