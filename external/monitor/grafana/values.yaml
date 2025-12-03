@@ -54,7 +54,7 @@ global:
 grafana:
   revisionHistoryLimit: 1
   ingress:
-    enabled: true
+    enabled: false  # Migrated to Gateway API HTTPRoute
     hosts:
     - grafana.mattgerega.net
     annotations:
