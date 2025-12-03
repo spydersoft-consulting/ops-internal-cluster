@@ -98,7 +98,7 @@ loki:
     autoscaling:
       enabled: false
     ingress:
-      enabled: true
+      enabled: false  # Migrated to Gateway API HTTPRoute
       hosts:
         - host: "loki.mattgerega.net"
           paths:
