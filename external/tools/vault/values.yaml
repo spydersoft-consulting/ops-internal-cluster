@@ -27,7 +27,7 @@ vault:
     dataStorage:
       enabled: false
     ingress:
-      enabled: true
+      enabled: false  # Migrated to Gateway API HTTPRoute
       ingressClassName: "nginx"
       hosts:
         - host: hcvault.mattgerega.net
