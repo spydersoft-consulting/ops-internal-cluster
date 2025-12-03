@@ -77,7 +77,7 @@ tempo-distributed:
   gateway:
     enabled: true
     ingress:
-      enabled: true
+      enabled: false  # Migrated to Gateway API HTTPRoute
       hosts:
         - host: "tempo.mattgerega.net"
           paths:

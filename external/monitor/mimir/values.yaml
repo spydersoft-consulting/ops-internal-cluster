@@ -40,7 +40,7 @@ mimir-distributed:
   ruler:
     enabled: true
   ingress:
-    enabled: true
+    enabled: false  # Migrated to Gateway API HTTPRoute
     hosts:
       - mimir.mattgerega.net
     annotations:
