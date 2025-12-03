@@ -58,8 +58,8 @@ route:
     enabled: true
     kind: HTTPRoute
     parentRefs:
-      - name: envoy-gateway
-        namespace: kube-system
+      - name: main
+        namespace: envoy-gateway-system
         group: gateway.networking.k8s.io
         kind: Gateway
     hostnames:
