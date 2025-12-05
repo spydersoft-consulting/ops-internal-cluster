@@ -1,82 +1,82 @@
+influxdb:
+  architecture: standalone
+  enabled: false
+  persistence:
+    enabled: false
+  database: unifi
+  authEnabled: false
+controllers:
+  main:
+    enabled: true
+    strategy: Recreate
+    revisionHistoryLimit: 3
+    replicas: 1
+    type: deployment
+    containers:
+      main:
+        probes:
+          startup:
+            enabled: true
+            type: TCP
+            spec:
+              initialDelaySeconds: 0
+              periodSeconds: 5
+              timeoutSeconds: 1
+              failureThreshold: 30
+            custom: false
+          liveness:
+            enabled: true
+            type: TCP
+            spec:
+              initialDelaySeconds: 0
+              periodSeconds: 10
+              timeoutSeconds: 1
+              failureThreshold: 3
+            custom: false
+          readiness:
+            enabled: true
+            type: TCP
+            spec:
+              initialDelaySeconds: 0
+              periodSeconds: 10
+              timeoutSeconds: 1
+              failureThreshold: 3
+            custom: false
+        image:
+          tag: v2.16.0
+          pullPolicy: IfNotPresent
+          repository: ghcr.io/unpoller/unpoller
+        envFrom:
+        - secretRef:
+            name: unifi-poller
+        env:
+          TZ: America/New_York
+          UP_INFLUXDB_DISABLE: true
+          UP_UNIFI_DEFAULT_URL: https://unifi
 serviceMonitor:
   main:
     enabled: true
     serviceName: '{{ include "bjw-s.common.lib.chart.names.fullname" $ }}'
     endpoints:
     - scheme: http
-      port: metrics
       path: /metrics
-      scrapeTimeout: 30s
       interval: 1m
-controllers:
+      port: metrics
+      scrapeTimeout: 30s
+ingress:
   main:
-    type: deployment
-    enabled: true
-    replicas: 1
-    containers:
-      main:
-        envFrom:
-        - secretRef:
-            name: unifi-poller
-        image:
-          pullPolicy: IfNotPresent
-          repository: ghcr.io/unpoller/unpoller
-          tag: v2.15.4
-        probes:
-          liveness:
-            type: TCP
-            enabled: true
-            custom: false
-            spec:
-              timeoutSeconds: 1
-              failureThreshold: 3
-              periodSeconds: 10
-              initialDelaySeconds: 0
-          readiness:
-            type: TCP
-            enabled: true
-            custom: false
-            spec:
-              timeoutSeconds: 1
-              failureThreshold: 3
-              periodSeconds: 10
-              initialDelaySeconds: 0
-          startup:
-            type: TCP
-            enabled: true
-            custom: false
-            spec:
-              timeoutSeconds: 1
-              failureThreshold: 30
-              periodSeconds: 5
-              initialDelaySeconds: 0
-        env:
-          TZ: America/New_York
-          UP_UNIFI_DEFAULT_URL: https://unifi
-          UP_INFLUXDB_DISABLE: true
-    strategy: Recreate
-    revisionHistoryLimit: 3
-influxdb:
-  authEnabled: false
-  architecture: standalone
-  enabled: false
-  persistence:
     enabled: false
-  database: unifi
 service:
   main:
-    type: ClusterIP
     primary: true
-    controller: main
+    type: ClusterIP
     ports:
       metrics:
-        enabled: true
         primary: true
+        enabled: true
         protocol: TCP
         port: 9130
       http:
         enabled: false
-ingress:
-  main:
-    enabled: false
+    controller: main
 
