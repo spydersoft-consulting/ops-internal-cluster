@@ -5,6 +5,8 @@ metadata:
   labels:
     spydersoft.io/environment: internal
     spydersoft.io/category: app-set
+  annotations:
+    argocd.argoproj.io/compare-options: ServerSideDiff=true
 spec:
   generators:
     - git:
@@ -45,10 +47,6 @@ spec:
           kind: Deployment
           jqPathExpressions:
             - .spec.template.spec.hostUsers
-        - group: "external-secrets.io" # For ExternalSecret resources
-          kind: ExternalSecret
-          managedFieldsManagers:
-            - external-secrets
       syncPolicy:
         # automated:
         #   prune: true
