@@ -45,6 +45,10 @@ spec:
           kind: Deployment
           jqPathExpressions:
             - .spec.template.spec.hostUsers
+        - group: "external-secrets.io" # For ExternalSecret resources
+          kind: ExternalSecret
+          managedFieldsManagers:
+            - external-secrets
       syncPolicy:
         # automated:
         #   prune: true
