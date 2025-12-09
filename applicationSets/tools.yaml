@@ -47,3 +47,4 @@ spec:
         #   selfHeal: false
         syncOptions: # Sync options which modifies sync behavior
           - RespectIgnoreDifferences=true
+          - ServerSideApply=true
