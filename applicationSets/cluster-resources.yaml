@@ -2,6 +2,8 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: internal-cluster-resources
+  annotations:
+    argocd.argoproj.io/compare-options: ServerSideDiff=true
   labels:
     spydersoft.io/environment: internal
     spydersoft.io/category: resources
