@@ -17,5 +17,8 @@ spec:
             type: PathPrefix
             value: /
       backendRefs:
-        - name: loki-gateway
+        - group: ''
+          kind: Service
+          name: loki-gateway
           port: 80
+          weight: 1

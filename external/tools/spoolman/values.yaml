@@ -70,8 +70,11 @@ route:
               type: PathPrefix
               value: /
         backendRefs:
-          - name: spoolman
+          - group: ''
+            kind: Service
+            name: spoolman
             port: 8000
+            weight: 1
 service:
   main:
     primary: true
