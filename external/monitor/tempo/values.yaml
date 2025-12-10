@@ -13,38 +13,38 @@ tempo-distributed:
       - -config.expand-env=true
     extraEnvFrom:
       - secretRef:
-          name: tempo-secret
+          name: tempo-storage-secret
   queryFrontend:
     extraArgs:
       - -config.expand-env=true
     extraEnvFrom:
       - secretRef:
-          name: tempo-secret
+          name: tempo-storage-secret
   querier:
     extraArgs:
       - -config.expand-env=true
     extraEnvFrom:
       - secretRef:
-          name: tempo-secret
+          name: tempo-storage-secret
   compactor:
     extraArgs:
       - -config.expand-env=true
     extraEnvFrom:
       - secretRef:
-          name: tempo-secret
+          name: tempo-storage-secret
   ingester:
     extraArgs:
       - -config.expand-env=true
     extraEnvFrom:
       - secretRef:
-          name: tempo-secret
+          name: tempo-storage-secret
   metricsGenerator:
     enabled: true
     extraArgs:
       - -config.expand-env=true
     extraEnvFrom:
       - secretRef:
-          name: tempo-secret
+          name: tempo-storage-secret
   minio:
     enabled: false
   storage:
@@ -52,7 +52,7 @@ tempo-distributed:
       backend: s3
       s3:
         bucket: tempo
-        endpoint: cloud.gerega.net:39000
+        endpoint: cloud.gerega.net:3900
         access_key: ${MINIO_USERNAME}
         secret_key: ${MINIO_PASSWORD}
         forcepathstyle: true
