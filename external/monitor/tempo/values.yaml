@@ -53,8 +53,8 @@ tempo-distributed:
       s3:
         bucket: tempo
         endpoint: cloud.gerega.net:3900
-        access_key: ${MINIO_USERNAME}
-        secret_key: ${MINIO_PASSWORD}
+        access_key: ${STORAGE_USERNAME}
+        secret_key: ${STORAGE_PASSWORD}
         forcepathstyle: true
         insecure: true
   traces:
