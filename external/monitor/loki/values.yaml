@@ -12,48 +12,35 @@ loki:
       s3:
         accessKeyId: ${STORAGE_USERNAME}
         secretAccessKey: ${STORAGE_PASSWORD}
+        region: us-east-1
         endpoint: cloud.gerega.net:3900
         s3ForcePathStyle: true
         insecure: true
     auth_enabled: true
     structuredConfig:
-      table_manager:
-        retention_deletes_enabled: true
-        retention_period: 168h
+      # Compactor configuration (replaces table_manager for TSDB)
+      compactor:
+        working_directory: /var/loki/compactor
+        compaction_interval: 10m
+        retention_enabled: true
+        retention_delete_delay: 2h
+        retention_delete_worker_count: 150
 
       schema_config:
         configs:
-          - from: 2023-01-01
-            store: boltdb-shipper
-            object_store: s3
-            schema: v11
-            index:
-              prefix: index_
-              period: 24h
-            chunks:
-              prefix: chunk
-          - from: 2024-04-10
-            store: boltdb-shipper
-            object_store: s3
-            schema: v13
-            index:
-              prefix: index_
-              period: 24h
-            chunks:
-              prefix: chunk
-          - from: 2024-11-08
+          # Single schema config for new installation - start fresh with TSDB
+          - from: 2024-12-10
             store: tsdb
             object_store: s3
             schema: v13
             index:
               prefix: index_
               period: 24h
-            chunks:
-              prefix: chunk
 
       limits_config:
         allow_structured_metadata: true
-        retention_period: 48h
+        retention_period: 168h  # 7 days default
+        # Per-stream retention overrides
         retention_stream:
           - selector: '{namespace="argocd"}'
             priority: 1
@@ -68,6 +55,7 @@ loki:
   minio:
     enabled: false
   write:
+    replicas: 3
     extraArgs:
       - -config.expand-env=true
     extraEnvFrom:
@@ -76,7 +64,9 @@ loki:
     persistence:
       enabled: true
       storageClass: nfs-client
+      size: 10Gi
   read:
+    replicas: 3
     extraArgs:
       - -config.expand-env=true
     extraEnvFrom:
@@ -85,7 +75,9 @@ loki:
     persistence:
       enabled: true
       storageClass: nfs-client
+      size: 10Gi
   backend:
+    replicas: 3
     extraArgs:
       - -config.expand-env=true
     extraEnvFrom:
@@ -94,7 +86,9 @@ loki:
     persistence:
       enabled: true
       storageClass: nfs-client
+      size: 10Gi
   gateway:
+    replicas: 1
     autoscaling:
       enabled: false
     ingress:
