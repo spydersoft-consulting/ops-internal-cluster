@@ -4,7 +4,7 @@ mimir-distributed:
     dnsNamespace: kube-system
     extraEnvFrom:
       - secretRef:
-          name: mimir-minio-secret
+          name: mimir-storage-secret
   minio:
     enabled: false
   kafka:
@@ -54,14 +54,14 @@ mimir-distributed:
         s3:
           access_key_id: ${MINIO_USERNAME}
           bucket_name: mimir-ruler
-          endpoint: cloud.gerega.net:39000
+          endpoint: cloud.gerega.net:3900
           insecure: true
           secret_access_key: ${MINIO_PASSWORD}
       blocks_storage:
         s3:
           access_key_id: ${MINIO_USERNAME}
           bucket_name: mimir-tsdb
-          endpoint: cloud.gerega.net:39000
+          endpoint: cloud.gerega.net:3900
           insecure: true
           secret_access_key: ${MINIO_PASSWORD}
       ruler_storage:
@@ -69,7 +69,7 @@ mimir-distributed:
         s3:
           access_key_id: ${MINIO_USERNAME}
           bucket_name: mimir-ruler
-          endpoint: cloud.gerega.net:39000
+          endpoint: cloud.gerega.net:3900
           insecure: true
           secret_access_key: ${MINIO_PASSWORD}
       limits:
