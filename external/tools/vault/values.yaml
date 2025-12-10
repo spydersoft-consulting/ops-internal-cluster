@@ -18,7 +18,7 @@ vault:
       - name: vault-storage-config
         secret:
           defaultMode: 420
-          secretName: vault-storage-config
+          secretName: garage-vault-storage-config
     volumeMounts:
       - name: vault-storage-config
         mountPath: /vault/userconfig/vault-storage-config
