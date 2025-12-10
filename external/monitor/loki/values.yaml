@@ -10,9 +10,9 @@ loki:
         admin: loki-admin
       type: s3
       s3:
-        accessKeyId: ${MINIO_USERNAME}
-        secretAccessKey: ${MINIO_PASSWORD}
-        endpoint: cloud.gerega.net:39000
+        accessKeyId: ${STORAGE_USERNAME}
+        secretAccessKey: ${STORAGE_PASSWORD}
+        endpoint: cloud.gerega.net:3900
         s3ForcePathStyle: true
         insecure: true
     auth_enabled: true
@@ -72,7 +72,7 @@ loki:
       - -config.expand-env=true
     extraEnvFrom:
       - secretRef:
-          name: minio-secret
+          name: loki-storage-secret
     persistence:
       enabled: true
       storageClass: nfs-client
@@ -81,7 +81,7 @@ loki:
       - -config.expand-env=true
     extraEnvFrom:
       - secretRef:
-          name: minio-secret
+          name: loki-storage-secret
     persistence:
       enabled: true
       storageClass: nfs-client
@@ -90,7 +90,7 @@ loki:
       - -config.expand-env=true
     extraEnvFrom:
       - secretRef:
-          name: minio-secret
+          name: loki-storage-secret
     persistence:
       enabled: true
       storageClass: nfs-client
