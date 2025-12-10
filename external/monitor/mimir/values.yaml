@@ -52,26 +52,26 @@ mimir-distributed:
       alertmanager_storage:
         backend: s3
         s3:
-          access_key_id: ${MINIO_USERNAME}
+          access_key_id: ${STORAGE_USERNAME}
           bucket_name: mimir-ruler
           endpoint: cloud.gerega.net:3900
           insecure: true
-          secret_access_key: ${MINIO_PASSWORD}
+          secret_access_key: ${STORAGE_PASSWORD}
       blocks_storage:
         s3:
-          access_key_id: ${MINIO_USERNAME}
+          access_key_id: ${STORAGE_USERNAME}
           bucket_name: mimir-tsdb
           endpoint: cloud.gerega.net:3900
           insecure: true
-          secret_access_key: ${MINIO_PASSWORD}
+          secret_access_key: ${STORAGE_PASSWORD}
       ruler_storage:
         backend: s3
         s3:
-          access_key_id: ${MINIO_USERNAME}
+          access_key_id: ${STORAGE_USERNAME}
           bucket_name: mimir-ruler
           endpoint: cloud.gerega.net:3900
           insecure: true
-          secret_access_key: ${MINIO_PASSWORD}
+          secret_access_key: ${STORAGE_PASSWORD}
       limits:
         max_global_series_per_user: 0
         ingestion_rate: 400000
