@@ -1,82 +1,82 @@
-ingress:
-  main:
-    enabled: false
 service:
   main:
-    controller: main
+    primary: true
+    type: ClusterIP
     ports:
-      http:
-        enabled: false
       metrics:
+        primary: true
         protocol: TCP
         enabled: true
         port: 9130
-        primary: true
-    type: ClusterIP
-    primary: true
+      http:
+        enabled: false
+    controller: main
 serviceMonitor:
   main:
-    serviceName: '{{ include "bjw-s.common.lib.chart.names.fullname" $ }}'
     enabled: true
+    serviceName: '{{ include "bjw-s.common.lib.chart.names.fullname" $ }}'
     endpoints:
-    - scrapeTimeout: 30s
+    - port: metrics
       path: /metrics
+      scrapeTimeout: 30s
       interval: 1m
-      port: metrics
       scheme: http
+ingress:
+  main:
+    enabled: false
 controllers:
   main:
-    strategy: Recreate
-    replicas: 1
-    type: deployment
+    enabled: true
     containers:
       main:
         probes:
-          readiness:
-            custom: false
-            enabled: true
-            type: TCP
-            spec:
-              timeoutSeconds: 1
-              periodSeconds: 10
-              failureThreshold: 3
-              initialDelaySeconds: 0
-          startup:
-            custom: false
-            enabled: true
-            type: TCP
-            spec:
-              timeoutSeconds: 1
-              periodSeconds: 5
-              failureThreshold: 30
-              initialDelaySeconds: 0
           liveness:
-            custom: false
-            enabled: true
-            type: TCP
             spec:
-              timeoutSeconds: 1
               periodSeconds: 10
-              failureThreshold: 3
               initialDelaySeconds: 0
+              failureThreshold: 3
+              timeoutSeconds: 1
+            enabled: true
+            custom: false
+            type: TCP
+          startup:
+            spec:
+              periodSeconds: 5
+              initialDelaySeconds: 0
+              failureThreshold: 30
+              timeoutSeconds: 1
+            enabled: true
+            custom: false
+            type: TCP
+          readiness:
+            spec:
+              periodSeconds: 10
+              initialDelaySeconds: 0
+              failureThreshold: 3
+              timeoutSeconds: 1
+            enabled: true
+            custom: false
+            type: TCP
         env:
-          UP_INFLUXDB_DISABLE: true
-          TZ: America/New_York
           UP_UNIFI_DEFAULT_URL: https://unifi
-        envFrom:
-        - secretRef:
-            name: unifi-poller
+          TZ: America/New_York
+          UP_INFLUXDB_DISABLE: true
         image:
           pullPolicy: IfNotPresent
           repository: ghcr.io/unpoller/unpoller
-          tag: v2.17.0
-    enabled: true
+          tag: v2.18.0
+        envFrom:
+        - secretRef:
+            name: unifi-poller
+    strategy: Recreate
+    type: deployment
     revisionHistoryLimit: 3
+    replicas: 1
 influxdb:
-  database: unifi
-  architecture: standalone
-  persistence:
-    enabled: false
   enabled: false
   authEnabled: false
+  architecture: standalone
+  database: unifi
+  persistence:
+    enabled: false
 
