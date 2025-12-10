@@ -15,7 +15,13 @@ spec:
     remoteRef:
       key: secrets-k8/unifi
       property: poller_name
+      conversionStrategy: Default
+      decodingStrategy: None
+      metadataPolicy: None
   - secretKey: UP_UNIFI_DEFAULT_PASS
     remoteRef:
       key: secrets-k8/unifi
       property: poller_password
+      conversionStrategy: Default
+      decodingStrategy: None
+      metadataPolicy: None
