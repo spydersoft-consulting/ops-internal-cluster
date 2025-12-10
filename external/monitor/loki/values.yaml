@@ -12,8 +12,8 @@ loki:
       s3:
         accessKeyId: ${STORAGE_USERNAME}
         secretAccessKey: ${STORAGE_PASSWORD}
-        endpoint: cloud.gerega.net:3900
-        #s3ForcePathStyle: true
+        endpoint: http://cloud.gerega.net:3900
+        s3ForcePathStyle: true
         insecure: true
     auth_enabled: true
     structuredConfig:
