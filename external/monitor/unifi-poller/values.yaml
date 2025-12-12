@@ -1,82 +1,82 @@
-service:
-  main:
-    primary: true
-    type: ClusterIP
-    ports:
-      metrics:
-        primary: true
-        protocol: TCP
-        enabled: true
-        port: 9130
-      http:
-        enabled: false
-    controller: main
-serviceMonitor:
-  main:
-    enabled: true
-    serviceName: '{{ include "bjw-s.common.lib.chart.names.fullname" $ }}'
-    endpoints:
-    - port: metrics
-      path: /metrics
-      scrapeTimeout: 30s
-      interval: 1m
-      scheme: http
 ingress:
   main:
     enabled: false
+influxdb:
+  persistence:
+    enabled: false
+  enabled: false
+  database: unifi
+  authEnabled: false
+  architecture: standalone
 controllers:
   main:
     enabled: true
     containers:
       main:
+        image:
+          tag: v2.19.0
+          pullPolicy: IfNotPresent
+          repository: ghcr.io/unpoller/unpoller
+        envFrom:
+        - secretRef:
+            name: unifi-poller
         probes:
           liveness:
-            spec:
-              periodSeconds: 10
-              initialDelaySeconds: 0
-              failureThreshold: 3
-              timeoutSeconds: 1
             enabled: true
             custom: false
+            spec:
+              initialDelaySeconds: 0
+              failureThreshold: 3
+              periodSeconds: 10
+              timeoutSeconds: 1
             type: TCP
           startup:
+            enabled: true
+            custom: false
             spec:
-              periodSeconds: 5
               initialDelaySeconds: 0
               failureThreshold: 30
+              periodSeconds: 5
               timeoutSeconds: 1
-            enabled: true
-            custom: false
             type: TCP
           readiness:
-            spec:
-              periodSeconds: 10
-              initialDelaySeconds: 0
-              failureThreshold: 3
-              timeoutSeconds: 1
             enabled: true
             custom: false
+            spec:
+              initialDelaySeconds: 0
+              failureThreshold: 3
+              periodSeconds: 10
+              timeoutSeconds: 1
             type: TCP
         env:
           UP_UNIFI_DEFAULT_URL: https://unifi
           TZ: America/New_York
           UP_INFLUXDB_DISABLE: true
-        image:
-          pullPolicy: IfNotPresent
-          repository: ghcr.io/unpoller/unpoller
-          tag: v2.18.0
-        envFrom:
-        - secretRef:
-            name: unifi-poller
-    strategy: Recreate
-    type: deployment
     revisionHistoryLimit: 3
     replicas: 1
-influxdb:
-  enabled: false
-  authEnabled: false
-  architecture: standalone
-  database: unifi
-  persistence:
-    enabled: false
+    type: deployment
+    strategy: Recreate
+service:
+  main:
+    ports:
+      metrics:
+        enabled: true
+        protocol: TCP
+        primary: true
+        port: 9130
+      http:
+        enabled: false
+    controller: main
+    primary: true
+    type: ClusterIP
+serviceMonitor:
+  main:
+    serviceName: '{{ include "bjw-s.common.lib.chart.names.fullname" $ }}'
+    enabled: true
+    endpoints:
+    - scrapeTimeout: 30s
+      scheme: http
+      interval: 1m
+      port: metrics
+      path: /metrics
 

@@ -1,11 +1,11 @@
-appVersion: v2.9.2
 dependencies:
-- repository: https://bjw-s-labs.github.io/helm-charts
-  name: common
+- name: common
   version: 4.5.0
-type: application
+  repository: https://bjw-s-labs.github.io/helm-charts
 name: unifi-poller
-version: 4.5.0
+appVersion: v2.9.2
 apiVersion: v2
+type: application
+version: 4.5.0
 
 
