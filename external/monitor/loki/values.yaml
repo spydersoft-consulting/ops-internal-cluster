@@ -92,6 +92,9 @@ loki:
     replicas: 1
     autoscaling:
       enabled: false
+    service:
+      labels:
+        mirror.linkerd.io/exported: "true"
     ingress:
       enabled: false  # Migrated to Gateway API HTTPRoute
       hosts:
