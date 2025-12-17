@@ -12,6 +12,8 @@ spec:
         revision: HEAD
         directories:
           - path: external/monitor/*
+          - path: external/monitor/promtail-syslog
+            exclude: true
   template:
     metadata:
       name: "{{path.basename}}"
