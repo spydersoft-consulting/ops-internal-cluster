@@ -6,7 +6,7 @@ prometheus-snmp-exporter:
       - module:
           - synology
         name: synology
-        target: 192.168.1.30
+        target: cloud.gerega.net
         auth:
           - auth
 
