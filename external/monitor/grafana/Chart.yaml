@@ -1,13 +1,13 @@
+version: 10.4.0
 type: application
-version: 10.3.2
 apiVersion: v2
 name: grafana
 dependencies:
-- name: grafana
+- version: 10.4.0
   repository: https://grafana.github.io/helm-charts
-  version: 10.3.2
-- name: common
+  name: grafana
+- version: 4.5.0
   repository: https://bjw-s-labs.github.io/helm-charts
-  version: 4.5.0
+  name: common
 
 
