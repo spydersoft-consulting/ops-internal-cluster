@@ -1,0 +1,36 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "loki.name" . }}-runtime-overrides
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "loki.labels" . | nindent 4 }}
+data:
+  runtime-overrides.yaml: |
+    # Runtime configuration for per-tenant overrides
+    # Reloaded every 10 seconds without requiring pod restarts
+
+    overrides:
+      # Internal cluster - 30 days retention
+      internal:
+        retention_period: 720h  # 30 days
+        max_streams_per_user: 100000
+        max_global_streams_per_user: 100000
+        ingestion_rate_mb: 10
+        ingestion_burst_size_mb: 20
+
+      # Production cluster - 90 days retention
+      production:
+        retention_period: 2160h  # 90 days
+        max_streams_per_user: 200000
+        max_global_streams_per_user: 200000
+        ingestion_rate_mb: 20
+        ingestion_burst_size_mb: 40
+
+      # Non-production cluster - 7 days retention
+      nonproduction:
+        retention_period: 168h  # 7 days
+        max_streams_per_user: 50000
+        max_global_streams_per_user: 50000
+        ingestion_rate_mb: 5
+        ingestion_burst_size_mb: 10

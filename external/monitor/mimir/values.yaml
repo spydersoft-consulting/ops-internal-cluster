@@ -17,17 +17,49 @@ mimir-distributed:
       storageClass: nfs-client
   distributor:
     replicas: 2
+    extraVolumes:
+      - name: runtime-overrides
+        configMap:
+          name: mimir-distributed-runtime-overrides
+    extraVolumeMounts:
+      - name: runtime-overrides
+        mountPath: /etc/mimir-runtime-overrides
+        readOnly: true
   ingester:
     replicas: 3
     persistentVolume:
       storageClass: nfs-client
+    extraVolumes:
+      - name: runtime-overrides
+        configMap:
+          name: mimir-distributed-runtime-overrides
+    extraVolumeMounts:
+      - name: runtime-overrides
+        mountPath: /etc/mimir-runtime-overrides
+        readOnly: true
   store_gateway:
     replicas: 3
     persistentVolume:
       storageClass: nfs-client
+    extraVolumes:
+      - name: runtime-overrides
+        configMap:
+          name: mimir-distributed-runtime-overrides
+    extraVolumeMounts:
+      - name: runtime-overrides
+        mountPath: /etc/mimir-runtime-overrides
+        readOnly: true
   compactor:
     persistentVolume:
       storageClass: nfs-client
+    extraVolumes:
+      - name: runtime-overrides
+        configMap:
+          name: mimir-distributed-runtime-overrides
+    extraVolumeMounts:
+      - name: runtime-overrides
+        mountPath: /etc/mimir-runtime-overrides
+        readOnly: true
   chunks-cache:
     enabled: false
     replicas: 2
@@ -53,6 +85,11 @@ mimir-distributed:
     tls: []
   mimir:
     structuredConfig:
+      # Runtime configuration for per-tenant overrides
+      runtime_config:
+        file: /etc/mimir-runtime-overrides/runtime-overrides.yaml
+        period: 10s
+
       alertmanager_storage:
         backend: s3
         s3:
