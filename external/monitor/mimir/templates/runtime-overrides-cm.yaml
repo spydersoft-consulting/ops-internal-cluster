@@ -1,0 +1,33 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "mimir.fullname" . }}-runtime-overrides
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "mimir.labels" . | nindent 4 }}
+data:
+  runtime-overrides.yaml: |
+    # Runtime configuration for per-tenant overrides
+    # Can be reloaded without pod restarts
+
+    overrides:
+      # Internal cluster - 1 year retention
+      internal:
+        compactor_blocks_retention_period: 8760h  # 1 year
+        max_global_series_per_user: 500000
+        ingestion_rate: 200000
+        ingestion_burst_size: 400000
+
+      # Production cluster - 2 years retention
+      production:
+        compactor_blocks_retention_period: 17520h  # 2 years
+        max_global_series_per_user: 1000000
+        ingestion_rate: 400000
+        ingestion_burst_size: 1000000
+
+      # Non-production cluster - 90 days retention
+      nonproduction:
+        compactor_blocks_retention_period: 2160h  # 90 days
+        max_global_series_per_user: 250000
+        ingestion_rate: 100000
+        ingestion_burst_size: 200000
