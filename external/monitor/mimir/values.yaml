@@ -15,6 +15,14 @@ mimir-distributed:
     enabled: true
     persistentVolume:
       storageClass: nfs-client
+    extraVolumes:
+      - name: runtime-overrides
+        configMap:
+          name: mimir-distributed-runtime-overrides
+    extraVolumeMounts:
+      - name: runtime-overrides
+        mountPath: /etc/mimir-runtime-overrides
+        readOnly: true
   distributor:
     replicas: 2
     extraVolumes:
@@ -71,6 +79,50 @@ mimir-distributed:
     replicas: 2
   ruler:
     enabled: true
+    extraVolumes:
+      - name: runtime-overrides
+        configMap:
+          name: mimir-distributed-runtime-overrides
+    extraVolumeMounts:
+      - name: runtime-overrides
+        mountPath: /etc/mimir-runtime-overrides
+        readOnly: true
+  querier:
+    extraVolumes:
+      - name: runtime-overrides
+        configMap:
+          name: mimir-distributed-runtime-overrides
+    extraVolumeMounts:
+      - name: runtime-overrides
+        mountPath: /etc/mimir-runtime-overrides
+        readOnly: true
+  query_frontend:
+    extraVolumes:
+      - name: runtime-overrides
+        configMap:
+          name: mimir-distributed-runtime-overrides
+    extraVolumeMounts:
+      - name: runtime-overrides
+        mountPath: /etc/mimir-runtime-overrides
+        readOnly: true
+  query_scheduler:
+    extraVolumes:
+      - name: runtime-overrides
+        configMap:
+          name: mimir-distributed-runtime-overrides
+    extraVolumeMounts:
+      - name: runtime-overrides
+        mountPath: /etc/mimir-runtime-overrides
+        readOnly: true
+  overrides_exporter:
+    extraVolumes:
+      - name: runtime-overrides
+        configMap:
+          name: mimir-distributed-runtime-overrides
+    extraVolumeMounts:
+      - name: runtime-overrides
+        mountPath: /etc/mimir-runtime-overrides
+        readOnly: true
   nginx:
     service:
       labels:

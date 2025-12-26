@@ -4,6 +4,20 @@ tempo-distributed:
     dnsService: rke2-coredns-rke2-coredns
     dnsNamespace: kube-system
   revisionHistoryLimit: 1
+  tempo:
+    structuredConfig:
+      # Global compactor configuration
+      compactor:
+        compaction:
+          block_retention: 720h  # 30 days default
+      # Per-tenant overrides
+      overrides:
+        internal:
+          block_retention: 720h  # 30 days
+        production:
+          block_retention: 2160h  # 90 days
+        nonproduction:
+          block_retention: 168h  # 7 days
   search:
     enabled: true
   distributor:
