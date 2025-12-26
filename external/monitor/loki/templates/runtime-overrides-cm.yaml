@@ -1,10 +1,11 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ include "loki.name" . }}-runtime-overrides
+  name: loki-runtime-overrides
   namespace: {{ .Release.Namespace }}
   labels:
-    {{- include "loki.labels" . | nindent 4 }}
+    app.kubernetes.io/name: loki
+    app.kubernetes.io/instance: {{ .Release.Name }}
 data:
   runtime-overrides.yaml: |
     # Runtime configuration for per-tenant overrides
