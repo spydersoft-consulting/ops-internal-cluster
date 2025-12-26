@@ -15,7 +15,7 @@ tempo-distributed:
         defaults:
           metrics_generator:
             processors: []
-        per_tenant_override_config: /conf/overrides.yaml
+        per_tenant_override_config: /runtime-config/overrides.yaml
   search:
     enabled: true
   distributor:
@@ -32,8 +32,7 @@ tempo-distributed:
           name: tempo-runtime-overrides
     extraVolumeMounts:
       - name: runtime-overrides
-        mountPath: /conf/overrides.yaml
-        subPath: overrides.yaml
+        mountPath: /runtime-config
         readOnly: true
   queryFrontend:
     extraArgs:
@@ -47,8 +46,7 @@ tempo-distributed:
           name: tempo-runtime-overrides
     extraVolumeMounts:
       - name: runtime-overrides
-        mountPath: /conf/overrides.yaml
-        subPath: overrides.yaml
+        mountPath: /runtime-config
         readOnly: true
   querier:
     extraArgs:
@@ -62,8 +60,7 @@ tempo-distributed:
           name: tempo-runtime-overrides
     extraVolumeMounts:
       - name: runtime-overrides
-        mountPath: /conf/overrides.yaml
-        subPath: overrides.yaml
+        mountPath: /runtime-config
         readOnly: true
   compactor:
     extraArgs:
@@ -77,8 +74,7 @@ tempo-distributed:
           name: tempo-runtime-overrides
     extraVolumeMounts:
       - name: runtime-overrides
-        mountPath: /conf/overrides.yaml
-        subPath: overrides.yaml
+        mountPath: /runtime-config
         readOnly: true
   ingester:
     extraArgs:
@@ -92,8 +88,7 @@ tempo-distributed:
           name: tempo-runtime-overrides
     extraVolumeMounts:
       - name: runtime-overrides
-        mountPath: /conf/overrides.yaml
-        subPath: overrides.yaml
+        mountPath: /runtime-config
         readOnly: true
   metricsGenerator:
     enabled: true
@@ -108,8 +103,7 @@ tempo-distributed:
           name: tempo-runtime-overrides
     extraVolumeMounts:
       - name: runtime-overrides
-        mountPath: /conf/overrides.yaml
-        subPath: overrides.yaml
+        mountPath: /runtime-config
         readOnly: true
   minio:
     enabled: false
