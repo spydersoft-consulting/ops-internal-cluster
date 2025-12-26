@@ -1,10 +1,11 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ include "mimir.fullname" . }}-runtime-overrides
+  name: mimir-distributed-runtime-overrides
   namespace: {{ .Release.Namespace }}
   labels:
-    {{- include "mimir.labels" . | nindent 4 }}
+    app.kubernetes.io/name: mimir
+    app.kubernetes.io/instance: {{ .Release.Name }}
 data:
   runtime-overrides.yaml: |
     # Runtime configuration for per-tenant overrides
