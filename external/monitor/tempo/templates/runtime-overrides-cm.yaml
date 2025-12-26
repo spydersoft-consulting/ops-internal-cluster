@@ -1,0 +1,37 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: tempo-runtime-overrides
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: tempo
+    app.kubernetes.io/instance: {{ .Release.Name }}
+data:
+  overrides.yaml: |
+    # Per-tenant overrides for Tempo
+    # Retention is controlled by block_retention in hours
+
+    overrides:
+      internal:
+        metrics_generator:
+          processors: []
+        ingestion:
+          burst_size_bytes: 5000000
+        compaction:
+          block_retention: 720h  # 30 days
+
+      production:
+        metrics_generator:
+          processors: []
+        ingestion:
+          burst_size_bytes: 10000000
+        compaction:
+          block_retention: 2160h  # 90 days
+
+      nonproduction:
+        metrics_generator:
+          processors: []
+        ingestion:
+          burst_size_bytes: 2000000
+        compaction:
+          block_retention: 168h  # 7 days
