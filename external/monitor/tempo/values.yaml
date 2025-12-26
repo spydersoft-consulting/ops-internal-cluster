@@ -12,12 +12,10 @@ tempo-distributed:
           block_retention: 720h  # 30 days default
       # Per-tenant overrides
       overrides:
-        internal:
-          block_retention: 720h  # 30 days
-        production:
-          block_retention: 2160h  # 90 days
-        nonproduction:
-          block_retention: 168h  # 7 days
+        defaults:
+          metrics_generator:
+            processors: []
+        per_tenant_override_config: /conf/overrides.yaml
   search:
     enabled: true
   distributor:
@@ -28,30 +26,75 @@ tempo-distributed:
     extraEnvFrom:
       - secretRef:
           name: tempo-storage-secret
+    extraVolumes:
+      - name: runtime-overrides
+        configMap:
+          name: tempo-runtime-overrides
+    extraVolumeMounts:
+      - name: runtime-overrides
+        mountPath: /conf/overrides.yaml
+        subPath: overrides.yaml
+        readOnly: true
   queryFrontend:
     extraArgs:
       - -config.expand-env=true
     extraEnvFrom:
       - secretRef:
           name: tempo-storage-secret
+    extraVolumes:
+      - name: runtime-overrides
+        configMap:
+          name: tempo-runtime-overrides
+    extraVolumeMounts:
+      - name: runtime-overrides
+        mountPath: /conf/overrides.yaml
+        subPath: overrides.yaml
+        readOnly: true
   querier:
     extraArgs:
       - -config.expand-env=true
     extraEnvFrom:
       - secretRef:
           name: tempo-storage-secret
+    extraVolumes:
+      - name: runtime-overrides
+        configMap:
+          name: tempo-runtime-overrides
+    extraVolumeMounts:
+      - name: runtime-overrides
+        mountPath: /conf/overrides.yaml
+        subPath: overrides.yaml
+        readOnly: true
   compactor:
     extraArgs:
       - -config.expand-env=true
     extraEnvFrom:
       - secretRef:
           name: tempo-storage-secret
+    extraVolumes:
+      - name: runtime-overrides
+        configMap:
+          name: tempo-runtime-overrides
+    extraVolumeMounts:
+      - name: runtime-overrides
+        mountPath: /conf/overrides.yaml
+        subPath: overrides.yaml
+        readOnly: true
   ingester:
     extraArgs:
       - -config.expand-env=true
     extraEnvFrom:
       - secretRef:
           name: tempo-storage-secret
+    extraVolumes:
+      - name: runtime-overrides
+        configMap:
+          name: tempo-runtime-overrides
+    extraVolumeMounts:
+      - name: runtime-overrides
+        mountPath: /conf/overrides.yaml
+        subPath: overrides.yaml
+        readOnly: true
   metricsGenerator:
     enabled: true
     extraArgs:
@@ -59,6 +102,15 @@ tempo-distributed:
     extraEnvFrom:
       - secretRef:
           name: tempo-storage-secret
+    extraVolumes:
+      - name: runtime-overrides
+        configMap:
+          name: tempo-runtime-overrides
+    extraVolumeMounts:
+      - name: runtime-overrides
+        mountPath: /conf/overrides.yaml
+        subPath: overrides.yaml
+        readOnly: true
   minio:
     enabled: false
   storage:
