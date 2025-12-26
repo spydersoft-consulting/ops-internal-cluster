@@ -15,7 +15,7 @@ tempo-distributed:
         defaults:
           metrics_generator:
             processors: []
-        per_tenant_override_config: /runtime-config/overrides.yaml
+        per_tenant_override_config: /overrides/overrides.yaml
   search:
     enabled: true
   distributor:
@@ -32,7 +32,7 @@ tempo-distributed:
           name: tempo-runtime-overrides
     extraVolumeMounts:
       - name: runtime-overrides
-        mountPath: /runtime-config
+        mountPath: /overrides
         readOnly: true
   queryFrontend:
     extraArgs:
@@ -46,7 +46,7 @@ tempo-distributed:
           name: tempo-runtime-overrides
     extraVolumeMounts:
       - name: runtime-overrides
-        mountPath: /runtime-config
+        mountPath: /overrides
         readOnly: true
   querier:
     extraArgs:
@@ -60,7 +60,7 @@ tempo-distributed:
           name: tempo-runtime-overrides
     extraVolumeMounts:
       - name: runtime-overrides
-        mountPath: /runtime-config
+        mountPath: /overrides
         readOnly: true
   compactor:
     extraArgs:
@@ -74,7 +74,7 @@ tempo-distributed:
           name: tempo-runtime-overrides
     extraVolumeMounts:
       - name: runtime-overrides
-        mountPath: /runtime-config
+        mountPath: /overrides
         readOnly: true
   ingester:
     extraArgs:
@@ -88,7 +88,7 @@ tempo-distributed:
           name: tempo-runtime-overrides
     extraVolumeMounts:
       - name: runtime-overrides
-        mountPath: /runtime-config
+        mountPath: /overrides
         readOnly: true
   metricsGenerator:
     enabled: true
@@ -103,7 +103,7 @@ tempo-distributed:
           name: tempo-runtime-overrides
     extraVolumeMounts:
       - name: runtime-overrides
-        mountPath: /runtime-config
+        mountPath: /overrides
         readOnly: true
   minio:
     enabled: false
