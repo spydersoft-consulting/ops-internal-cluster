@@ -16,7 +16,8 @@ data:
         metrics_generator:
           processors: []
         ingestion:
-          burst_size_bytes: 5000000
+          rate_limit_bytes: 5000000      # 5MB/s sustained rate
+          burst_size_bytes: 10000000     # 10MB burst
         compaction:
           block_retention: 720h  # 30 days
 
@@ -24,7 +25,8 @@ data:
         metrics_generator:
           processors: []
         ingestion:
-          burst_size_bytes: 10000000
+          rate_limit_bytes: 10000000     # 10MB/s sustained rate
+          burst_size_bytes: 20000000     # 20MB burst
         compaction:
           block_retention: 2160h  # 90 days
 
@@ -32,6 +34,7 @@ data:
         metrics_generator:
           processors: []
         ingestion:
-          burst_size_bytes: 2000000
+          rate_limit_bytes: 2000000      # 2MB/s sustained rate
+          burst_size_bytes: 5000000      # 5MB burst
         compaction:
           block_retention: 168h  # 7 days
