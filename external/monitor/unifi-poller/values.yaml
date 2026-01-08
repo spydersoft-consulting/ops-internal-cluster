@@ -9,6 +9,11 @@ service:
   main:
     type: ClusterIP
     controller: main
+    annotations:
+      metrics.spydersoft.io/scrape: "true"
+      metrics.spydersoft.io/port: "9130"
+      metrics.spydersoft.io/path: "/metrics"
+      metrics.spydersoft.io/scheme: "http"
     ports:
       metrics:
         enabled: true
