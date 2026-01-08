@@ -1,6 +1,6 @@
 prometheus-snmp-exporter:
   serviceMonitor:
-    enabled: true
+    enabled: false
     scrapeTimeout: 25s
     params:
       - module:
