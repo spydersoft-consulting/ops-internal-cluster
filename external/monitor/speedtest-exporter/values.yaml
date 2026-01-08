@@ -57,7 +57,7 @@ service:
 
 serviceMonitor:
   main:
-    enabled: true
+    enabled: false
     serviceName: '{{ include "bjw-s.common.lib.chart.names.fullname" $ }}'
     endpoints:
       - port: metrics

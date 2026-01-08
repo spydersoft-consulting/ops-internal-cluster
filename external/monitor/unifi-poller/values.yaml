@@ -27,7 +27,7 @@ serviceMonitor:
       scheme: http
       path: /metrics
     serviceName: '{{ include "bjw-s.common.lib.chart.names.fullname" $ }}'
-    enabled: true
+    enabled: false
 controllers:
   main:
     type: deployment
