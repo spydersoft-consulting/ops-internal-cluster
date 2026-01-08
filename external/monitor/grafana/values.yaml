@@ -67,7 +67,7 @@ grafana:
     storageClassName: nfs-client
     enabled: true
   serviceMonitor:
-    enabled: true
+    enabled: false
   service:
     annotations:
       linkerd.io/inject: enabled
