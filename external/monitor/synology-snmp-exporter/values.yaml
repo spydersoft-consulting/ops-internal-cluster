@@ -7,6 +7,7 @@ prometheus-snmp-exporter:
       metrics.spydersoft.io/scheme: "http"
       metrics.spydersoft.io/param_module: "synology"
       metrics.spydersoft.io/param_target: "cloud.gerega.net"
+      metrics.spydersoft.io/param_auth: "auth"
   
   serviceMonitor:
     enabled: false
