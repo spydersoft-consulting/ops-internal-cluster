@@ -1,4 +1,13 @@
 prometheus-snmp-exporter:
+  service:
+    annotations:
+      metrics.spydersoft.io/scrape: "true"
+      metrics.spydersoft.io/port: "9116"
+      metrics.spydersoft.io/path: "/snmp"
+      metrics.spydersoft.io/scheme: "http"
+      metrics.spydersoft.io/param_module: "synology"
+      metrics.spydersoft.io/param_target: "cloud.gerega.net"
+  
   serviceMonitor:
     enabled: false
     scrapeTimeout: 25s
