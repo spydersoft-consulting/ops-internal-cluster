@@ -1,5 +1,26 @@
 vault:
   server:
+    # Enable automatic pod updates on chart/image changes
+    updateStrategyType: "RollingUpdate"
+    
+    # Reference the auto-unseal secret from External Secrets
+    extraSecretEnvironmentVars:
+      - envName: AZURE_TENANT_ID
+        secretName: vault-autounseal-secret
+        secretKey: AZURE_TENANT_ID
+      - envName: AZURE_CLIENT_ID
+        secretName: vault-autounseal-secret
+        secretKey: AZURE_CLIENT_ID
+      - envName: AZURE_CLIENT_SECRET
+        secretName: vault-autounseal-secret
+        secretKey: AZURE_CLIENT_SECRET
+      - envName: VAULT_AZUREKEYVAULT_VAULT_NAME
+        secretName: vault-autounseal-secret
+        secretKey: VAULT_AZUREKEYVAULT_VAULT_NAME
+      - envName: VAULT_AZUREKEYVAULT_KEY_NAME
+        secretName: vault-autounseal-secret
+        secretKey: VAULT_AZUREKEYVAULT_KEY_NAME
+    
     standalone:
       config: |
         ui = true
@@ -8,6 +29,14 @@ vault:
           tls_disable = 1
           address = "[::]:8200"
           cluster_address = "[::]:8201"
+        }
+
+        seal "azurekeyvault" {
+          tenant_id      = "${AZURE_TENANT_ID}"
+          client_id      = "${AZURE_CLIENT_ID}"
+          client_secret  = "${AZURE_CLIENT_SECRET}"
+          vault_name     = "${VAULT_AZUREKEYVAULT_VAULT_NAME}"
+          key_name       = "${VAULT_AZUREKEYVAULT_KEY_NAME}"
         }
 
         telemetry {
