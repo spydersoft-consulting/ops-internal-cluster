@@ -1,88 +1,88 @@
 persistence:
   data:
-    globalMounts:
-    - path: /home/app/.local/share/spoolman
-      readOnly: false
-    type: persistentVolumeClaim
-    size: 2Gi
-    accessMode: ReadWriteMany
     enabled: true
     storageClass: nfs-client
-controllers:
-  main:
-    revisionHistoryLimit: 3
-    type: deployment
-    replicas: 1
-    containers:
-      main:
-        strategy:
-          type: Recreate
-        env:
-          TZ: America/New_York
-        image:
-          repository: ghcr.io/donkie/spoolman
-          pullPolicy: IfNotPresent
-          tag: 0.22.1
-        probes:
-          liveness:
-            spec:
-              timeoutSeconds: 1
-              periodSeconds: 10
-              failureThreshold: 3
-              initialDelaySeconds: 0
-            type: TCP
-            custom: false
-            enabled: true
-          readiness:
-            spec:
-              timeoutSeconds: 1
-              periodSeconds: 10
-              failureThreshold: 3
-              initialDelaySeconds: 0
-            type: TCP
-            custom: false
-            enabled: true
-          startup:
-            spec:
-              timeoutSeconds: 1
-              periodSeconds: 5
-              failureThreshold: 30
-              initialDelaySeconds: 0
-            type: TCP
-            custom: false
-            enabled: true
-    strategy: Recreate
-    enabled: true
+    size: 2Gi
+    accessMode: ReadWriteMany
+    globalMounts:
+    - readOnly: false
+      path: /home/app/.local/share/spoolman
+    type: persistentVolumeClaim
 route:
   main:
     enabled: true
-    kind: HTTPRoute
-    parentRefs:
-      - name: main
-        namespace: envoy-gateway-system
-        group: gateway.networking.k8s.io
-        kind: Gateway
-    hostnames:
-      - spoolman.mattgerega.net
     rules:
-      - matches:
-          - path:
-              type: PathPrefix
-              value: /
-        backendRefs:
-          - group: ''
-            kind: Service
-            name: spoolman
-            port: 8000
-            weight: 1
+    - backendRefs:
+      - name: spoolman
+        kind: Service
+        group: ""
+        weight: 1
+        port: 8000
+      matches:
+      - path:
+          type: PathPrefix
+          value: /
+    kind: HTTPRoute
+    hostnames:
+    - spoolman.mattgerega.net
+    parentRefs:
+    - namespace: envoy-gateway-system
+      kind: Gateway
+      group: gateway.networking.k8s.io
+      name: main
 service:
   main:
-    primary: true
-    type: ClusterIP
     ports:
       http:
         primary: true
         port: 8000
         enabled: true
+    primary: true
+    type: ClusterIP
     controller: main
+controllers:
+  main:
+    enabled: true
+    type: deployment
+    revisionHistoryLimit: 3
+    replicas: 1
+    strategy: Recreate
+    containers:
+      main:
+        probes:
+          startup:
+            type: TCP
+            enabled: true
+            custom: false
+            spec:
+              initialDelaySeconds: 0
+              failureThreshold: 30
+              periodSeconds: 5
+              timeoutSeconds: 1
+          liveness:
+            type: TCP
+            enabled: true
+            custom: false
+            spec:
+              initialDelaySeconds: 0
+              failureThreshold: 3
+              periodSeconds: 10
+              timeoutSeconds: 1
+          readiness:
+            type: TCP
+            enabled: true
+            custom: false
+            spec:
+              initialDelaySeconds: 0
+              failureThreshold: 3
+              periodSeconds: 10
+              timeoutSeconds: 1
+        image:
+          pullPolicy: IfNotPresent
+          tag: 0.23.0
+          repository: ghcr.io/donkie/spoolman
+        env:
+          TZ: America/New_York
+        strategy:
+          type: Recreate
 
