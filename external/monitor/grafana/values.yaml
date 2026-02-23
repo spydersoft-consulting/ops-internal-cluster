@@ -1,76 +1,104 @@
+service:
+  postgres:
+    type: ClusterIP
+    controller: postgres
+    primary: false
+    ports:
+      postgres:
+        enabled: true
+        port: 5432
+  main:
+    enabled: false
+global:
+  nameOverride: postgres
+grafanaBackup:
+  image:
+    tag: v1.5.0
+    repository: dealfa/grafana-backup-tool
+  schedule: 0 4 * * *
+  enabled: true
+persistence:
+  postgres-secrets:
+    type: secret
+    name: postgres-secrets
+    enabled: true
+  postgres-data:
+    type: persistentVolumeClaim
+    storageClass: nfs-client
+    size: 300Gi
+    advancedMounts:
+      postgres:
+        main:
+        - path: /var/lib/postgresql/data
+    enabled: true
+    accessMode: ReadWriteMany
+  postgres-init-data:
+    type: configMap
+    advancedMounts:
+      postgres:
+        main:
+        - path: /docker-entrypoint-initdb.d/init-grafana-user.sh
+          subPath: init-data.sh
+    identifier: postgres-init-data
+    enabled: true
 grafana:
-  podAnnotations:
-    linkerd.io/inject: enabled
   service:
     annotations:
       linkerd.io/inject: enabled
-  serviceMonitor:
-    enabled: false
-  grafana.ini:
-    azure:
-      managed_identity_enabled: true
-    server:
-      root_url: https://grafana.mattgerega.net
-      domain: grafana.mattgerega.net
-    auth.azuread:
-      token_url: https://login.microsoftonline.com/70965cdd-c60c-4109-9fcf-709b2f23bd0c/oauth2/v2.0/token
-      allow_sign_up: true
-      scopes: openid email profile
-      role_attribute_strict: false
-      enabled: true
-      auth_url: https://login.microsoftonline.com/70965cdd-c60c-4109-9fcf-709b2f23bd0c/oauth2/v2.0/authorize
-      name: Azure AD
-    database:
-      type: postgres
-      host: grafana-postgres
-      name: grafana
-  revisionHistoryLimit: 1
-  envFromSecret: grafana-auth-secret
-  persistence:
-    storageClassName: nfs-client
-    enabled: true
+  plugins:
+  - grafana-piechart-panel
   admin:
     passwordKey: GRAFANA_ADMIN_PASSWORD
     existingSecret: grafana-admin-secret
     userKey: GRAFANA_ADMIN_USER
   ingress:
+    pathType: Prefix
+    tls: []
     path: /
+    enabled: false
+    annotations:
+      kubernetes.io/ingress.class: nginx
+      nginx.ingress.kubernetes.io/service-upstream: "true"
     hosts:
     - grafana.mattgerega.net
-    tls: []
-    annotations:
-      nginx.ingress.kubernetes.io/service-upstream: "true"
-      kubernetes.io/ingress.class: nginx
-    pathType: Prefix
+  serviceMonitor:
     enabled: false
-  plugins:
-  - grafana-piechart-panel
-service:
-  postgres:
-    controller: postgres
-    type: ClusterIP
-    primary: false
-    ports:
-      postgres:
-        port: 5432
-        enabled: true
-  main:
-    enabled: false
-grafanaBackup:
-  enabled: true
-  schedule: 0 4 * * *
-  image:
-    tag: v1.4.7
-    repository: dealfa/grafana-backup-tool
+  podAnnotations:
+    linkerd.io/inject: enabled
+  envFromSecret: grafana-auth-secret
+  revisionHistoryLimit: 1
+  persistence:
+    storageClassName: nfs-client
+    enabled: true
+  grafana.ini:
+    server:
+      domain: grafana.mattgerega.net
+      root_url: https://grafana.mattgerega.net
+    database:
+      type: postgres
+      host: grafana-postgres
+      name: grafana
+    azure:
+      managed_identity_enabled: true
+    auth.azuread:
+      allow_sign_up: true
+      token_url: https://login.microsoftonline.com/70965cdd-c60c-4109-9fcf-709b2f23bd0c/oauth2/v2.0/token
+      enabled: true
+      auth_url: https://login.microsoftonline.com/70965cdd-c60c-4109-9fcf-709b2f23bd0c/oauth2/v2.0/authorize
+      role_attribute_strict: false
+      name: Azure AD
+      scopes: openid email profile
 controllers:
   postgres:
+    type: deployment
     containers:
       main:
+        image:
+          pullPolicy: IfNotPresent
+          tag: 17
+          repository: postgres
         strategy:
           type: Recreate
-        envFrom:
-        - secretRef:
-            name: postgres-secrets
         env:
         - name: POSTGRES_PORT
           value: 5432
@@ -78,46 +106,17 @@ controllers:
           value: postgres-service
         - name: POSTGRES_DB
           value: grafana
-        image:
-          pullPolicy: IfNotPresent
-          tag: 17
-          repository: postgres
+        envFrom:
+        - secretRef:
+            name: postgres-secrets
     strategy: Recreate
-    revisionHistoryLimit: 3
     enabled: true
+    revisionHistoryLimit: 3
     replicas: 1
-    type: deployment
   main:
     enabled: false
-persistence:
-  postgres-data:
-    storageClass: nfs-client
-    type: persistentVolumeClaim
-    size: 300Gi
-    accessMode: ReadWriteMany
-    enabled: true
-    advancedMounts:
-      postgres:
-        main:
-        - path: /var/lib/postgresql/data
-  postgres-init-data:
-    type: configMap
-    identifier: postgres-init-data
-    advancedMounts:
-      postgres:
-        main:
-        - subPath: init-data.sh
-          path: /docker-entrypoint-initdb.d/init-grafana-user.sh
-    enabled: true
-  postgres-secrets:
-    type: secret
-    enabled: true
-    name: postgres-secrets
-global:
-  nameOverride: postgres
 configMaps:
   postgres-init-data:
-    enabled: true
     data:
       init-data.sh: |
         #!/bin/bash
@@ -131,4 +130,5 @@ configMaps:
         else
           echo "SETUP INFO: No Environment variables given!"
         fi
+    enabled: true
 
