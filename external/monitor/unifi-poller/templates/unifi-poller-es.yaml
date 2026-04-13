@@ -18,7 +18,6 @@ spec:
       conversionStrategy: Default
       decodingStrategy: None
       metadataPolicy: None
-      nullBytePolicy: Ignore
   - secretKey: UP_UNIFI_DEFAULT_PASS
     remoteRef:
       key: secrets-k8/unifi
