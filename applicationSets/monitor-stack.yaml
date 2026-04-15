@@ -57,6 +57,8 @@ spec:
             - '.spec.data[]?.remoteRef.nullBytePolicy'
             - '.spec.dataFrom[]?.extract.nullBytePolicy'
             - '.spec.dataFrom[]?.find.nullBytePolicy'
+          jsonPointers:
+            - /metadata/labels
       syncPolicy:
         # automated:
         #   prune: true
