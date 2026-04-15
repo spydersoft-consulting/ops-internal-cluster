@@ -55,6 +55,10 @@ spec:
             - '.spec.data[]?.remoteRef.nullBytePolicy'
             - '.spec.dataFrom[]?.extract.nullBytePolicy'
             - '.spec.dataFrom[]?.find.nullBytePolicy'
+            - '.spec.target.template.mergePolicy'
+            - '.spec.target.template.metadata'
+            - '.spec.target.creationPolicy'
+            - '.spec.target.deletionPolicy'
       syncPolicy:
         # automated:
         #   prune: true
