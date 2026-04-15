@@ -51,14 +51,12 @@ spec:
             - .spec.template.spec.hostUsers
         - group: "external-secrets.io"
           kind: ExternalSecret
+          managedFieldsManagers:
+            - before-first-apply
           jqPathExpressions:
             - '.spec.data[]?.remoteRef.nullBytePolicy'
             - '.spec.dataFrom[]?.extract.nullBytePolicy'
             - '.spec.dataFrom[]?.find.nullBytePolicy'
-            - '.spec.target.template.mergePolicy'
-            - '.spec.target.template.metadata'
-            - '.spec.target.creationPolicy'
-            - '.spec.target.deletionPolicy'
       syncPolicy:
         # automated:
         #   prune: true
