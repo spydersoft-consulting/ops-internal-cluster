@@ -5,6 +5,8 @@ metadata:
   name: grafana-backup-tool
 spec:
   schedule: {{ .Values.grafanaBackup.schedule }}
+  failedJobsHistoryLimit: {{ .Values.grafanaBackup.failedJobsHistoryLimit | default 3 }}
+  successfulJobsHistoryLimit: {{ .Values.grafanaBackup.successfulJobsHistoryLimit | default 3 }}
   jobTemplate:
     metadata:
       labels:

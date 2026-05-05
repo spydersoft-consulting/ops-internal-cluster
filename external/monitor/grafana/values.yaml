@@ -38,9 +38,11 @@ global:
 grafanaBackup:
   image:
     repository: dealfa/grafana-backup-tool
-    tag: v1.6.3
+    tag: v1.5.0
   schedule: 0 4 * * *
   enabled: true
+  failedJobsHistoryLimit: 3
+  successfulJobsHistoryLimit: 3
 controllers:
   postgres:
     revisionHistoryLimit: 3
