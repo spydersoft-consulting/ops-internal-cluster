@@ -12,7 +12,11 @@ spec:
       labels:
         app: grafana-backup-tool
     spec:
+      activeDeadlineSeconds: 3600
       template:
+        metadata:
+          annotations:
+            linkerd.io/inject: disabled
         spec:
           restartPolicy: "Never"
           containers:
