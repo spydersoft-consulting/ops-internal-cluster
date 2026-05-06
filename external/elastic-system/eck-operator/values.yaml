@@ -1,4 +1,5 @@
 eck-operator:
+  revisionHistoryLimit: 3
   webhook:
     manage-webhook-certs: false
     certsSecret: elastic-webhook-server-cert

@@ -1,4 +1,5 @@
 prometheus-snmp-exporter:
+  revisionHistoryLimit: 3
   service:
     annotations:
       metrics.spydersoft.io/scrape: "true"
