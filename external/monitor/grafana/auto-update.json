@@ -1,7 +1,8 @@
 {
     "repositories": [
         {
-            "repository": "DuraCHYo/grafana-backup-tool",
+            "repository": "dealfa/grafana-backup-tool",
+            "type": "docker",
             "imagePrefix": "v",
             "tagPath": "grafanaBackup.image.tag",
             "keepImagePrefix": true
