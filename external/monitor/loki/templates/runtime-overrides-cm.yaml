@@ -19,6 +19,10 @@ data:
         max_global_streams_per_user: 100000
         ingestion_rate_mb: 10
         ingestion_burst_size_mb: 20
+        # Bumped from default 15 to accommodate vault-audit streams
+        # which add 5 audit-specific labels on top of the existing
+        # k8s discovery label set.
+        max_label_names_per_series: 25
 
       # Production cluster - 90 days retention
       production:
