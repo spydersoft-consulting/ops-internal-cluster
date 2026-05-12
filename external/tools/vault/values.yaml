@@ -2,7 +2,39 @@ vault:
   server:
     # Enable automatic pod updates on chart/image changes
     updateStrategyType: "RollingUpdate"
-    
+
+    # Pod annotations - opts Vault into the spydersoft.io log pipeline.
+    # The vault-audit sidecar (below) tails the audit log file to stdout;
+    # Alloy's discovery.relabel "spydersoft_logs" filters by collect=true
+    # and applies JSON parsing per logs.spydersoft.io/format.
+    annotations:
+      logs.spydersoft.io/collect: "true"
+      logs.spydersoft.io/format: "json"
+
+    # Sidecar that tails the file audit device to stdout so Alloy can ship
+    # it through the standard k8s container-log pipeline. Container name is
+    # "vault-audit" — that becomes the Loki `container` label and is what
+    # the Alloy relabel rules key on to set source/source_type.
+    extraContainers:
+      - name: vault-audit
+        image: busybox:1.37
+        command: ["/bin/sh", "-c"]
+        args:
+          - |
+            # Wait for vault to enable the audit device and create the file.
+            until [ -f /vault/audit/audit.log ]; do sleep 2; done
+            exec tail -n +1 -F /vault/audit/audit.log
+        volumeMounts:
+          - name: audit-log
+            mountPath: /vault/audit
+            readOnly: true
+        resources:
+          requests:
+            cpu: 10m
+            memory: 16Mi
+          limits:
+            memory: 64Mi
+
     # Reference the auto-unseal secret from External Secrets
     extraSecretEnvironmentVars:
       - envName: AZURE_TENANT_ID
@@ -48,10 +80,15 @@ vault:
         secret:
           defaultMode: 420
           secretName: garage-vault-storage-config
+      - name: audit-log
+        emptyDir:
+          sizeLimit: 5Gi
     volumeMounts:
       - name: vault-storage-config
         mountPath: /vault/userconfig/vault-storage-config
         readOnly: true
+      - name: audit-log
+        mountPath: /vault/audit
     extraArgs: -config=/vault/userconfig/vault-storage-config/config.hcl
     dataStorage:
       enabled: false
