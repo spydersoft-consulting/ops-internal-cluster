@@ -25,6 +25,13 @@ mimir-distributed:
         readOnly: true
   distributor:
     replicas: 2
+    resources:
+      requests:
+        cpu: 200m
+        memory: 1Gi
+      limits:
+        cpu: "1"
+        memory: 3Gi
     extraVolumes:
       - name: runtime-overrides
         configMap:
@@ -35,6 +42,13 @@ mimir-distributed:
         readOnly: true
   ingester:
     replicas: 3
+    resources:
+      requests:
+        cpu: 200m
+        memory: 1Gi
+      limits:
+        cpu: "1"
+        memory: 3Gi
     persistentVolume:
       storageClass: nfs-client
     extraVolumes:
@@ -47,6 +61,13 @@ mimir-distributed:
         readOnly: true
   store_gateway:
     replicas: 3
+    resources:
+      requests:
+        cpu: 100m
+        memory: 512Mi
+      limits:
+        cpu: 500m
+        memory: 2Gi
     persistentVolume:
       storageClass: nfs-client
     extraVolumes:
@@ -166,7 +187,7 @@ mimir-distributed:
           insecure: true
           secret_access_key: ${STORAGE_PASSWORD}
       limits:
-        max_global_series_per_user: 0
+        max_global_series_per_user: 1000000
         ingestion_rate: 400000
         ingestion_burst_size: 1000000
         compactor_blocks_retention_period: 1y
