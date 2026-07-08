@@ -1,88 +1,88 @@
+persistence:
+  data:
+    storageClass: nfs-client
+    type: persistentVolumeClaim
+    enabled: true
+    accessMode: ReadWriteMany
+    globalMounts:
+    - path: /home/app/.local/share/spoolman
+      readOnly: false
+    size: 2Gi
 controllers:
   main:
-    strategy: Recreate
-    replicas: 1
+    type: deployment
     enabled: true
-    revisionHistoryLimit: 3
     containers:
       main:
+        image:
+          pullPolicy: IfNotPresent
+          tag: 0.24.0
+          repository: ghcr.io/donkie/spoolman
         probes:
-          liveness:
-            spec:
-              initialDelaySeconds: 0
-              timeoutSeconds: 1
-              failureThreshold: 3
-              periodSeconds: 10
-            enabled: true
-            custom: false
-            type: TCP
           readiness:
             spec:
-              initialDelaySeconds: 0
-              timeoutSeconds: 1
-              failureThreshold: 3
               periodSeconds: 10
+              initialDelaySeconds: 0
+              failureThreshold: 3
+              timeoutSeconds: 1
             enabled: true
-            custom: false
             type: TCP
+            custom: false
           startup:
             spec:
-              initialDelaySeconds: 0
-              timeoutSeconds: 1
-              failureThreshold: 30
               periodSeconds: 5
+              initialDelaySeconds: 0
+              failureThreshold: 30
+              timeoutSeconds: 1
             enabled: true
-            custom: false
             type: TCP
-        image:
-          tag: 0.23.1
-          repository: ghcr.io/donkie/spoolman
-          pullPolicy: IfNotPresent
+            custom: false
+          liveness:
+            spec:
+              periodSeconds: 10
+              initialDelaySeconds: 0
+              failureThreshold: 3
+              timeoutSeconds: 1
+            enabled: true
+            type: TCP
+            custom: false
         strategy:
           type: Recreate
         env:
           TZ: America/New_York
-    type: deployment
-persistence:
-  data:
-    accessMode: ReadWriteMany
-    storageClass: nfs-client
-    enabled: true
-    size: 2Gi
-    globalMounts:
-    - path: /home/app/.local/share/spoolman
-      readOnly: false
-    type: persistentVolumeClaim
+    revisionHistoryLimit: 3
+    replicas: 1
+    strategy: Recreate
+service:
+  main:
+    controller: main
+    ports:
+      http:
+        enabled: true
+        primary: true
+        port: 8000
+    primary: true
+    type: ClusterIP
 route:
   main:
-    kind: HTTPRoute
-    rules:
-    - matches:
-      - path:
-          type: PathPrefix
-          value: /
-      backendRefs:
-      - port: 8000
-        name: spoolman
-        weight: 1
-        kind: Service
-        group: ""
     enabled: true
     parentRefs:
     - namespace: envoy-gateway-system
+      group: gateway.networking.k8s.io
       kind: Gateway
       name: main
-      group: gateway.networking.k8s.io
     hostnames:
     - spoolman.mattgerega.net
-service:
-  main:
-    primary: true
-    ports:
-      http:
-        primary: true
+    rules:
+    - matches:
+      - path:
+          value: /
+          type: PathPrefix
+      backendRefs:
+      - name: spoolman
+        weight: 1
+        group: ""
+        kind: Service
         port: 8000
-        enabled: true
-    controller: main
-    type: ClusterIP
+    kind: HTTPRoute
 
