@@ -11,6 +11,13 @@ mimir-distributed:
     enabled: true
     persistence:
       storageClassName: nfs-client
+    # 24h (chart default) meant an ingester with no committed offset (e.g.
+    # after an incident) would replay a full day of backlog on startup - that
+    # replay burst repeatedly OOMed/destabilized nodes during the 2026-07
+    # recovery. 6h keeps enough buffer for a normal restart/maintenance
+    # window while capping the worst-case replay size at ~1.5GB instead of
+    # ~6GB (current 24h usage, measured directly off the PVC).
+    logRetentionHours: 6
     affinity:
       podAntiAffinity:
         preferredDuringSchedulingIgnoredDuringExecution:
