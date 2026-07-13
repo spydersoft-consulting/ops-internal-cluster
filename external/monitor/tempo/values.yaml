@@ -25,6 +25,14 @@ tempo-distributed:
   distributor:
     service:
       type: NodePort
+    # Had no requests/limits at all. Measured actual usage is ~37m/40Mi.
+    resources:
+      requests:
+        cpu: 50m
+        memory: 64Mi
+      limits:
+        cpu: 250m
+        memory: 256Mi
     # Reproduces the chart's own default (hard same-node/soft same-zone
     # same-component anti-affinity - see chart values.yaml) plus an added
     # soft rule to avoid nodes already running another heavy/stateful
@@ -68,6 +76,14 @@ tempo-distributed:
         mountPath: /overrides
         readOnly: true
   queryFrontend:
+    # Measured actual usage is ~2m/29Mi.
+    resources:
+      requests:
+        cpu: 25m
+        memory: 64Mi
+      limits:
+        cpu: 150m
+        memory: 256Mi
     extraArgs:
       - -config.expand-env=true
     extraEnvFrom:
@@ -82,6 +98,14 @@ tempo-distributed:
         mountPath: /overrides
         readOnly: true
   querier:
+    # Measured actual usage is ~20-50m/25-50Mi.
+    resources:
+      requests:
+        cpu: 50m
+        memory: 64Mi
+      limits:
+        cpu: 250m
+        memory: 256Mi
     extraArgs:
       - -config.expand-env=true
     extraEnvFrom:
@@ -96,6 +120,16 @@ tempo-distributed:
         mountPath: /overrides
         readOnly: true
   compactor:
+    # Had no requests/limits. Measured actual usage is ~14m/51Mi, but
+    # compaction runs can spike higher than steady-state, so limit has more
+    # headroom than the others.
+    resources:
+      requests:
+        cpu: 50m
+        memory: 128Mi
+      limits:
+        cpu: 200m
+        memory: 384Mi
     # See the matching comment on distributor.affinity above.
     affinity: |
       podAntiAffinity:
@@ -133,6 +167,15 @@ tempo-distributed:
         mountPath: /overrides
         readOnly: true
   ingester:
+    # Had no requests/limits. Measured actual usage is ~22m/40Mi, but trace
+    # ingestion can burst, so limit has more headroom.
+    resources:
+      requests:
+        cpu: 50m
+        memory: 128Mi
+      limits:
+        cpu: 250m
+        memory: 512Mi
     # See the matching comment on distributor.affinity above. Ingester's
     # chart default only has the soft same-node/soft same-zone rules (no
     # hard requirement), reproduced here.
@@ -174,6 +217,14 @@ tempo-distributed:
         readOnly: true
   metricsGenerator:
     enabled: true
+    # Measured actual usage is ~17m/26Mi.
+    resources:
+      requests:
+        cpu: 50m
+        memory: 64Mi
+      limits:
+        cpu: 200m
+        memory: 256Mi
     extraArgs:
       - -config.expand-env=true
     extraEnvFrom:

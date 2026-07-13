@@ -11,6 +11,16 @@ mimir-distributed:
     enabled: true
     persistence:
       storageClassName: nfs-client
+    # Had a 1Gi/1cpu request but no limit at all (unbounded). Measured actual
+    # usage is ~154m/250Mi; limit gives headroom without leaving it
+    # ungoverned.
+    resources:
+      requests:
+        cpu: 200m
+        memory: 512Mi
+      limits:
+        cpu: "1"
+        memory: 2Gi
     # 24h (chart default) meant an ingester with no committed offset (e.g.
     # after an incident) would replay a full day of backlog on startup - that
     # replay burst repeatedly OOMed/destabilized nodes during the 2026-07
@@ -47,13 +57,16 @@ mimir-distributed:
   distributor:
     replicas: 2
     revisionHistoryLimit: 1
+    # Was 200m/1Gi request, 1 CPU/3Gi limit - measured actual usage is only
+    # ~120m/100Mi (~10% of request). Trimmed to match, with headroom for
+    # request bursts.
     resources:
       requests:
-        cpu: 200m
-        memory: 1Gi
+        cpu: 100m
+        memory: 256Mi
       limits:
-        cpu: "1"
-        memory: 3Gi
+        cpu: 500m
+        memory: 768Mi
     affinity:
       podAntiAffinity:
         preferredDuringSchedulingIgnoredDuringExecution:
@@ -132,13 +145,16 @@ mimir-distributed:
         readOnly: true
   store_gateway:
     replicas: 3
+    # Was 100m/512Mi request, 500m/2Gi limit - measured actual usage is only
+    # ~40m/40Mi (~7% of request). Trimmed to match, with headroom for query
+    # bursts (block index/chunk loading).
     resources:
       requests:
-        cpu: 100m
-        memory: 512Mi
+        cpu: 50m
+        memory: 128Mi
       limits:
-        cpu: 500m
-        memory: 2Gi
+        cpu: 250m
+        memory: 512Mi
     persistentVolume:
       storageClass: nfs-client
     # store_gateway.affinity is ignored when zoneAwareReplication.enabled=true
