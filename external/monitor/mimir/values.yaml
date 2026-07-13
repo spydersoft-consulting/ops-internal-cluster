@@ -249,6 +249,19 @@ mimir-distributed:
         file: /etc/mimir-runtime-overrides/runtime-overrides.yaml
         period: 10s
 
+      # Only affects ingesters with no previously-committed Kafka offset (e.g.
+      # zone-b/zone-c after the 2026-07 incident). Ingesters with a real
+      # committed offset (zone-a) are unaffected and keep consuming from where
+      # they left off. Defaults to "start", which replays the full Kafka
+      # retention window (24h) on first startup - that backlog replay was
+      # repeatedly OOMing/destabilizing nodes during recovery. "end" skips the
+      # backlog and starts from the live tip instead; the data isn't lost
+      # (zone-a already has it and ships blocks to durable S3 storage), we're
+      # just accepting a gap in zone-b/zone-c's local redundant copy.
+      ingest_storage:
+        kafka:
+          consume_from_position_at_startup: end
+
       alertmanager_storage:
         backend: s3
         s3:
