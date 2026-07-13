@@ -120,15 +120,21 @@ tempo-distributed:
         mountPath: /overrides
         readOnly: true
   compactor:
-    # Had no requests/limits. Measured actual usage is ~14m/51Mi, but
-    # compaction runs can spike higher than steady-state, so limit has more
-    # headroom than the others.
+    # Had no requests/limits. Measured steady-state usage is only ~14m/51Mi,
+    # but a 200m CPU limit caused real problems: on startup the compactor
+    # deliberately waits 60s+ for ring stability while polling/indexing the
+    # blocklist (30d retention, 3 tenants) before answering /ready, and CPU
+    # throttling at 200m pushed that past the liveness probe's tolerance,
+    # causing a genuine crash-loop (confirmed via `kubectl describe pod`:
+    # readiness/liveness probes failing with 503, kubelet killing it
+    # repeatedly). Limit raised well above steady-state to give startup
+    # room to burst.
     resources:
       requests:
         cpu: 50m
         memory: 128Mi
       limits:
-        cpu: 200m
+        cpu: "1"
         memory: 384Mi
     # See the matching comment on distributor.affinity above.
     affinity: |
