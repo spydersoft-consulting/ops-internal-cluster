@@ -3,8 +3,12 @@ tempo-distributed:
   global:
     dnsService: rke2-coredns-rke2-coredns
     dnsNamespace: kube-system
-  revisionHistoryLimit: 1
   tempo:
+    # Was previously set as a sibling of `tempo:` instead of nested inside it -
+    # templates read .Values.tempo.revisionHistoryLimit, so that placement was
+    # a silent no-op (confirmed via helm template: rendered as the chart
+    # default of 10, not 1). Fixed nesting here.
+    revisionHistoryLimit: 1
     structuredConfig:
       # Global compactor configuration
       compactor:
@@ -21,6 +25,35 @@ tempo-distributed:
   distributor:
     service:
       type: NodePort
+    # Reproduces the chart's own default (hard same-node/soft same-zone
+    # same-component anti-affinity - see chart values.yaml) plus an added
+    # soft rule to avoid nodes already running another heavy/stateful
+    # component from Mimir, Loki, or Tempo. Chart templates this field as a
+    # raw string passed through `tpl`, so overriding it replaces the default
+    # wholesale rather than merging - the original rules are reproduced here
+    # rather than lost.
+    affinity: |
+      podAntiAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchLabels:
+                {{- include "tempo.selectorLabels" (dict "ctx" . "component" "distributor") | nindent 16 }}
+            topologyKey: kubernetes.io/hostname
+        preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchLabels:
+                  {{- include "tempo.selectorLabels" (dict "ctx" . "component" "distributor") | nindent 18 }}
+              topologyKey: topology.kubernetes.io/zone
+          - weight: 75
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                  - key: app.kubernetes.io/component
+                    operator: In
+                    values: [distributor, ingester, store-gateway, kafka, write, read, backend, compactor]
+              topologyKey: kubernetes.io/hostname
     extraArgs:
       - -config.expand-env=true
     extraEnvFrom:
@@ -63,6 +96,29 @@ tempo-distributed:
         mountPath: /overrides
         readOnly: true
   compactor:
+    # See the matching comment on distributor.affinity above.
+    affinity: |
+      podAntiAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchLabels:
+                {{- include "tempo.selectorLabels" (dict "ctx" . "component" "compactor") | nindent 16 }}
+            topologyKey: kubernetes.io/hostname
+        preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchLabels:
+                  {{- include "tempo.selectorLabels" (dict "ctx" . "component" "compactor") | nindent 18 }}
+              topologyKey: topology.kubernetes.io/zone
+          - weight: 75
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                  - key: app.kubernetes.io/component
+                    operator: In
+                    values: [distributor, ingester, store-gateway, kafka, write, read, backend, compactor]
+              topologyKey: kubernetes.io/hostname
     extraArgs:
       - -config.expand-env=true
     extraEnvFrom:
@@ -77,6 +133,32 @@ tempo-distributed:
         mountPath: /overrides
         readOnly: true
   ingester:
+    # See the matching comment on distributor.affinity above. Ingester's
+    # chart default only has the soft same-node/soft same-zone rules (no
+    # hard requirement), reproduced here.
+    affinity: |
+      podAntiAffinity:
+        preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchLabels:
+                  {{- include "tempo.selectorLabels" (dict "ctx" . "component" "ingester") | nindent 18 }}
+              topologyKey: kubernetes.io/hostname
+          - weight: 75
+            podAffinityTerm:
+              labelSelector:
+                matchLabels:
+                  {{- include "tempo.selectorLabels" (dict "ctx" . "component" "ingester") | nindent 18 }}
+              topologyKey: topology.kubernetes.io/zone
+          - weight: 75
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                  - key: app.kubernetes.io/component
+                    operator: In
+                    values: [distributor, ingester, store-gateway, kafka, write, read, backend, compactor]
+              topologyKey: kubernetes.io/hostname
     extraArgs:
       - -config.expand-env=true
     extraEnvFrom:

@@ -27,7 +27,7 @@ mimir-distributed:
                 matchExpressions:
                   - key: app.kubernetes.io/component
                     operator: In
-                    values: [distributor, ingester, store-gateway, kafka]
+                    values: [distributor, ingester, store-gateway, kafka, write, read, backend, compactor]
               topologyKey: kubernetes.io/hostname
   alertmanager:
     enabled: true
@@ -63,7 +63,7 @@ mimir-distributed:
                 matchExpressions:
                   - key: app.kubernetes.io/component
                     operator: In
-                    values: [distributor, ingester, store-gateway, kafka]
+                    values: [distributor, ingester, store-gateway, kafka, write, read, backend, compactor]
               topologyKey: kubernetes.io/hostname
     extraVolumes:
       - name: runtime-overrides
@@ -102,7 +102,7 @@ mimir-distributed:
                       matchExpressions:
                         - key: app.kubernetes.io/component
                           operator: In
-                          values: [distributor, ingester, store-gateway, kafka]
+                          values: [distributor, ingester, store-gateway, kafka, write, read, backend, compactor]
                     topologyKey: kubernetes.io/hostname
           storageClass: null
           noDownscale: false
@@ -178,6 +178,18 @@ mimir-distributed:
   compactor:
     persistentVolume:
       storageClass: nfs-client
+    # Had no affinity at all previously (unlike the other heavy components).
+    affinity:
+      podAntiAffinity:
+        preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 75
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                  - key: app.kubernetes.io/component
+                    operator: In
+                    values: [distributor, ingester, store-gateway, kafka, write, read, backend, compactor]
+              topologyKey: kubernetes.io/hostname
     extraVolumes:
       - name: runtime-overrides
         configMap:
