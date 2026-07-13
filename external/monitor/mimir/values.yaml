@@ -31,6 +31,9 @@ mimir-distributed:
               topologyKey: kubernetes.io/hostname
   alertmanager:
     enabled: true
+    # GitOps (ArgoCD) is the source of truth for rollback, not `kubectl
+    # rollout undo` - no need to keep more than the current revision around.
+    revisionHistoryLimit: 1
     persistentVolume:
       storageClass: nfs-client
     extraVolumes:
@@ -43,6 +46,7 @@ mimir-distributed:
         readOnly: true
   distributor:
     replicas: 2
+    revisionHistoryLimit: 1
     resources:
       requests:
         cpu: 200m
@@ -193,6 +197,7 @@ mimir-distributed:
     replicas: 2
   ruler:
     enabled: true
+    revisionHistoryLimit: 1
     extraVolumes:
       - name: runtime-overrides
         configMap:
@@ -202,6 +207,7 @@ mimir-distributed:
         mountPath: /etc/mimir-runtime-overrides
         readOnly: true
   querier:
+    revisionHistoryLimit: 1
     extraVolumes:
       - name: runtime-overrides
         configMap:
@@ -211,6 +217,7 @@ mimir-distributed:
         mountPath: /etc/mimir-runtime-overrides
         readOnly: true
   query_frontend:
+    revisionHistoryLimit: 1
     extraVolumes:
       - name: runtime-overrides
         configMap:
@@ -220,6 +227,7 @@ mimir-distributed:
         mountPath: /etc/mimir-runtime-overrides
         readOnly: true
   query_scheduler:
+    revisionHistoryLimit: 1
     extraVolumes:
       - name: runtime-overrides
         configMap:
@@ -229,6 +237,7 @@ mimir-distributed:
         mountPath: /etc/mimir-runtime-overrides
         readOnly: true
   overrides_exporter:
+    revisionHistoryLimit: 1
     extraVolumes:
       - name: runtime-overrides
         configMap:
@@ -237,7 +246,13 @@ mimir-distributed:
       - name: runtime-overrides
         mountPath: /etc/mimir-runtime-overrides
         readOnly: true
-  nginx:
+  # NOTE: this component was renamed from `nginx` to `gateway` upstream; the
+  # old `nginx:` key is silently ignored by 6.1.0 (Helm doesn't error on
+  # unknown values keys), so this override had actually been a no-op - the
+  # live service only had the label because it was baked in before the chart
+  # was upgraded past the rename.
+  gateway:
+    revisionHistoryLimit: 1
     service:
       labels:
         mirror.linkerd.io/exported: "true"
