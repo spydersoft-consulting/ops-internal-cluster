@@ -11,6 +11,17 @@ mimir-distributed:
     enabled: true
     persistence:
       storageClassName: nfs-client
+    affinity:
+      podAntiAffinity:
+        preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                  - key: app.kubernetes.io/component
+                    operator: In
+                    values: [distributor, ingester, store-gateway, kafka]
+              topologyKey: kubernetes.io/hostname
   alertmanager:
     enabled: true
     persistentVolume:
@@ -32,6 +43,17 @@ mimir-distributed:
       limits:
         cpu: "1"
         memory: 3Gi
+    affinity:
+      podAntiAffinity:
+        preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                  - key: app.kubernetes.io/component
+                    operator: In
+                    values: [distributor, ingester, store-gateway, kafka]
+              topologyKey: kubernetes.io/hostname
     extraVolumes:
       - name: runtime-overrides
         configMap:
@@ -51,6 +73,17 @@ mimir-distributed:
         memory: 3Gi
     persistentVolume:
       storageClass: nfs-client
+    affinity:
+      podAntiAffinity:
+        preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                  - key: app.kubernetes.io/component
+                    operator: In
+                    values: [distributor, ingester, store-gateway, kafka]
+              topologyKey: kubernetes.io/hostname
     extraVolumes:
       - name: runtime-overrides
         configMap:
@@ -70,6 +103,17 @@ mimir-distributed:
         memory: 2Gi
     persistentVolume:
       storageClass: nfs-client
+    affinity:
+      podAntiAffinity:
+        preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                  - key: app.kubernetes.io/component
+                    operator: In
+                    values: [distributor, ingester, store-gateway, kafka]
+              topologyKey: kubernetes.io/hostname
     extraVolumes:
       - name: runtime-overrides
         configMap:
