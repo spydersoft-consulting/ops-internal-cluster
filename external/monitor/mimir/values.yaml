@@ -73,17 +73,44 @@ mimir-distributed:
         memory: 3Gi
     persistentVolume:
       storageClass: nfs-client
-    affinity:
-      podAntiAffinity:
-        preferredDuringSchedulingIgnoredDuringExecution:
-          - weight: 100
-            podAffinityTerm:
-              labelSelector:
-                matchExpressions:
-                  - key: app.kubernetes.io/component
-                    operator: In
-                    values: [distributor, ingester, store-gateway, kafka]
-              topologyKey: kubernetes.io/hostname
+    # ingester.affinity is ignored when zoneAwareReplication.enabled=true (which it
+    # is here, since we run zone-a/b/c as separate StatefulSets) - per-zone affinity
+    # has to go through zoneAwareReplication.zones[].extraAffinity instead.
+    zoneAwareReplication:
+      # Activates the chart's built-in anti-affinity so zone-a/b/c never share a node.
+      topologyKey: kubernetes.io/hostname
+      zones:
+        - name: zone-a
+          nodeSelector: null
+          extraAffinity: &mimirHeavyAntiAffinity
+            podAntiAffinity:
+              preferredDuringSchedulingIgnoredDuringExecution:
+                - weight: 100
+                  podAffinityTerm:
+                    labelSelector:
+                      matchExpressions:
+                        - key: app.kubernetes.io/component
+                          operator: In
+                          values: [distributor, ingester, store-gateway, kafka]
+                    topologyKey: kubernetes.io/hostname
+          storageClass: null
+          noDownscale: false
+          downscaleLeader: null
+          prepareDownscale: true
+        - name: zone-b
+          nodeSelector: null
+          extraAffinity: *mimirHeavyAntiAffinity
+          storageClass: null
+          noDownscale: false
+          downscaleLeader: null
+          prepareDownscale: true
+        - name: zone-c
+          nodeSelector: null
+          extraAffinity: *mimirHeavyAntiAffinity
+          storageClass: null
+          noDownscale: false
+          downscaleLeader: null
+          prepareDownscale: true
     extraVolumes:
       - name: runtime-overrides
         configMap:
@@ -103,17 +130,32 @@ mimir-distributed:
         memory: 2Gi
     persistentVolume:
       storageClass: nfs-client
-    affinity:
-      podAntiAffinity:
-        preferredDuringSchedulingIgnoredDuringExecution:
-          - weight: 100
-            podAffinityTerm:
-              labelSelector:
-                matchExpressions:
-                  - key: app.kubernetes.io/component
-                    operator: In
-                    values: [distributor, ingester, store-gateway, kafka]
-              topologyKey: kubernetes.io/hostname
+    # store_gateway.affinity is ignored when zoneAwareReplication.enabled=true
+    # (which it is here) - see the matching comment under ingester above.
+    zoneAwareReplication:
+      topologyKey: kubernetes.io/hostname
+      zones:
+        - name: zone-a
+          nodeSelector: null
+          extraAffinity: *mimirHeavyAntiAffinity
+          storageClass: null
+          noDownscale: false
+          downscaleLeader: null
+          prepareDownscale: true
+        - name: zone-b
+          nodeSelector: null
+          extraAffinity: *mimirHeavyAntiAffinity
+          storageClass: null
+          noDownscale: false
+          downscaleLeader: null
+          prepareDownscale: true
+        - name: zone-c
+          nodeSelector: null
+          extraAffinity: *mimirHeavyAntiAffinity
+          storageClass: null
+          noDownscale: false
+          downscaleLeader: null
+          prepareDownscale: true
     extraVolumes:
       - name: runtime-overrides
         configMap:
