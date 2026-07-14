@@ -173,6 +173,12 @@ tempo-distributed:
         mountPath: /overrides
         readOnly: true
   ingester:
+    # Chart default is 3 replicas with ring replication_factor 3 (a full
+    # copy of every trace on each of 3 ingesters) - zone/replica HA with
+    # no second physical node to protect against. Dropped to 1/1.
+    replicas: 1
+    config:
+      replication_factor: 1
     # Had no requests/limits. Measured actual usage is ~22m/40Mi, but trace
     # ingestion can burst, so limit has more headroom.
     resources:

@@ -55,7 +55,11 @@ mimir-distributed:
         mountPath: /etc/mimir-runtime-overrides
         readOnly: true
   distributor:
-    replicas: 2
+    # Was 2 for HA - live ingestion is ~2000 samples/sec combined across all
+    # 3 tenants (measured 2026-07-14), several orders of magnitude below
+    # what a single distributor handles. There's no second physical node
+    # for a second replica to protect against here anyway.
+    replicas: 1
     revisionHistoryLimit: 1
     # Was 200m/1Gi request, 1 CPU/3Gi limit - measured actual usage is only
     # ~120m/100Mi (~10% of request). Trimmed to match, with headroom for
@@ -87,7 +91,11 @@ mimir-distributed:
         mountPath: /etc/mimir-runtime-overrides
         readOnly: true
   ingester:
-    replicas: 3
+    # Was 3 (zone-a/b/c), one full replica of the series set per zone -
+    # zone anti-affinity protects against losing a physical node, which
+    # doesn't apply here (single Proxmox host). Live series count is
+    # ~166k, comfortably within a single ingester (measured 2026-07-14).
+    replicas: 1
     resources:
       requests:
         cpu: 200m
@@ -97,44 +105,19 @@ mimir-distributed:
         memory: 3Gi
     persistentVolume:
       storageClass: nfs-client
-    # ingester.affinity is ignored when zoneAwareReplication.enabled=true (which it
-    # is here, since we run zone-a/b/c as separate StatefulSets) - per-zone affinity
-    # has to go through zoneAwareReplication.zones[].extraAffinity instead.
     zoneAwareReplication:
-      # Activates the chart's built-in anti-affinity so zone-a/b/c never share a node.
-      topologyKey: kubernetes.io/hostname
-      zones:
-        - name: zone-a
-          nodeSelector: null
-          extraAffinity: &mimirHeavyAntiAffinity
-            podAntiAffinity:
-              preferredDuringSchedulingIgnoredDuringExecution:
-                - weight: 100
-                  podAffinityTerm:
-                    labelSelector:
-                      matchExpressions:
-                        - key: app.kubernetes.io/component
-                          operator: In
-                          values: [distributor, ingester, store-gateway, kafka, write, read, backend, compactor]
-                    topologyKey: kubernetes.io/hostname
-          storageClass: null
-          noDownscale: false
-          downscaleLeader: null
-          prepareDownscale: true
-        - name: zone-b
-          nodeSelector: null
-          extraAffinity: *mimirHeavyAntiAffinity
-          storageClass: null
-          noDownscale: false
-          downscaleLeader: null
-          prepareDownscale: true
-        - name: zone-c
-          nodeSelector: null
-          extraAffinity: *mimirHeavyAntiAffinity
-          storageClass: null
-          noDownscale: false
-          downscaleLeader: null
-          prepareDownscale: true
+      enabled: false
+    affinity:
+      podAntiAffinity:
+        preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                  - key: app.kubernetes.io/component
+                    operator: In
+                    values: [distributor, ingester, store-gateway, kafka, write, read, backend, compactor]
+              topologyKey: kubernetes.io/hostname
     extraVolumes:
       - name: runtime-overrides
         configMap:
@@ -144,7 +127,9 @@ mimir-distributed:
         mountPath: /etc/mimir-runtime-overrides
         readOnly: true
   store_gateway:
-    replicas: 3
+    # Was 3 (zone-a/b/c) for the same reason as ingester above - dropped
+    # to match, no zone-level HA benefit on a single physical host.
+    replicas: 1
     # Was 100m/512Mi request, 500m/2Gi limit - measured actual usage is only
     # ~40m/40Mi (~7% of request). Trimmed to match, with headroom for query
     # bursts (block index/chunk loading).
@@ -157,32 +142,19 @@ mimir-distributed:
         memory: 512Mi
     persistentVolume:
       storageClass: nfs-client
-    # store_gateway.affinity is ignored when zoneAwareReplication.enabled=true
-    # (which it is here) - see the matching comment under ingester above.
     zoneAwareReplication:
-      topologyKey: kubernetes.io/hostname
-      zones:
-        - name: zone-a
-          nodeSelector: null
-          extraAffinity: *mimirHeavyAntiAffinity
-          storageClass: null
-          noDownscale: false
-          downscaleLeader: null
-          prepareDownscale: true
-        - name: zone-b
-          nodeSelector: null
-          extraAffinity: *mimirHeavyAntiAffinity
-          storageClass: null
-          noDownscale: false
-          downscaleLeader: null
-          prepareDownscale: true
-        - name: zone-c
-          nodeSelector: null
-          extraAffinity: *mimirHeavyAntiAffinity
-          storageClass: null
-          noDownscale: false
-          downscaleLeader: null
-          prepareDownscale: true
+      enabled: false
+    affinity:
+      podAntiAffinity:
+        preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                  - key: app.kubernetes.io/component
+                    operator: In
+                    values: [distributor, ingester, store-gateway, kafka, write, read, backend, compactor]
+              topologyKey: kubernetes.io/hostname
     extraVolumes:
       - name: runtime-overrides
         configMap:
@@ -192,6 +164,16 @@ mimir-distributed:
         mountPath: /etc/mimir-runtime-overrides
         readOnly: true
   compactor:
+    # Had only the chart default (100m/512Mi request, no limit) - measured
+    # actual usage is ~26m/1.4Gi (memory ~2.7x over the old request; no
+    # OOM since there's no limit, but the request should reflect reality).
+    resources:
+      requests:
+        cpu: 50m
+        memory: 1536Mi
+      limits:
+        cpu: 500m
+        memory: 2Gi
     persistentVolume:
       storageClass: nfs-client
     # Had no affinity at all previously (unlike the other heavy components).
@@ -235,6 +217,9 @@ mimir-distributed:
         mountPath: /etc/mimir-runtime-overrides
         readOnly: true
   querier:
+    # Chart default is 2 (HA query path) - no benefit on a single physical
+    # host, and query volume here is trivial.
+    replicas: 1
     revisionHistoryLimit: 1
     extraVolumes:
       - name: runtime-overrides
@@ -255,6 +240,8 @@ mimir-distributed:
         mountPath: /etc/mimir-runtime-overrides
         readOnly: true
   query_scheduler:
+    # Chart default is 2 (HA) - same reasoning as querier above.
+    replicas: 1
     revisionHistoryLimit: 1
     extraVolumes:
       - name: runtime-overrides
