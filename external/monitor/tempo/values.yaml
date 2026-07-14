@@ -179,15 +179,18 @@ tempo-distributed:
     replicas: 1
     config:
       replication_factor: 1
-    # Had no requests/limits. Measured actual usage is ~22m/40Mi, but trace
-    # ingestion can burst, so limit has more headroom.
+    # Had no requests/limits. Measured baseline usage was ~22m/40Mi, but the
+    # 512Mi limit was getting OOMKilled repeatedly during ingest bursts
+    # (observed 2026-07-14, ~2-3 restarts/hr), dropping traces for ~30-90s
+    # each time while the ingester rejoins the memberlist ring. Raised limit
+    # to give real burst headroom.
     resources:
       requests:
         cpu: 50m
         memory: 128Mi
       limits:
         cpu: 250m
-        memory: 512Mi
+        memory: 1Gi
     # See the matching comment on distributor.affinity above. Ingester's
     # chart default only has the soft same-node/soft same-zone rules (no
     # hard requirement), reproduced here.
