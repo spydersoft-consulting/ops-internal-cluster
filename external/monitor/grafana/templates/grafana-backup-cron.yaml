@@ -26,4 +26,6 @@ spec:
               envFrom:
                 - secretRef:
                     name: grafana-backup-secret
+              resources:
+                {{- toYaml .Values.grafanaBackup.resources | nindent 16 }}
 {{ end }}
