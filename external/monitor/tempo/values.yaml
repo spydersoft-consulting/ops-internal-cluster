@@ -253,6 +253,11 @@ tempo-distributed:
       - name: runtime-overrides
         mountPath: /overrides
         readOnly: true
+  # Had no requests/limits. Measured actual usage is ~7-9m/68Mi.
+  memcached:
+    resources:
+      requests:
+        cpu: 5m
   minio:
     enabled: false
   storage:
@@ -284,6 +289,11 @@ tempo-distributed:
         enabled: true
   gateway:
     enabled: true
+    # nginx gateway - no CPU request previously set. Measured actual usage
+    # is ~1-2m.
+    resources:
+      requests:
+        cpu: 5m
     service:
       labels:
         mirror.linkerd.io/exported: "true"
