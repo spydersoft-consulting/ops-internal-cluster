@@ -57,13 +57,20 @@ mimir-distributed:
     # Was 200m/1Gi request, 1 CPU/3Gi limit - measured actual usage is only
     # ~120m/100Mi (~10% of request). Trimmed to match, with headroom for
     # request bursts.
+    #
+    # Limit raised again after the 2026-07-15 outage: whenever mimir is
+    # down for a while, every Alloy agent buffers its remote-write WAL and
+    # replays the whole backlog in a burst the moment writes succeed again.
+    # That burst OOMKilled the distributor repeatedly at the trimmed 768Mi
+    # limit. Steady-state usage is unaffected by this - only the limit
+    # (OOM ceiling) needs the headroom for replay bursts, not the request.
     resources:
       requests:
         cpu: 100m
         memory: 256Mi
       limits:
-        cpu: 500m
-        memory: 768Mi
+        cpu: "1"
+        memory: 2Gi
     affinity:
       podAntiAffinity:
         preferredDuringSchedulingIgnoredDuringExecution:
