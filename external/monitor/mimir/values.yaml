@@ -295,6 +295,12 @@ mimir-distributed:
   # was upgraded past the rename.
   gateway:
     revisionHistoryLimit: 1
+    # nginx gateway - no CPU request previously set. Observed usage ~1-2m
+    # (fronts a low-traffic single-tenant setup); floored to a sensible
+    # minimum rather than tracking usage exactly.
+    resources:
+      requests:
+        cpu: 5m
     service:
       labels:
         mirror.linkerd.io/exported: "true"

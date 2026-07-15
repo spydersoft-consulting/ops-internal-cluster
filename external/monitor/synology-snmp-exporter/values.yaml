@@ -1,5 +1,11 @@
 prometheus-snmp-exporter:
   revisionHistoryLimit: 3
+  # No CPU request previously set. Observed usage was bursty (~1-13m
+  # across samples, tracks SNMP poll interval). Requested below the low
+  # end of steady-state rather than the bursts.
+  resources:
+    requests:
+      cpu: 10m
   service:
     annotations:
       metrics.spydersoft.io/scrape: "true"

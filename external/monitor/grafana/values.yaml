@@ -43,6 +43,14 @@ grafanaBackup:
   enabled: true
   failedJobsHistoryLimit: 3
   successfulJobsHistoryLimit: 3
+  # No live usage sample available - short-lived batch job, `kubectl top`
+  # only ever catches it "Completed". Conservative placeholder based on
+  # similar lightweight backup/cron tooling.
+  # TODO: verify against live usage (e.g. capture with a metrics scrape
+  # while a run is in progress, or check container runtime cpu stats).
+  resources:
+    requests:
+      cpu: 25m
 controllers:
   postgres:
     revisionHistoryLimit: 3
@@ -57,6 +65,10 @@ controllers:
           repository: postgres
           pullPolicy: IfNotPresent
           tag: 17
+        # No CPU request previously set. Observed usage ~20-27m.
+        resources:
+          requests:
+            cpu: 20m
         env:
         - name: POSTGRES_PORT
           value: 5432
@@ -72,6 +84,10 @@ controllers:
     enabled: false
 grafana:
   revisionHistoryLimit: 1
+  # No CPU request previously set. Observed usage steady at ~67m.
+  resources:
+    requests:
+      cpu: 50m
   persistence:
     enabled: true
     storageClassName: nfs-client

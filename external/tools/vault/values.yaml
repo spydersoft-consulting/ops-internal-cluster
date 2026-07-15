@@ -3,6 +3,11 @@ vault:
     # Enable automatic pod updates on chart/image changes
     updateStrategyType: "RollingUpdate"
 
+    # No CPU request previously set. Observed usage steady at ~126-129m.
+    resources:
+      requests:
+        cpu: 100m
+
     # Pod annotations - opts Vault into the spydersoft.io log pipeline.
     # The vault-audit sidecar (below) tails the audit log file to stdout;
     # Alloy's discovery.relabel "spydersoft_logs" filters by collect=true
@@ -97,3 +102,9 @@ vault:
       ingressClassName: "nginx"
       hosts:
         - host: hcvault.mattgerega.net
+
+  # No CPU request previously set. Observed usage ~10-13m.
+  injector:
+    resources:
+      requests:
+        cpu: 10m

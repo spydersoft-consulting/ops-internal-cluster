@@ -198,6 +198,10 @@ loki:
       size: 10Gi
   gateway:
     replicas: 1
+    # nginx gateway - no CPU request previously set. Observed usage ~20-30m.
+    resources:
+      requests:
+        cpu: 20m
     autoscaling:
       enabled: false
     service:
@@ -225,6 +229,25 @@ loki:
   resultsCache:
     allocatedMemory: 128
     allocatedCPU: 100m
+  # DaemonSet, one pod per node - no CPU request previously set. Observed
+  # usage ~6-14m across the fleet.
+  lokiCanary:
+    resources:
+      requests:
+        cpu: 10m
+  # Rules-ingestion sidecar on the backend pod (loki-sc-rules container) -
+  # no CPU request previously set. Observed usage ~1m, near-idle.
+  sidecar:
+    resources:
+      requests:
+        cpu: 5m
+  # memcached-exporter sidecar shared by chunksCache/resultsCache (only
+  # resultsCache is enabled here) - no CPU request previously set. Observed
+  # usage ~7-9m on loki-results-cache's exporter container.
+  memcachedExporter:
+    resources:
+      requests:
+        cpu: 5m
 serviceMonitor:
   enabled: false
   interval: 1m
