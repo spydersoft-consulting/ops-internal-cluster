@@ -13,6 +13,12 @@ controllers:
           pullPolicy: IfNotPresent
         env:
           TZ: "UTC"
+        # No CPU request previously set. Observed usage ~1m (runs a
+        # periodic speedtest, mostly idle in between); floored to a
+        # sensible minimum.
+        resources:
+          requests:
+            cpu: 5m
         probes:
           liveness:
             enabled: true
