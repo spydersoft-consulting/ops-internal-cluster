@@ -18,6 +18,10 @@ controllers:
           pullPolicy: IfNotPresent
           tag: 0.24.0
           repository: ghcr.io/donkie/spoolman
+        # No CPU request previously set. Observed usage ~6-7m.
+        resources:
+          requests:
+            cpu: 5m
         probes:
           readiness:
             spec:
