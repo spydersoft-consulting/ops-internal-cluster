@@ -7,38 +7,20 @@ mimir-distributed:
           name: mimir-storage-secret
   minio:
     enabled: false
+  # Ingest-storage (Kafka) was the source of the 2026-07 incident: an
+  # ingester with no committed offset replayed a full day of backlog on
+  # startup and OOMed/destabilized nodes. With everything at replicas:1 on a
+  # single Proxmox host there's no failure domain for Kafka to actually
+  # decouple - reverting to classic direct distributor->ingester push
+  # removes the whole failure class. See mimir.structuredConfig below for
+  # the corresponding ingest_storage/push_grpc_method_enabled flip.
   kafka:
-    enabled: true
-    persistence:
-      storageClassName: nfs-client
-    # Had a 1Gi/1cpu request but no limit at all (unbounded). Measured actual
-    # usage is ~154m/250Mi; limit gives headroom without leaving it
-    # ungoverned.
-    resources:
-      requests:
-        cpu: 200m
-        memory: 512Mi
-      limits:
-        cpu: "1"
-        memory: 2Gi
-    # 24h (chart default) meant an ingester with no committed offset (e.g.
-    # after an incident) would replay a full day of backlog on startup - that
-    # replay burst repeatedly OOMed/destabilized nodes during the 2026-07
-    # recovery. 6h keeps enough buffer for a normal restart/maintenance
-    # window while capping the worst-case replay size at ~1.5GB instead of
-    # ~6GB (current 24h usage, measured directly off the PVC).
-    logRetentionHours: 6
-    affinity:
-      podAntiAffinity:
-        preferredDuringSchedulingIgnoredDuringExecution:
-          - weight: 100
-            podAffinityTerm:
-              labelSelector:
-                matchExpressions:
-                  - key: app.kubernetes.io/component
-                    operator: In
-                    values: [distributor, ingester, store-gateway, kafka, write, read, backend, compactor]
-              topologyKey: kubernetes.io/hostname
+    enabled: false
+  # Only needed to coordinate zone-by-zone rollouts; ingester/store_gateway
+  # zoneAwareReplication are both disabled below (single physical host, no
+  # zone-level HA to protect), so there's nothing left for it to coordinate.
+  rollout_operator:
+    enabled: false
   alertmanager:
     enabled: true
     # GitOps (ArgoCD) is the source of truth for rollback, not `kubectl
@@ -282,26 +264,11 @@ mimir-distributed:
         mountPath: /etc/mimir-runtime-overrides
         readOnly: true
   query_scheduler:
-    # Chart default is 2 (HA) - same reasoning as querier above.
-    replicas: 1
-    revisionHistoryLimit: 1
-    # Chart default (100m/128Mi request, no limit) was skipped by the
-    # 2026-07-14 tuning pass. Measured actual usage is ~12m/17Mi.
-    resources:
-      requests:
-        cpu: 20m
-        memory: 64Mi
-      limits:
-        cpu: 100m
-        memory: 256Mi
-    extraVolumes:
-      - name: runtime-overrides
-        configMap:
-          name: mimir-distributed-runtime-overrides
-    extraVolumeMounts:
-      - name: runtime-overrides
-        mountPath: /etc/mimir-runtime-overrides
-        readOnly: true
+    # Exists to let query-frontend fan out across multiple queriers/handle
+    # query-sharding fanout at scale. With a single querier and trivial query
+    # volume, query-frontend dispatches to the querier directly - the chart
+    # handles the conditional wiring, no scheduler_address left dangling.
+    enabled: false
   overrides_exporter:
     revisionHistoryLimit: 1
     # Chart default (100m/128Mi request, no limit) was skipped by the
@@ -346,18 +313,14 @@ mimir-distributed:
         file: /etc/mimir-runtime-overrides/runtime-overrides.yaml
         period: 10s
 
-      # Only affects ingesters with no previously-committed Kafka offset (e.g.
-      # zone-b/zone-c after the 2026-07 incident). Ingesters with a real
-      # committed offset (zone-a) are unaffected and keep consuming from where
-      # they left off. Defaults to "start", which replays the full Kafka
-      # retention window (24h) on first startup - that backlog replay was
-      # repeatedly OOMing/destabilizing nodes during recovery. "end" skips the
-      # backlog and starts from the live tip instead; the data isn't lost
-      # (zone-a already has it and ships blocks to durable S3 storage), we're
-      # just accepting a gap in zone-b/zone-c's local redundant copy.
+      # Reverted to classic architecture (direct distributor->ingester push)
+      # - see kafka.enabled: false above for why. push_grpc_method_enabled
+      # re-enables the classic push RPC that ingest_storage otherwise
+      # replaces with the Kafka consume path.
       ingest_storage:
-        kafka:
-          consume_from_position_at_startup: end
+        enabled: false
+      ingester:
+        push_grpc_method_enabled: true
 
       alertmanager_storage:
         backend: s3
