@@ -264,11 +264,26 @@ mimir-distributed:
         mountPath: /etc/mimir-runtime-overrides
         readOnly: true
   query_scheduler:
-    # Exists to let query-frontend fan out across multiple queriers/handle
-    # query-sharding fanout at scale. With a single querier and trivial query
-    # volume, query-frontend dispatches to the querier directly - the chart
-    # handles the conditional wiring, no scheduler_address left dangling.
-    enabled: false
+    # The 2026-07-14 tuning pass disabled this assuming the chart would
+    # clear frontend/frontend_worker scheduler_address when disabled - it
+    # doesn't (mimir-distributed always renders a literal
+    # mimir-query-scheduler-headless address in both). With no scheduler
+    # behind that address, no querier worker ever connects to the frontend
+    # and queries sit queued until the client (Grafana) times out. Tried
+    # blanking scheduler_address instead of running the scheduler, but
+    # Mimir's query-frontend module fails to start ("missing address") when
+    # it's set to "" - re-enabling the scheduler is the supported way to
+    # not hardcode a dangling address. Single replica - only one querier,
+    # no fan-out to coordinate.
+    enabled: true
+    replicas: 1
+    resources:
+      requests:
+        cpu: 20m
+        memory: 64Mi
+      limits:
+        cpu: 100m
+        memory: 256Mi
   overrides_exporter:
     revisionHistoryLimit: 1
     # Chart default (100m/128Mi request, no limit) was skipped by the
@@ -334,19 +349,6 @@ mimir-distributed:
           # "at least 2 live replicas required, could only find 1" since -
           # no metrics ingested. Matches the single-ingester topology.
           replication_factor: 1
-
-      # query_scheduler.enabled: false above only skips deploying the
-      # scheduler - it does NOT clear these addresses (the chart always
-      # renders them, see mimir-distributed chart values.yaml). With them
-      # left pointing at a scheduler that doesn't exist, frontend/querier
-      # both spend their time on failed scheduler discovery and no querier
-      # worker ever connects to the frontend directly, so queries just sit
-      # queued until the client (Grafana) times out - the upstream-timeout
-      # symptom. Clearing both forces direct frontend<->querier wiring.
-      frontend:
-        scheduler_address: ""
-      frontend_worker:
-        scheduler_address: ""
 
       alertmanager_storage:
         backend: s3
