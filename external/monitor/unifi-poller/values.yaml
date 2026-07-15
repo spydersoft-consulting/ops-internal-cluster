@@ -41,6 +41,13 @@ controllers:
           UP_UNIFI_DEFAULT_URL: https://unifi
           UP_INFLUXDB_DISABLE: true
           TZ: America/New_York
+        # No CPU request previously set. Observed usage was bursty
+        # (~1-22m across samples, tracks UniFi controller poll interval).
+        # Requested below the low end of steady-state rather than the
+        # bursts.
+        resources:
+          requests:
+            cpu: 10m
     replicas: 1
     enabled: true
     revisionHistoryLimit: 3
