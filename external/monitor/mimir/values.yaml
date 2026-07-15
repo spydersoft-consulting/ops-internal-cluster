@@ -327,6 +327,26 @@ mimir-distributed:
         enabled: false
       ingester:
         push_grpc_method_enabled: true
+        ring:
+          # Chart default is 3 (quorum write needs 2 live replicas). The
+          # 2026-07-14 tuning pass dropped ingester replicas to 1 without
+          # updating this, so every distributor write has been failing with
+          # "at least 2 live replicas required, could only find 1" since -
+          # no metrics ingested. Matches the single-ingester topology.
+          replication_factor: 1
+
+      # query_scheduler.enabled: false above only skips deploying the
+      # scheduler - it does NOT clear these addresses (the chart always
+      # renders them, see mimir-distributed chart values.yaml). With them
+      # left pointing at a scheduler that doesn't exist, frontend/querier
+      # both spend their time on failed scheduler discovery and no querier
+      # worker ever connects to the frontend directly, so queries just sit
+      # queued until the client (Grafana) times out - the upstream-timeout
+      # symptom. Clearing both forces direct frontend<->querier wiring.
+      frontend:
+        scheduler_address: ""
+      frontend_worker:
+        scheduler_address: ""
 
       alertmanager_storage:
         backend: s3
