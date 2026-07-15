@@ -44,6 +44,17 @@ mimir-distributed:
     # GitOps (ArgoCD) is the source of truth for rollback, not `kubectl
     # rollout undo` - no need to keep more than the current revision around.
     revisionHistoryLimit: 1
+    # Chart default (10m/32Mi request, no limit) was skipped by the 2026-07-14
+    # tuning pass along with the rest of this file. Actual usage is ~23m/32Mi -
+    # the old CPU request was already below actual usage. Raised request to
+    # cover it and added a limit for an OOM ceiling.
+    resources:
+      requests:
+        cpu: 30m
+        memory: 64Mi
+      limits:
+        cpu: 150m
+        memory: 256Mi
     persistentVolume:
       storageClass: nfs-client
     extraVolumes:
@@ -208,6 +219,19 @@ mimir-distributed:
   ruler:
     enabled: true
     revisionHistoryLimit: 1
+    # Chart default (100m/128Mi request, no limit) was skipped by the
+    # 2026-07-14 tuning pass. Measured actual usage is ~42m/61Mi; request
+    # trimmed to match with headroom, limit added for an OOM ceiling. (The
+    # 5 restarts observed same-day were a startup race waiting on
+    # mimir-kafka-0 during rollout, not resource pressure - unrelated to
+    # this change.)
+    resources:
+      requests:
+        cpu: 60m
+        memory: 96Mi
+      limits:
+        cpu: 300m
+        memory: 384Mi
     extraVolumes:
       - name: runtime-overrides
         configMap:
@@ -221,6 +245,15 @@ mimir-distributed:
     # host, and query volume here is trivial.
     replicas: 1
     revisionHistoryLimit: 1
+    # Chart default (100m/128Mi request, no limit) was skipped by the
+    # 2026-07-14 tuning pass. Measured actual usage is ~29m/31Mi.
+    resources:
+      requests:
+        cpu: 30m
+        memory: 64Mi
+      limits:
+        cpu: 150m
+        memory: 256Mi
     extraVolumes:
       - name: runtime-overrides
         configMap:
@@ -231,6 +264,15 @@ mimir-distributed:
         readOnly: true
   query_frontend:
     revisionHistoryLimit: 1
+    # Chart default (100m/128Mi request, no limit) was skipped by the
+    # 2026-07-14 tuning pass. Measured actual usage is ~28m/29Mi.
+    resources:
+      requests:
+        cpu: 30m
+        memory: 64Mi
+      limits:
+        cpu: 150m
+        memory: 256Mi
     extraVolumes:
       - name: runtime-overrides
         configMap:
@@ -243,6 +285,15 @@ mimir-distributed:
     # Chart default is 2 (HA) - same reasoning as querier above.
     replicas: 1
     revisionHistoryLimit: 1
+    # Chart default (100m/128Mi request, no limit) was skipped by the
+    # 2026-07-14 tuning pass. Measured actual usage is ~12m/17Mi.
+    resources:
+      requests:
+        cpu: 20m
+        memory: 64Mi
+      limits:
+        cpu: 100m
+        memory: 256Mi
     extraVolumes:
       - name: runtime-overrides
         configMap:
@@ -253,6 +304,15 @@ mimir-distributed:
         readOnly: true
   overrides_exporter:
     revisionHistoryLimit: 1
+    # Chart default (100m/128Mi request, no limit) was skipped by the
+    # 2026-07-14 tuning pass. Measured actual usage is ~10m/17Mi.
+    resources:
+      requests:
+        cpu: 20m
+        memory: 64Mi
+      limits:
+        cpu: 100m
+        memory: 256Mi
     extraVolumes:
       - name: runtime-overrides
         configMap:
