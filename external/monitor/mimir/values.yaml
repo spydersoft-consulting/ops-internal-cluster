@@ -284,6 +284,14 @@ mimir-distributed:
       limits:
         cpu: 100m
         memory: 256Mi
+    extraVolumes:
+      - name: runtime-overrides
+        configMap:
+          name: mimir-distributed-runtime-overrides
+    extraVolumeMounts:
+      - name: runtime-overrides
+        mountPath: /etc/mimir-runtime-overrides
+        readOnly: true
   overrides_exporter:
     revisionHistoryLimit: 1
     # Chart default (100m/128Mi request, no limit) was skipped by the
