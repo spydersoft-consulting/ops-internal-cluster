@@ -270,13 +270,23 @@ mimir-distributed:
     replicas: 1
     revisionHistoryLimit: 1
     # Chart default (100m/128Mi request, no limit) was skipped by the
-    # 2026-07-14 tuning pass. Measured actual usage is ~29m/31Mi.
+    # 2026-07-14 tuning pass, which measured ~29m/31Mi steady-state and set
+    # a 150m CPU limit accordingly. That missed query-time bursts: the
+    # Mimir/Overview dashboard (and others) shard queries 16 ways per panel
+    # across multiple concurrent panels, and 150m throttled hard under that
+    # fan-out (measured ~13% of CPU periods throttled even at ambient load
+    # via container_cpu_cfs_throttled_periods_total/container_cpu_cfs_periods_total).
+    # That throttling was slow enough that query-frontend gave up waiting,
+    # producing "query not found, cancelled or response already received"
+    # errors and dashboard timeouts (2026-07-16). Node has headroom (4 CPU,
+    # ~38% used) - raised the limit well above GOMAXPROCS=5's worth of burst
+    # room rather than tuning to steady-state average.
     resources:
       requests:
         cpu: 30m
         memory: 64Mi
       limits:
-        cpu: 150m
+        cpu: "1"
         memory: 256Mi
     extraVolumes:
       - name: runtime-overrides
