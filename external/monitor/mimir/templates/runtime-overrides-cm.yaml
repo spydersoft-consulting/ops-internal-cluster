@@ -18,6 +18,10 @@ data:
         max_global_series_per_user: 500000
         ingestion_rate: 200000
         ingestion_burst_size: 400000
+        # Default (20) is one short of the compiled Mimir mixin's
+        # mimir_querier_api group (21 rules) - mimirtool rules load fails
+        # with "per rule group limit exceeded" otherwise.
+        ruler_max_rules_per_rule_group: 30
 
       # Production cluster - 2 years retention
       production:
@@ -25,6 +29,7 @@ data:
         max_global_series_per_user: 1000000
         ingestion_rate: 400000
         ingestion_burst_size: 1000000
+        ruler_max_rules_per_rule_group: 30
 
       # Non-production cluster - 90 days retention
       nonproduction:
@@ -32,3 +37,4 @@ data:
         max_global_series_per_user: 250000
         ingestion_rate: 100000
         ingestion_burst_size: 200000
+        ruler_max_rules_per_rule_group: 30
