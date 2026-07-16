@@ -10,12 +10,15 @@ metadata:
 data:
   # Extracted from the live Grafana instance - see infrastructure-dashboards-configmap.yaml
   # for the full note on datasource UID rewriting during extraction.
+  #
+  # unifi-poller-client-dpi lives in its own ConfigMap
+  # (network-unifi-client-dpi-configmap.yaml) - it's 834KB on its own and
+  # combining it here would push this ConfigMap over Kubernetes' 1MiB
+  # object limit.
   synology-nas.json: |-
 {{ .Files.Get "dashboard-src/synology-nas.json" | indent 4 }}
   speedtest-exporter.json: |-
 {{ .Files.Get "dashboard-src/speedtest-exporter.json" | indent 4 }}
-  unifi-poller-client-dpi.json: |-
-{{ .Files.Get "dashboard-src/unifi-poller-client-dpi.json" | indent 4 }}
   unifi-poller-network-sites.json: |-
 {{ .Files.Get "dashboard-src/unifi-poller-network-sites.json" | indent 4 }}
   unifi-poller-uap-insights.json: |-

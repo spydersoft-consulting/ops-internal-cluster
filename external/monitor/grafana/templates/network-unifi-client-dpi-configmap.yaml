@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-network-unifi-client-dpi-dashboard
+  namespace: {{ .Release.Namespace }}
+  labels:
+    grafana_dashboard: "1"
+  annotations:
+    grafana_folder: Network
+data:
+  # Split out from network-dashboards-configmap.yaml: at 834KB on its
+  # own, combining it with anything else there would exceed Kubernetes'
+  # 1MiB ConfigMap size limit.
+  unifi-poller-client-dpi.json: |-
+{{ .Files.Get "dashboard-src/unifi-poller-client-dpi.json" | indent 4 }}

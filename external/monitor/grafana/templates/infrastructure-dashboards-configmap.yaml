@@ -18,10 +18,14 @@ data:
   # added in this pass and pointed directly at randomly-generated UIDs
   # from manually-created datasources (now duplicates - see cleanup
   # note below). kubernetes-cluster/kubernetes-ingress-nginx/main/
-  # node-exporter-full/rabbitmq-overview were actually already broken -
-  # they pointed at a datasource UID (fbed2c16-...) that no longer
-  # exists in Grafana at all - repointed to Mimir-internal since they're
-  # all cluster-wide infra metrics.
+  # rabbitmq-overview were actually already broken - they pointed at a
+  # datasource UID (fbed2c16-...) that no longer exists in Grafana at
+  # all - repointed to Mimir-internal since they're all cluster-wide
+  # infra metrics.
+  #
+  # node-exporter-full lives in its own ConfigMap (node-exporter-
+  # dashboard-configmap.yaml) - it's 674KB on its own and combining it
+  # here would push this ConfigMap over Kubernetes' 1MiB object limit.
   garage.json: |-
 {{ .Files.Get "dashboard-src/garage.json" | indent 4 }}
   vault.json: |-
@@ -32,13 +36,5 @@ data:
 {{ .Files.Get "dashboard-src/kubernetes-ingress-nginx.json" | indent 4 }}
   main.json: |-
 {{ .Files.Get "dashboard-src/main.json" | indent 4 }}
-  # Was already pointing at the same orphaned/deleted datasource as the
-  # others above, so it's unclear this ever had live data - node_exporter
-  # isn't scraped anywhere in the current Alloy configs (see the
-  # Kubernetes dashboards' notes on the same gap). Kept as-is rather than
-  # dropped since it costs nothing sitting unused, but don't expect data
-  # until node_exporter actually gets deployed to cluster nodes.
-  node-exporter-full.json: |-
-{{ .Files.Get "dashboard-src/node-exporter-full.json" | indent 4 }}
   rabbitmq-overview.json: |-
 {{ .Files.Get "dashboard-src/rabbitmq-overview.json" | indent 4 }}
