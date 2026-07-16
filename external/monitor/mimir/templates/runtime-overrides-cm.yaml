@@ -22,6 +22,7 @@ data:
         # mimir_querier_api group (21 rules) - mimirtool rules load fails
         # with "per rule group limit exceeded" otherwise.
         ruler_max_rules_per_rule_group: 30
+        cardinality_analysis_enabled: true
 
       # Production cluster - 2 years retention
       production:
