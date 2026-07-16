@@ -507,6 +507,139 @@ grafana:
                 description: Blocks are failing to resync - potential data-loss risk for Mimir/Loki/Tempo backing storage.
               labels:
                 severity: critical
+
+        - orgId: 1
+          name: proxmox-health
+          folder: Observability Stack
+          interval: 5m
+          rules:
+            # Host-down uses absent_over_time rather than the up == 0 idiom used
+            # elsewhere in this file: Alloy on pxdell/pxhp pushes via remote_write
+            # (see the Proxmox monitoring follow-up plan) instead of being
+            # centrally scraped, so a dead host's `up` series goes stale and
+            # disappears rather than reporting 0. One rule per host because
+            # absent_over_time only preserves labels from equality matchers, not
+            # the regex match a single combined rule would need.
+            - uid: proxmox-host-down-pmxdell
+              title: Proxmox Host Down (pmxdell)
+              condition: A
+              for: 10m
+              noDataState: OK
+              data:
+                - refId: A
+                  relativeTimeRange:
+                    from: 600
+                    to: 0
+                  datasourceUid: mimir-internal
+                  model:
+                    expr: absent_over_time(up{job="node", host="pmxdell"}[10m])
+                    intervalMs: 60000
+                    maxDataPoints: 43200
+              annotations:
+                summary: pmxdell has not reported metrics in 10+ minutes.
+                description: Alloy on pmxdell may be down, or the host itself is unreachable.
+              labels:
+                severity: critical
+            - uid: proxmox-host-down-pxhp
+              title: Proxmox Host Down (pxhp)
+              condition: A
+              for: 10m
+              noDataState: OK
+              data:
+                - refId: A
+                  relativeTimeRange:
+                    from: 600
+                    to: 0
+                  datasourceUid: mimir-internal
+                  model:
+                    expr: absent_over_time(up{job="node", host="pxhp"}[10m])
+                    intervalMs: 60000
+                    maxDataPoints: 43200
+              annotations:
+                summary: pxhp has not reported metrics in 10+ minutes.
+                description: Alloy on pxhp may be down, or the host itself is unreachable.
+              labels:
+                severity: critical
+            - uid: proxmox-host-high-load
+              title: Proxmox Host High CPU Load
+              condition: A
+              for: 10m
+              noDataState: OK
+              data:
+                - refId: A
+                  relativeTimeRange:
+                    from: 600
+                    to: 0
+                  datasourceUid: mimir-internal
+                  model:
+                    expr: pve_cpu_usage_ratio{id=~"node/.+"} > 0.85
+                    intervalMs: 60000
+                    maxDataPoints: 43200
+              annotations:
+                summary: A Proxmox host is over 85% CPU utilization.
+                description: Check the id label for which host - see pve_cpu_usage_ratio for the exact value.
+              labels:
+                severity: warning
+            - uid: proxmox-storage-70
+              title: Proxmox Storage 70% Full
+              condition: A
+              for: 10m
+              noDataState: OK
+              data:
+                - refId: A
+                  relativeTimeRange:
+                    from: 600
+                    to: 0
+                  datasourceUid: mimir-internal
+                  model:
+                    expr: (pve_disk_usage_bytes{id=~"storage/.+"} / pve_disk_size_bytes{id=~"storage/.+"}) > 0.7
+                    intervalMs: 60000
+                    maxDataPoints: 43200
+              annotations:
+                summary: A Proxmox storage pool is over 70% full.
+                description: Check the id label for which storage pool - consider adding capacity.
+              labels:
+                severity: warning
+            - uid: proxmox-storage-85
+              title: Proxmox Storage 85% Full
+              condition: A
+              for: 10m
+              noDataState: OK
+              data:
+                - refId: A
+                  relativeTimeRange:
+                    from: 600
+                    to: 0
+                  datasourceUid: mimir-internal
+                  model:
+                    expr: (pve_disk_usage_bytes{id=~"storage/.+"} / pve_disk_size_bytes{id=~"storage/.+"}) > 0.85
+                    intervalMs: 60000
+                    maxDataPoints: 43200
+              annotations:
+                summary: A Proxmox storage pool is over 85% full - CRITICAL.
+                description: Check the id label for which storage pool - immediate action required.
+              labels:
+                severity: critical
+            - uid: proxmox-guest-stopped
+              title: Proxmox VM/CT Stopped
+              condition: A
+              for: 15m
+              noDataState: OK
+              data:
+                - refId: A
+                  relativeTimeRange:
+                    from: 900
+                    to: 0
+                  datasourceUid: mimir-internal
+                  model:
+                    expr: pve_up{id=~"qemu/.+|lxc/.+"} == 0
+                    intervalMs: 60000
+                    maxDataPoints: 43200
+              annotations:
+                summary: A Proxmox VM or CT has been stopped for 15+ minutes.
+                description: Check the id label for which guest. Can't distinguish an intentional shutdown from an unexpected one from this metric alone - silence if expected.
+              labels:
+                severity: warning
 configMaps:
   postgres-init-data:
     enabled: true

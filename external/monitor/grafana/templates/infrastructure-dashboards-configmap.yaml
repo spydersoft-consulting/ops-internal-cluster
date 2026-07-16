@@ -28,3 +28,12 @@ data:
 {{ .Files.Get "dashboard-src/garage.json" | indent 4 }}
   vault.json: |-
 {{ .Files.Get "dashboard-src/vault.json" | indent 4 }}
+  # grafana.com ID 10347 ("Proxmox via Prometheus"), fed by node_exporter +
+  # prometheus-pve-exporter + Alloy running on pxdell/pxhp (see the Proxmox
+  # monitoring follow-up plan). Hardcoded to mimir-internal like
+  # garage/vault above rather than given a datasource template variable:
+  # the Proxmox hosts aren't part of any K8s cluster, so there's no
+  # production/nonproduction variant to switch between, only ever the one
+  # internal-tenant source.
+  proxmox-via-prometheus.json: |-
+{{ .Files.Get "dashboard-src/proxmox-via-prometheus.json" | indent 4 }}
