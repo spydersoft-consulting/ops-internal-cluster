@@ -1,0 +1,41 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-kubernetes-dashboards
+  namespace: {{ .Release.Namespace }}
+  labels:
+    grafana_dashboard: "1"
+  annotations:
+    grafana_folder: Kubernetes
+data:
+  # dotdc/grafana-dashboards-kubernetes (https://github.com/dotdc/grafana-dashboards-kubernetes),
+  # unmodified except for this note. Each has its own `datasource` template
+  # variable (type: datasource, query: prometheus) so pick Mimir-internal /
+  # Mimir-production / Mimir-nonproduction per cluster at view time, and a
+  # `cluster` variable driven by kube_node_info{cluster=...} which Alloy's
+  # remote_write external_labels already stamp on every series.
+  #
+  # "Global" (15757) and "Nodes" (15759) are intentionally NOT included -
+  # both lean heavily on node_exporter (node_cpu_seconds_total,
+  # node_memory_*, node_filesystem_*, node_network_*) for their headline
+  # panels, and we don't run node_exporter on any K8s node yet, only
+  # kubelet+cAdvisor. Add them once that gap is closed (same node_exporter
+  # follow-up as Proxmox, just on cluster nodes instead of the
+  # hypervisors) - see kube-state-metrics/README or the observability plan
+  # for the tracked gap.
+  #
+  # "Namespaces" (15758) is included but a handful of its stat panels
+  # (configmap/secret/service/ingress/networkpolicy counts, and anything
+  # keyed off kube_*_labels) will show "No data": we deliberately scoped
+  # the kube-state-metrics collector list down to
+  # daemonsets/deployments/hpas/jobs/cronjobs/nodes/pvc/pv/pods/
+  # replicasets/statefulsets (see cluster-tools/tools/kube-state-metrics/
+  # values.yaml) and denylisted kube_*_labels/kube_*_annotations as
+  # unbounded-cardinality. Everything else on this dashboard (CPU/memory
+  # per namespace, restarts, network, deployment health, PVC usage) is
+  # fully populated. Widen the collector list only if one of those empty
+  # panels turns out to matter.
+  k8s-views-namespaces.json: |-
+{{ .Files.Get "dashboard-src/k8s-views-namespaces.json" | indent 4 }}
+  k8s-views-pods.json: |-
+{{ .Files.Get "dashboard-src/k8s-views-pods.json" | indent 4 }}

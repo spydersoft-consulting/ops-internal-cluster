@@ -26,6 +26,15 @@ mimir-distributed:
     # GitOps (ArgoCD) is the source of truth for rollback, not `kubectl
     # rollout undo` - no need to keep more than the current revision around.
     revisionHistoryLimit: 1
+    # Self-monitoring: Alloy's annotation-based discovery (metrics.spydersoft.io)
+    # picks this up so the Mimir mixin dashboards below have data. There's no
+    # prometheus-operator here for ServiceMonitor, hence the annotations instead
+    # of metaMonitoring.serviceMonitor.
+    service:
+      annotations:
+        metrics.spydersoft.io/scrape: "true"
+        metrics.spydersoft.io/port: "8080"
+        metrics.spydersoft.io/path: "/metrics"
     # Chart default (10m/32Mi request, no limit) was skipped by the 2026-07-14
     # tuning pass along with the rest of this file. Actual usage is ~23m/32Mi -
     # the old CPU request was already below actual usage. Raised request to
@@ -90,6 +99,11 @@ mimir-distributed:
       - name: runtime-overrides
         mountPath: /etc/mimir-runtime-overrides
         readOnly: true
+    service:
+      annotations:
+        metrics.spydersoft.io/scrape: "true"
+        metrics.spydersoft.io/port: "8080"
+        metrics.spydersoft.io/path: "/metrics"
   ingester:
     # Was 3 (zone-a/b/c), one full replica of the series set per zone -
     # zone anti-affinity protects against losing a physical node, which
@@ -126,6 +140,11 @@ mimir-distributed:
       - name: runtime-overrides
         mountPath: /etc/mimir-runtime-overrides
         readOnly: true
+    service:
+      annotations:
+        metrics.spydersoft.io/scrape: "true"
+        metrics.spydersoft.io/port: "8080"
+        metrics.spydersoft.io/path: "/metrics"
   store_gateway:
     # Was 3 (zone-a/b/c) for the same reason as ingester above - dropped
     # to match, no zone-level HA benefit on a single physical host.
@@ -163,6 +182,11 @@ mimir-distributed:
       - name: runtime-overrides
         mountPath: /etc/mimir-runtime-overrides
         readOnly: true
+    service:
+      annotations:
+        metrics.spydersoft.io/scrape: "true"
+        metrics.spydersoft.io/port: "8080"
+        metrics.spydersoft.io/path: "/metrics"
   compactor:
     # Had only the chart default (100m/512Mi request, no limit) - measured
     # actual usage is ~26m/1.4Gi (memory ~2.7x over the old request; no
@@ -196,6 +220,11 @@ mimir-distributed:
       - name: runtime-overrides
         mountPath: /etc/mimir-runtime-overrides
         readOnly: true
+    service:
+      annotations:
+        metrics.spydersoft.io/scrape: "true"
+        metrics.spydersoft.io/port: "8080"
+        metrics.spydersoft.io/path: "/metrics"
   chunks-cache:
     enabled: false
     replicas: 2
@@ -229,6 +258,11 @@ mimir-distributed:
       - name: runtime-overrides
         mountPath: /etc/mimir-runtime-overrides
         readOnly: true
+    service:
+      annotations:
+        metrics.spydersoft.io/scrape: "true"
+        metrics.spydersoft.io/port: "8080"
+        metrics.spydersoft.io/path: "/metrics"
   querier:
     # Chart default is 2 (HA query path) - no benefit on a single physical
     # host, and query volume here is trivial.
@@ -251,6 +285,11 @@ mimir-distributed:
       - name: runtime-overrides
         mountPath: /etc/mimir-runtime-overrides
         readOnly: true
+    service:
+      annotations:
+        metrics.spydersoft.io/scrape: "true"
+        metrics.spydersoft.io/port: "8080"
+        metrics.spydersoft.io/path: "/metrics"
   query_frontend:
     revisionHistoryLimit: 1
     # Chart default (100m/128Mi request, no limit) was skipped by the
@@ -270,6 +309,11 @@ mimir-distributed:
       - name: runtime-overrides
         mountPath: /etc/mimir-runtime-overrides
         readOnly: true
+    service:
+      annotations:
+        metrics.spydersoft.io/scrape: "true"
+        metrics.spydersoft.io/port: "8080"
+        metrics.spydersoft.io/path: "/metrics"
   query_scheduler:
     # The 2026-07-14 tuning pass disabled this assuming the chart would
     # clear frontend/frontend_worker scheduler_address when disabled - it
@@ -395,7 +439,21 @@ mimir-distributed:
         compactor_blocks_retention_period: 1y
         out_of_order_time_window:
   metaMonitoring:
+    # No prometheus-operator here, so this stays disabled - self-monitoring
+    # goes through the metrics.spydersoft.io annotations added to each
+    # component's `service:` block above (Alloy's existing annotation-based
+    # discovery), not a ServiceMonitor CRD.
     serviceMonitor:
       enabled: false
       interval: 1m
       scrapeTimeout: 30s
+    # Ships the official Mimir mixin dashboards (Writes/Reads/Compactor/
+    # Alertmanager/Ruler/Overview etc.) as grafana_dashboard-labeled
+    # ConfigMaps, same sidecar mechanism as the hand-picked dashboards in
+    # the grafana chart. Verify job-label matching once deployed - the
+    # mixin expects the chart's default resource naming, which nameOverride/
+    # fullnameOverride (both null here) preserves.
+    dashboards:
+      enabled: true
+      annotations:
+        grafana_folder: Mimir

@@ -133,6 +133,351 @@ grafana:
       nginx.ingress.kubernetes.io/service-upstream: "true"
       kubernetes.io/ingress.class: nginx
     pathType: Prefix
+  sidecar:
+    dashboards:
+      enabled: true
+      label: grafana_dashboard
+      folderAnnotation: grafana_folder
+      provider:
+        foldersFromFilesStructure: false
+  datasources:
+    datasources.yaml:
+      apiVersion: 1
+      datasources:
+        # Explicit `uid`s (rather than letting Grafana generate one) so
+        # alert rules and dashboards can reference these deterministically
+        # in file-based provisioning instead of a UID that only exists
+        # after the datasource is created.
+        - name: Mimir-internal
+          uid: mimir-internal
+          type: prometheus
+          access: proxy
+          url: http://mimir-gateway.monitoring.svc.cluster.local/prometheus
+          jsonData:
+            httpHeaderName1: X-Scope-OrgID
+          secureJsonData:
+            httpHeaderValue1: internal
+        - name: Mimir-production
+          uid: mimir-production
+          type: prometheus
+          access: proxy
+          url: http://mimir-gateway.monitoring.svc.cluster.local/prometheus
+          jsonData:
+            httpHeaderName1: X-Scope-OrgID
+          secureJsonData:
+            httpHeaderValue1: production
+        - name: Mimir-nonproduction
+          uid: mimir-nonproduction
+          type: prometheus
+          access: proxy
+          url: http://mimir-gateway.monitoring.svc.cluster.local/prometheus
+          jsonData:
+            httpHeaderName1: X-Scope-OrgID
+          secureJsonData:
+            httpHeaderValue1: nonproduction
+        - name: Loki-internal
+          uid: loki-internal
+          type: loki
+          access: proxy
+          url: http://loki-gateway.monitoring.svc.cluster.local
+          jsonData:
+            httpHeaderName1: X-Scope-OrgID
+          secureJsonData:
+            httpHeaderValue1: internal
+        - name: Loki-production
+          uid: loki-production
+          type: loki
+          access: proxy
+          url: http://loki-gateway.monitoring.svc.cluster.local
+          jsonData:
+            httpHeaderName1: X-Scope-OrgID
+          secureJsonData:
+            httpHeaderValue1: production
+        - name: Loki-nonproduction
+          uid: loki-nonproduction
+          type: loki
+          access: proxy
+          url: http://loki-gateway.monitoring.svc.cluster.local
+          jsonData:
+            httpHeaderName1: X-Scope-OrgID
+          secureJsonData:
+            httpHeaderValue1: nonproduction
+        - name: Tempo-internal
+          uid: tempo-internal
+          type: tempo
+          access: proxy
+          url: http://tempo-gateway.monitoring.svc.cluster.local
+          jsonData:
+            httpHeaderName1: X-Scope-OrgID
+          secureJsonData:
+            httpHeaderValue1: internal
+        - name: Tempo-production
+          uid: tempo-production
+          type: tempo
+          access: proxy
+          url: http://tempo-gateway.monitoring.svc.cluster.local
+          jsonData:
+            httpHeaderName1: X-Scope-OrgID
+          secureJsonData:
+            httpHeaderValue1: production
+        - name: Tempo-nonproduction
+          uid: tempo-nonproduction
+          type: tempo
+          access: proxy
+          url: http://tempo-gateway.monitoring.svc.cluster.local
+          jsonData:
+            httpHeaderName1: X-Scope-OrgID
+          secureJsonData:
+            httpHeaderValue1: nonproduction
+  alerting:
+    rules.yaml:
+      apiVersion: 1
+      groups:
+        - orgId: 1
+          name: kubernetes-health
+          folder: Kubernetes
+          interval: 1m
+          rules:
+            - uid: kube-node-not-ready
+              title: Kubernetes Node Not Ready
+              condition: A
+              for: 10m
+              data:
+                - refId: A
+                  relativeTimeRange:
+                    from: 300
+                    to: 0
+                  datasourceUid: mimir-internal
+                  model:
+                    expr: kube_node_status_condition{condition="Ready", status="true"} == 0
+                    intervalMs: 60000
+                    maxDataPoints: 43200
+              annotations:
+                summary: A Kubernetes node has been reporting condition Ready=false for 10+ minutes.
+                description: Check node, cluster, and pod labels on the firing instance for which node/cluster.
+              labels:
+                severity: critical
+            - uid: kube-pod-crashlooping
+              title: Kubernetes Pod CrashLoopBackOff
+              condition: A
+              for: 10m
+              data:
+                - refId: A
+                  relativeTimeRange:
+                    from: 300
+                    to: 0
+                  datasourceUid: mimir-internal
+                  model:
+                    expr: kube_pod_container_status_waiting_reason{reason="CrashLoopBackOff"} == 1
+                    intervalMs: 60000
+                    maxDataPoints: 43200
+              annotations:
+                summary: A container has been in CrashLoopBackOff for 10+ minutes.
+                description: Check namespace/pod/container/cluster labels on the firing instance.
+              labels:
+                severity: warning
+            - uid: kube-deployment-replicas-unavailable
+              title: Kubernetes Deployment Replicas Unavailable
+              condition: A
+              for: 15m
+              data:
+                - refId: A
+                  relativeTimeRange:
+                    from: 300
+                    to: 0
+                  datasourceUid: mimir-internal
+                  model:
+                    expr: kube_deployment_status_replicas_unavailable > 0
+                    intervalMs: 60000
+                    maxDataPoints: 43200
+              annotations:
+                summary: A Deployment has had unavailable replicas for 15+ minutes.
+                description: Check namespace/deployment/cluster labels on the firing instance.
+              labels:
+                severity: warning
+            - uid: kube-pvc-pending
+              title: Kubernetes PVC Pending
+              condition: A
+              for: 15m
+              data:
+                - refId: A
+                  relativeTimeRange:
+                    from: 300
+                    to: 0
+                  datasourceUid: mimir-internal
+                  model:
+                    expr: kube_persistentvolumeclaim_status_phase{phase="Pending"} == 1
+                    intervalMs: 60000
+                    maxDataPoints: 43200
+              annotations:
+                summary: A PVC has been stuck Pending for 15+ minutes.
+                description: Check namespace/persistentvolumeclaim/cluster labels - likely a storage class/provisioner issue.
+              labels:
+                severity: warning
+      
+        - orgId: 1
+          name: observability-stack-health
+          folder: Observability Stack
+          interval: 1m
+          rules:
+            - uid: mimir-component-down
+              title: Mimir Component Down
+              condition: A
+              for: 5m
+              data:
+                - refId: A
+                  relativeTimeRange:
+                    from: 300
+                    to: 0
+                  datasourceUid: mimir-internal
+                  model:
+                    expr: up{job=~"mimir-(distributor|ingester|compactor|store-gateway|querier|query-frontend|ruler|alertmanager)"} == 0
+                    intervalMs: 60000
+                    maxDataPoints: 43200
+              annotations:
+                summary: A Mimir component has been down for 5+ minutes.
+                description: Check the job label on the firing instance for which component.
+              labels:
+                severity: critical
+            - uid: mimir-samples-discarded
+              title: Mimir Discarding Samples
+              condition: A
+              for: 10m
+              data:
+                - refId: A
+                  relativeTimeRange:
+                    from: 900
+                    to: 0
+                  datasourceUid: mimir-internal
+                  model:
+                    expr: sum by (reason) (increase(cortex_discarded_samples_total[15m])) > 0
+                    intervalMs: 60000
+                    maxDataPoints: 43200
+              annotations:
+                summary: Mimir is discarding samples.
+                description: This is how the 2026-07 WAL-replay/out-of-order incident first showed up - catch it before dashboards go dark instead of after. Check the reason label on the firing instance.
+              labels:
+                severity: warning
+            - uid: loki-component-down
+              title: Loki Component Down
+              condition: A
+              for: 5m
+              data:
+                - refId: A
+                  relativeTimeRange:
+                    from: 300
+                    to: 0
+                  datasourceUid: mimir-internal
+                  model:
+                    expr: up{job=~"loki-(write|read|backend)"} == 0
+                    intervalMs: 60000
+                    maxDataPoints: 43200
+              annotations:
+                summary: A Loki component has been down for 5+ minutes.
+                description: Check the job label on the firing instance for which component.
+              labels:
+                severity: critical
+            - uid: tempo-component-down
+              title: Tempo Component Down
+              condition: A
+              for: 5m
+              data:
+                - refId: A
+                  relativeTimeRange:
+                    from: 300
+                    to: 0
+                  datasourceUid: mimir-internal
+                  model:
+                    expr: up{job=~"tempo-(distributor|ingester|compactor|querier|query-frontend|metrics-generator)"} == 0
+                    intervalMs: 60000
+                    maxDataPoints: 43200
+              annotations:
+                summary: A Tempo component has been down for 5+ minutes.
+                description: Check the job label on the firing instance for which component.
+              labels:
+                severity: critical
+      
+        - orgId: 1
+          name: garage-storage
+          folder: Observability Stack
+          interval: 5m
+          rules:
+            - uid: garage-storage-70
+              title: Garage Storage 70% Full
+              condition: A
+              for: 10m
+              data:
+                - refId: A
+                  relativeTimeRange:
+                    from: 600
+                    to: 0
+                  datasourceUid: mimir-internal
+                  model:
+                    expr: (sum(garage_local_disk_total{volume="data"}) - sum(garage_local_disk_avail{volume="data"})) / sum(garage_local_disk_total{volume="data"}) > 0.7
+                    intervalMs: 60000
+                    maxDataPoints: 43200
+              annotations:
+                summary: Garage object storage is over 70% full.
+                description: Consider adding capacity - see the query value for the exact percentage.
+              labels:
+                severity: warning
+            - uid: garage-storage-85
+              title: Garage Storage 85% Full
+              condition: A
+              for: 10m
+              data:
+                - refId: A
+                  relativeTimeRange:
+                    from: 600
+                    to: 0
+                  datasourceUid: mimir-internal
+                  model:
+                    expr: (sum(garage_local_disk_total{volume="data"}) - sum(garage_local_disk_avail{volume="data"})) / sum(garage_local_disk_total{volume="data"}) > 0.85
+                    intervalMs: 60000
+                    maxDataPoints: 43200
+              annotations:
+                summary: Garage object storage is over 85% full - CRITICAL.
+                description: Immediate action required - this backs Mimir/Loki/Tempo block storage.
+              labels:
+                severity: critical
+            - uid: garage-cluster-unhealthy
+              title: Garage Cluster Unhealthy
+              condition: A
+              for: 5m
+              data:
+                - refId: A
+                  relativeTimeRange:
+                    from: 300
+                    to: 0
+                  datasourceUid: mimir-internal
+                  model:
+                    expr: garage_cluster_healthy < 1
+                    intervalMs: 60000
+                    maxDataPoints: 43200
+              annotations:
+                summary: Garage cluster is unhealthy.
+                description: Not all Garage storage nodes are connected. Check node connectivity.
+              labels:
+                severity: critical
+            - uid: garage-resync-errors
+              title: Garage Block Resync Errors
+              condition: A
+              for: 10m
+              data:
+                - refId: A
+                  relativeTimeRange:
+                    from: 600
+                    to: 0
+                  datasourceUid: mimir-internal
+                  model:
+                    expr: garage_block_resync_errored_blocks > 0
+                    intervalMs: 60000
+                    maxDataPoints: 43200
+              annotations:
+                summary: Garage has block resync errors.
+                description: Blocks are failing to resync - potential data-loss risk for Mimir/Loki/Tempo backing storage.
+              labels:
+                severity: critical
 configMaps:
   postgres-init-data:
     enabled: true

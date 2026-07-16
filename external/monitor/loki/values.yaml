@@ -115,6 +115,13 @@ loki:
       enabled: true
       storageClass: nfs-client
       size: 10Gi
+    # Self-monitoring via Alloy's annotation-based discovery (no
+    # prometheus-operator here for ServiceMonitor).
+    service:
+      annotations:
+        metrics.spydersoft.io/scrape: "true"
+        metrics.spydersoft.io/port: "3100"
+        metrics.spydersoft.io/path: "/metrics"
   read:
     # Was 3 - same reasoning as write above.
     replicas: 1
@@ -156,6 +163,11 @@ loki:
       enabled: true
       storageClass: nfs-client
       size: 10Gi
+    service:
+      annotations:
+        metrics.spydersoft.io/scrape: "true"
+        metrics.spydersoft.io/port: "3100"
+        metrics.spydersoft.io/path: "/metrics"
   backend:
     # Was 3 - same reasoning as write above.
     replicas: 1
@@ -196,6 +208,11 @@ loki:
       enabled: true
       storageClass: nfs-client
       size: 10Gi
+    service:
+      annotations:
+        metrics.spydersoft.io/scrape: "true"
+        metrics.spydersoft.io/port: "3100"
+        metrics.spydersoft.io/path: "/metrics"
   gateway:
     replicas: 1
     # nginx gateway - no CPU request previously set. Observed usage ~20-30m.
@@ -248,6 +265,18 @@ loki:
     resources:
       requests:
         cpu: 5m
+  # Ships the official Loki mixin dashboards as grafana_dashboard-labeled
+  # ConfigMaps (sidecar picks them up, same mechanism as Mimir above).
+  # monitoring.rules (PrometheusRule-based recording/alerting rules, which
+  # some dashboard panels expect) is intentionally left disabled - it
+  # requires the prometheus-operator CRDs, which aren't installed here
+  # (see templates/servicemonitor.yaml's own CRD-presence guard). Loki
+  # alerting goes through Grafana-native alert rules instead.
+  monitoring:
+    dashboards:
+      enabled: true
+      annotations:
+        grafana_folder: Loki
 serviceMonitor:
   enabled: false
   interval: 1m

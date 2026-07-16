@@ -25,6 +25,10 @@ tempo-distributed:
   distributor:
     service:
       type: NodePort
+      annotations:
+        metrics.spydersoft.io/scrape: "true"
+        metrics.spydersoft.io/port: "3200"
+        metrics.spydersoft.io/path: "/metrics"
     # Had no requests/limits at all. Measured actual usage is ~37m/40Mi.
     resources:
       requests:
@@ -97,6 +101,11 @@ tempo-distributed:
       - name: runtime-overrides
         mountPath: /overrides
         readOnly: true
+    service:
+      annotations:
+        metrics.spydersoft.io/scrape: "true"
+        metrics.spydersoft.io/port: "3200"
+        metrics.spydersoft.io/path: "/metrics"
   querier:
     # Measured actual usage is ~20-50m/25-50Mi.
     resources:
@@ -119,6 +128,11 @@ tempo-distributed:
       - name: runtime-overrides
         mountPath: /overrides
         readOnly: true
+    service:
+      annotations:
+        metrics.spydersoft.io/scrape: "true"
+        metrics.spydersoft.io/port: "3200"
+        metrics.spydersoft.io/path: "/metrics"
   compactor:
     # Had no requests/limits. Measured steady-state usage is only ~14m/51Mi,
     # but a 200m CPU limit caused real problems: on startup the compactor
@@ -172,6 +186,11 @@ tempo-distributed:
       - name: runtime-overrides
         mountPath: /overrides
         readOnly: true
+    service:
+      annotations:
+        metrics.spydersoft.io/scrape: "true"
+        metrics.spydersoft.io/port: "3200"
+        metrics.spydersoft.io/path: "/metrics"
   ingester:
     # Chart default is 3 replicas with ring replication_factor 3 (a full
     # copy of every trace on each of 3 ingesters) - zone/replica HA with
@@ -230,6 +249,11 @@ tempo-distributed:
       - name: runtime-overrides
         mountPath: /overrides
         readOnly: true
+    service:
+      annotations:
+        metrics.spydersoft.io/scrape: "true"
+        metrics.spydersoft.io/port: "3200"
+        metrics.spydersoft.io/path: "/metrics"
   metricsGenerator:
     enabled: true
     # Measured actual usage is ~17m/26Mi.
@@ -253,6 +277,11 @@ tempo-distributed:
       - name: runtime-overrides
         mountPath: /overrides
         readOnly: true
+    service:
+      annotations:
+        metrics.spydersoft.io/scrape: "true"
+        metrics.spydersoft.io/port: "3200"
+        metrics.spydersoft.io/path: "/metrics"
   # Had no requests/limits. Measured actual usage is ~7-9m/68Mi.
   memcached:
     resources:

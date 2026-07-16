@@ -1,0 +1,39 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-tempo-dashboards
+  namespace: {{ .Release.Namespace }}
+  labels:
+    grafana_dashboard: "1"
+  annotations:
+    grafana_folder: Tempo
+data:
+  # Official Tempo mixin dashboards (grafana/tempo, operations/tempo-mixin-compiled/dashboards),
+  # unmodified - each already has a proper `datasource`/`ds` template
+  # variable (type: datasource, query: prometheus) so pick Mimir-internal/
+  # production/nonproduction per cluster at view time, same as the
+  # Kubernetes and Linkerd dashboards.
+  #
+  # Unlike Mimir's mixin (shipped via the chart's own metaMonitoring.dashboards
+  # flag), tempo-distributed has no such flag - these were pulled directly
+  # from the tempo-distributed's upstream mixin source and only the
+  # highest-signal three included (Operational, Writes, Reads); the mixin
+  # also ships Resources/Tenants/Rollout Progress/Service Graph/Backend Work/
+  # Block Builder if more drill-down turns out to be needed later.
+  #
+  # CAVEAT: these mixin dashboards match panels on job=~"$namespace/$component"
+  # (the upstream convention for jobs scraped by a ServiceMonitor with that
+  # relabeling baked in - see the Mimir/Loki servicemonitor.yaml templates in
+  # this same chart for the pattern). Our Alloy annotation-based discovery
+  # instead sets `job` to the bare Kubernetes service name (e.g.
+  # "tempo-distributor"), not "monitoring/distributor". Verify data actually
+  # shows up once deployed; if panels are empty because of the job-label
+  # mismatch, either add a `job` relabel rule in Alloy's spydersoft_metrics
+  # discovery to reformat it as "$namespace/$component", or edit these
+  # dashboards' panel queries to match the bare service name instead.
+  tempo-operational.json: |-
+{{ .Files.Get "dashboard-src/tempo-operational.json" | indent 4 }}
+  tempo-writes.json: |-
+{{ .Files.Get "dashboard-src/tempo-writes.json" | indent 4 }}
+  tempo-reads.json: |-
+{{ .Files.Get "dashboard-src/tempo-reads.json" | indent 4 }}

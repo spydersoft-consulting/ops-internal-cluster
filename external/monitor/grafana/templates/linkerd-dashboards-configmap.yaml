@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-linkerd-dashboards
+  namespace: {{ .Release.Namespace }}
+  labels:
+    grafana_dashboard: "1"
+  annotations:
+    grafana_folder: Linkerd
+data:
+  # Official Linkerd Grafana dashboards (https://github.com/linkerd/linkerd2/tree/main/grafana/dashboards),
+  # adapted from the old Grafana "import with input" format: the originals
+  # hardcode every panel/variable datasource to the literal string
+  # "${DS_PROMETHEUS}", which only resolves during the manual import wizard
+  # and is left dangling when loaded via the dashboard sidecar. Replaced
+  # with a real `datasource` template variable (type: datasource, query:
+  # prometheus) so Mimir-internal/production/nonproduction can be picked
+  # per cluster at view time, same pattern as the Kubernetes dashboards.
+  #
+  # Only Top Line and Health shipped so far - broadest signal for "is the
+  # mesh healthy" with the least screen real estate. Namespace/Deployment/
+  # Pod/Service/Route/Authority/Multicluster (grafana.com IDs 15478,
+  # 15475, 15477, 15480, 15481, 15479, 15482) are the same adaptation and
+  # can be added the same way once there's a concrete need to drill in
+  # further than Top Line/Health cover.
+  linkerd-top-line.json: |-
+{{ .Files.Get "dashboard-src/linkerd-top-line.json" | indent 4 }}
+  linkerd-health.json: |-
+{{ .Files.Get "dashboard-src/linkerd-health.json" | indent 4 }}
