@@ -520,6 +520,15 @@ grafana:
             # disappears rather than reporting 0. One rule per host because
             # absent_over_time only preserves labels from equality matchers, not
             # the regex match a single combined rule would need.
+            #
+            # The other rules below wrap their expr in max by (id) (...): pxdell
+            # and pxhp each run their own pve-exporter, but Proxmox's cluster API
+            # means each exporter reports on the whole cluster, not just itself
+            # - so every node/storage/guest metric arrives twice (once per
+            # collector, differing only by the host/source/instance labels).
+            # Without the dedup, each of these rules would fire twice per real
+            # host/pool/guest. Same root cause as the dashboard's node CPU/memory
+            # panels needing the same fix - see that commit.
             - uid: proxmox-host-down-pmxdell
               title: Proxmox Host Down (pmxdell)
               condition: A
@@ -572,7 +581,7 @@ grafana:
                     to: 0
                   datasourceUid: mimir-internal
                   model:
-                    expr: pve_cpu_usage_ratio{id=~"node/.+"} > 0.85
+                    expr: max by (id) (pve_cpu_usage_ratio{id=~"node/.+"}) > 0.85
                     intervalMs: 60000
                     maxDataPoints: 43200
               annotations:
@@ -592,7 +601,7 @@ grafana:
                     to: 0
                   datasourceUid: mimir-internal
                   model:
-                    expr: (pve_disk_usage_bytes{id=~"storage/.+"} / pve_disk_size_bytes{id=~"storage/.+"}) > 0.7
+                    expr: max by (id) (pve_disk_usage_bytes{id=~"storage/.+"} / pve_disk_size_bytes{id=~"storage/.+"}) > 0.7
                     intervalMs: 60000
                     maxDataPoints: 43200
               annotations:
@@ -612,7 +621,7 @@ grafana:
                     to: 0
                   datasourceUid: mimir-internal
                   model:
-                    expr: (pve_disk_usage_bytes{id=~"storage/.+"} / pve_disk_size_bytes{id=~"storage/.+"}) > 0.85
+                    expr: max by (id) (pve_disk_usage_bytes{id=~"storage/.+"} / pve_disk_size_bytes{id=~"storage/.+"}) > 0.85
                     intervalMs: 60000
                     maxDataPoints: 43200
               annotations:
@@ -632,7 +641,7 @@ grafana:
                     to: 0
                   datasourceUid: mimir-internal
                   model:
-                    expr: pve_up{id=~"qemu/.+|lxc/.+"} == 0
+                    expr: max by (id) (pve_up{id=~"qemu/.+|lxc/.+"}) == 0
                     intervalMs: 60000
                     maxDataPoints: 43200
               annotations:
