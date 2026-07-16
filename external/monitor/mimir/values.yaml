@@ -458,3 +458,11 @@ mimir-distributed:
       enabled: true
       annotations:
         grafana_folder: Mimir
+        # The "reads" mixin dashboard alone is ~300KB of JSON. ArgoCD's
+        # legacy last-applied-configuration annotation maintenance (which it
+        # runs even under the app-level ServerSideApply=true syncOption, to
+        # backfill the annotation on resources that lack it) duplicates the
+        # whole object into an annotation, blowing past Kubernetes' 256KiB
+        # metadata.annotations cap and failing every sync. Forcing SSA at
+        # the resource level skips that legacy annotation path entirely.
+        argocd.argoproj.io/sync-options: ServerSideApply=true
