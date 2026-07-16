@@ -139,7 +139,12 @@ grafana:
       label: grafana_dashboard
       folderAnnotation: grafana_folder
       provider:
-        foldersFromFilesStructure: false
+        # Required for folderAnnotation to actually create/place dashboards
+        # into folders - without this, the sidecar drops every dashboard at
+        # the provider's root regardless of the annotation (confirmed: this
+        # was `false` and every dashboard landed at the root while the
+        # Kubernetes/Observability Stack folders sat empty).
+        foldersFromFilesStructure: true
   datasources:
     datasources.yaml:
       apiVersion: 1
