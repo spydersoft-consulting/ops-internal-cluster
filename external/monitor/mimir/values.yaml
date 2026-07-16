@@ -237,19 +237,20 @@ mimir-distributed:
   ruler:
     enabled: true
     revisionHistoryLimit: 1
-    # Chart default (100m/128Mi request, no limit) was skipped by the
-    # 2026-07-14 tuning pass. Measured actual usage is ~42m/61Mi; request
-    # trimmed to match with headroom, limit added for an OOM ceiling. (The
-    # 5 restarts observed same-day were a startup race waiting on
-    # mimir-kafka-0 during rollout, not resource pressure - unrelated to
-    # this change.)
+    # 2026-07-14 tuning pass set this to 60m/96Mi request, 300m/384Mi limit
+    # based on a ~42m/61Mi usage measurement - too tight for the actual rule
+    # set (recording/alerting rules evaluated across all 3 tenants:
+    # internal/production/nonproduction). Ruler was OOMKilling every few
+    # minutes (2026-07-16), which took down /prometheus/api/v1/alerts via
+    # mimir-gateway (502s) and fired Grafana DatasourceNoData alerts. Raised
+    # limit for headroom; request bumped to reflect real steady-state usage.
     resources:
       requests:
         cpu: 60m
-        memory: 96Mi
+        memory: 200Mi
       limits:
         cpu: 300m
-        memory: 384Mi
+        memory: 768Mi
     extraVolumes:
       - name: runtime-overrides
         configMap:
