@@ -641,12 +641,12 @@ grafana:
                     to: 0
                   datasourceUid: mimir-internal
                   model:
-                    expr: max by (id) (pve_up{id=~"qemu/.+|lxc/.+"}) == 0
+                    expr: max by (id) (pve_up{id=~"qemu/.+|lxc/.+"} and on (id) pve_guest_info{template!="1"}) == 0
                     intervalMs: 60000
                     maxDataPoints: 43200
               annotations:
                 summary: A Proxmox VM or CT has been stopped for 15+ minutes.
-                description: Check the id label for which guest. Can't distinguish an intentional shutdown from an unexpected one from this metric alone - silence if expected.
+                description: Check the id label for which guest. Excludes VM/CT templates (pve_guest_info template="1"), which are intentionally never started. Can't distinguish an intentional shutdown from an unexpected one for everything else - silence if expected.
               labels:
                 severity: warning
 configMaps:
