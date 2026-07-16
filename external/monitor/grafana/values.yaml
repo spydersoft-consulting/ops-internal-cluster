@@ -336,7 +336,7 @@ grafana:
                     to: 0
                   datasourceUid: mimir-internal
                   model:
-                    expr: up{job=~"mimir-(distributor|ingester|compactor|store-gateway|querier|query-frontend|ruler|alertmanager)"} == 0
+                    expr: up{job=~".*/(distributor|ingester|compactor|store-gateway|querier|query-frontend|ruler|alertmanager)"} == 0
                     intervalMs: 60000
                     maxDataPoints: 43200
               annotations:
@@ -374,7 +374,7 @@ grafana:
                     to: 0
                   datasourceUid: mimir-internal
                   model:
-                    expr: up{job=~"loki-(write|read|backend)"} == 0
+                    expr: up{job=~".*/loki-(write|read|backend)"} == 0
                     intervalMs: 60000
                     maxDataPoints: 43200
               annotations:
@@ -393,7 +393,7 @@ grafana:
                     to: 0
                   datasourceUid: mimir-internal
                   model:
-                    expr: up{job=~"tempo-(distributor|ingester|compactor|querier|query-frontend|metrics-generator)"} == 0
+                    expr: up{job=~".*/(distributor|ingester|compactor|querier|query-frontend|metrics-generator)"} == 0
                     intervalMs: 60000
                     maxDataPoints: 43200
               annotations:

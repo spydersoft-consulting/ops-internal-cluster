@@ -17,24 +17,14 @@ data:
   # pre-date the Mimir-internal/production/nonproduction datasources
   # added in this pass and pointed directly at randomly-generated UIDs
   # from manually-created datasources (now duplicates - see cleanup
-  # note below). kubernetes-cluster/kubernetes-ingress-nginx/main/
-  # rabbitmq-overview were actually already broken - they pointed at a
-  # datasource UID (fbed2c16-...) that no longer exists in Grafana at
-  # all - repointed to Mimir-internal since they're all cluster-wide
-  # infra metrics.
+  # note below).
   #
-  # node-exporter-full lives in its own ConfigMap (node-exporter-
-  # dashboard-configmap.yaml) - it's 674KB on its own and combining it
-  # here would push this ConfigMap over Kubernetes' 1MiB object limit.
+  # kubernetes-cluster, main, node-exporter-full, kubernetes-ingress-nginx
+  # and rabbitmq-overview were dropped during extraction - replacements
+  # for these are coming separately; nginx-ingress and rabbitmq don't
+  # apply to this environment at all (envoy-gateway, not nginx-ingress;
+  # no RabbitMQ deployed).
   garage.json: |-
 {{ .Files.Get "dashboard-src/garage.json" | indent 4 }}
   vault.json: |-
 {{ .Files.Get "dashboard-src/vault.json" | indent 4 }}
-  kubernetes-cluster.json: |-
-{{ .Files.Get "dashboard-src/kubernetes-cluster.json" | indent 4 }}
-  kubernetes-ingress-nginx.json: |-
-{{ .Files.Get "dashboard-src/kubernetes-ingress-nginx.json" | indent 4 }}
-  main.json: |-
-{{ .Files.Get "dashboard-src/main.json" | indent 4 }}
-  rabbitmq-overview.json: |-
-{{ .Files.Get "dashboard-src/rabbitmq-overview.json" | indent 4 }}
