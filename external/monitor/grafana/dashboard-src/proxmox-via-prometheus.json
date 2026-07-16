@@ -552,7 +552,7 @@
           "calcs": [],
           "displayMode": "list",
           "placement": "bottom",
-          "showLegend": false
+          "showLegend": true
         },
         "tooltip": {
           "mode": "single",
@@ -566,8 +566,8 @@
             "uid": "mimir-internal"
           },
           "editorMode": "code",
-          "expr": "pve_cpu_usage_ratio{instance=\"$instance\"} and on(id) pve_node_info",
-          "legendFormat": "__auto",
+          "expr": "max by (id) (pve_cpu_usage_ratio and on(id) pve_node_info)",
+          "legendFormat": "{{id}}",
           "range": true,
           "refId": "usage"
         },
@@ -578,11 +578,11 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "pve_cpu_usage_limit{instance=\"$instance\"} and on(id) pve_node_info",
+          "expr": "max by (id) (pve_cpu_usage_limit and on(id) pve_node_info)",
           "format": "table",
           "hide": false,
           "instant": true,
-          "legendFormat": "__auto",
+          "legendFormat": "{{id}}",
           "range": false,
           "refId": "total"
         }
@@ -680,10 +680,10 @@
             "type": "prometheus",
             "uid": "mimir-internal"
           },
-          "expr": "pve_cpu_usage_ratio{instance=\"$instance\"} / pve_cpu_usage_limit and on(id) pve_node_info",
+          "expr": "max by (id) (pve_cpu_usage_ratio / pve_cpu_usage_limit and on(id) pve_node_info)",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "",
+          "legendFormat": "{{id}}",
           "refId": "A"
         }
       ],
@@ -761,7 +761,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "pve_cpu_usage_limit and on(id) pve_node_info",
+          "expr": "sum(max by (id) (pve_cpu_usage_limit and on(id) pve_node_info))",
           "format": "table",
           "instant": true,
           "legendFormat": "__auto",
@@ -846,7 +846,7 @@
           "calcs": [],
           "displayMode": "list",
           "placement": "bottom",
-          "showLegend": false
+          "showLegend": true
         },
         "tooltip": {
           "mode": "single",
@@ -860,8 +860,8 @@
             "uid": "mimir-internal"
           },
           "editorMode": "code",
-          "expr": "pve_memory_usage_bytes{instance=\"$instance\"} and on(id) pve_node_info",
-          "legendFormat": "__auto",
+          "expr": "max by (id) (pve_memory_usage_bytes and on(id) pve_node_info)",
+          "legendFormat": "{{id}}",
           "range": true,
           "refId": "usage"
         },
@@ -872,11 +872,11 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "pve_memory_size_bytes{instance=\"$instance\"} and on(id) pve_node_info",
+          "expr": "max by (id) (pve_memory_size_bytes and on(id) pve_node_info)",
           "format": "table",
           "hide": false,
           "instant": true,
-          "legendFormat": "__auto",
+          "legendFormat": "{{id}}",
           "range": false,
           "refId": "total"
         }
@@ -973,10 +973,10 @@
             "type": "prometheus",
             "uid": "mimir-internal"
           },
-          "expr": "pve_memory_usage_bytes{instance=\"$instance\"} / pve_memory_size_bytes and on(id) pve_node_info",
+          "expr": "max by (id) (pve_memory_usage_bytes / pve_memory_size_bytes and on(id) pve_node_info)",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "",
+          "legendFormat": "{{id}}",
           "refId": "A"
         }
       ],
@@ -1082,7 +1082,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "pve_memory_usage_bytes{instance=\"$instance\"} and on(id) pve_node_info",
+          "expr": "sum(max by (id) (pve_memory_usage_bytes and on(id) pve_node_info))",
           "format": "table",
           "instant": true,
           "legendFormat": "__auto",
@@ -1096,7 +1096,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "pve_memory_size_bytes{instance=\"$instance\"} and on(id) pve_node_info",
+          "expr": "sum(max by (id) (pve_memory_size_bytes and on(id) pve_node_info))",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -1111,7 +1111,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "pve_memory_size_bytes{instance=\"$instance\"} and on(id) pve_node_info",
+          "expr": "sum(max by (id) (pve_memory_size_bytes and on(id) pve_node_info))",
           "format": "table",
           "hide": false,
           "instant": true,
