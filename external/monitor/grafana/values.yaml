@@ -160,6 +160,16 @@ grafana:
           url: http://mimir-gateway.monitoring.svc.cluster.local/prometheus
           jsonData:
             httpHeaderName1: X-Scope-OrgID
+            # Grafana Alloy scrapes Mimir's own metrics on a 60s interval, but
+            # this wasn't set - Grafana defaulted to assuming 15s, so
+            # $__rate_interval (max(4x scrape_interval, step)) resolved to
+            # just 60s. A 1m rate() window against a 60s-spaced series often
+            # contains 0-1 raw samples, which isn't enough to compute a rate,
+            # so any dashboard panel querying raw counters directly (not
+            # through a mixin recording rule, which uses a fixed [2m] window)
+            # showed "No data" (2026-07-16, e.g. Mimir/Overview "Write
+            # requests / sec").
+            timeInterval: 1m
           secureJsonData:
             httpHeaderValue1: internal
         - name: Mimir-production
@@ -169,6 +179,7 @@ grafana:
           url: http://mimir-gateway.monitoring.svc.cluster.local/prometheus
           jsonData:
             httpHeaderName1: X-Scope-OrgID
+            timeInterval: 1m
           secureJsonData:
             httpHeaderValue1: production
         - name: Mimir-nonproduction
@@ -178,6 +189,7 @@ grafana:
           url: http://mimir-gateway.monitoring.svc.cluster.local/prometheus
           jsonData:
             httpHeaderName1: X-Scope-OrgID
+            timeInterval: 1m
           secureJsonData:
             httpHeaderValue1: nonproduction
         - name: Loki-internal
