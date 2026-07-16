@@ -259,6 +259,7 @@ grafana:
               title: Kubernetes Node Not Ready
               condition: A
               for: 10m
+              noDataState: OK
               data:
                 - refId: A
                   relativeTimeRange:
@@ -278,6 +279,7 @@ grafana:
               title: Kubernetes Pod CrashLoopBackOff
               condition: A
               for: 10m
+              noDataState: OK
               data:
                 - refId: A
                   relativeTimeRange:
@@ -297,6 +299,7 @@ grafana:
               title: Kubernetes Deployment Replicas Unavailable
               condition: A
               for: 15m
+              noDataState: OK
               data:
                 - refId: A
                   relativeTimeRange:
@@ -316,6 +319,7 @@ grafana:
               title: Kubernetes PVC Pending
               condition: A
               for: 15m
+              noDataState: OK
               data:
                 - refId: A
                   relativeTimeRange:
@@ -341,6 +345,7 @@ grafana:
               title: Mimir Component Down
               condition: A
               for: 5m
+              noDataState: OK
               data:
                 - refId: A
                   relativeTimeRange:
@@ -360,6 +365,7 @@ grafana:
               title: Mimir Discarding Samples
               condition: A
               for: 10m
+              noDataState: OK
               data:
                 - refId: A
                   relativeTimeRange:
@@ -379,6 +385,7 @@ grafana:
               title: Loki Component Down
               condition: A
               for: 5m
+              noDataState: OK
               data:
                 - refId: A
                   relativeTimeRange:
@@ -398,6 +405,7 @@ grafana:
               title: Tempo Component Down
               condition: A
               for: 5m
+              noDataState: OK
               data:
                 - refId: A
                   relativeTimeRange:
@@ -423,6 +431,7 @@ grafana:
               title: Garage Storage 70% Full
               condition: A
               for: 10m
+              noDataState: OK
               data:
                 - refId: A
                   relativeTimeRange:
@@ -442,6 +451,7 @@ grafana:
               title: Garage Storage 85% Full
               condition: A
               for: 10m
+              noDataState: OK
               data:
                 - refId: A
                   relativeTimeRange:
@@ -461,6 +471,7 @@ grafana:
               title: Garage Cluster Unhealthy
               condition: A
               for: 5m
+              noDataState: OK
               data:
                 - refId: A
                   relativeTimeRange:
@@ -480,6 +491,7 @@ grafana:
               title: Garage Block Resync Errors
               condition: A
               for: 10m
+              noDataState: OK
               data:
                 - refId: A
                   relativeTimeRange:
