@@ -514,23 +514,23 @@ grafana:
           interval: 5m
           rules:
             # Host-down uses absent_over_time rather than the up == 0 idiom used
-            # elsewhere in this file: Alloy on pxdell/pxhp pushes via remote_write
-            # (see the Proxmox monitoring follow-up plan) instead of being
-            # centrally scraped, so a dead host's `up` series goes stale and
+            # elsewhere in this file: Alloy on pmxblue/pmxblack/pxhp pushes via
+            # remote_write (see the Proxmox monitoring follow-up plan) instead of
+            # being centrally scraped, so a dead host's `up` series goes stale and
             # disappears rather than reporting 0. One rule per host because
             # absent_over_time only preserves labels from equality matchers, not
             # the regex match a single combined rule would need.
             #
-            # The other rules below wrap their expr in max by (id) (...): pxdell
-            # and pxhp each run their own pve-exporter, but Proxmox's cluster API
-            # means each exporter reports on the whole cluster, not just itself
-            # - so every node/storage/guest metric arrives twice (once per
-            # collector, differing only by the host/source/instance labels).
-            # Without the dedup, each of these rules would fire twice per real
-            # host/pool/guest. Same root cause as the dashboard's node CPU/memory
-            # panels needing the same fix - see that commit.
-            - uid: proxmox-host-down-pmxdell
-              title: Proxmox Host Down (pmxdell)
+            # The other rules below wrap their expr in max by (id) (...): each
+            # host runs its own pve-exporter, but for PVE-clustered hosts the
+            # Proxmox API means each exporter reports on the whole cluster, not
+            # just itself - so a clustered node/storage/guest metric arrives
+            # twice (once per collector, differing only by the host/source/
+            # instance labels). Without the dedup, each of these rules would fire
+            # twice per real host/pool/guest. Same root cause as the dashboard's
+            # node CPU/memory panels needing the same fix - see that commit.
+            - uid: proxmox-host-down-pmxblue
+              title: Proxmox Host Down (pmxblue)
               condition: A
               for: 10m
               noDataState: OK
@@ -541,12 +541,32 @@ grafana:
                     to: 0
                   datasourceUid: mimir-internal
                   model:
-                    expr: absent_over_time(up{job="node", host="pmxdell"}[10m])
+                    expr: absent_over_time(up{job="node", host="pmxblue"}[10m])
                     intervalMs: 60000
                     maxDataPoints: 43200
               annotations:
-                summary: pmxdell has not reported metrics in 10+ minutes.
-                description: Alloy on pmxdell may be down, or the host itself is unreachable.
+                summary: pmxblue has not reported metrics in 10+ minutes.
+                description: Alloy on pmxblue may be down, or the host itself is unreachable.
+              labels:
+                severity: critical
+            - uid: proxmox-host-down-pmxblack
+              title: Proxmox Host Down (pmxblack)
+              condition: A
+              for: 10m
+              noDataState: OK
+              data:
+                - refId: A
+                  relativeTimeRange:
+                    from: 600
+                    to: 0
+                  datasourceUid: mimir-internal
+                  model:
+                    expr: absent_over_time(up{job="node", host="pmxblack"}[10m])
+                    intervalMs: 60000
+                    maxDataPoints: 43200
+              annotations:
+                summary: pmxblack has not reported metrics in 10+ minutes.
+                description: Alloy on pmxblack may be down, or the host itself is unreachable.
               labels:
                 severity: critical
             - uid: proxmox-host-down-pxhp
