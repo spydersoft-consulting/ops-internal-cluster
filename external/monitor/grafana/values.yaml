@@ -669,6 +669,14 @@ grafana:
                 description: Check the id label for which guest. Excludes VM/CT templates (pve_guest_info template="1"), which are intentionally never started. Can't distinguish an intentional shutdown from an unexpected one for everything else - silence if expected.
               labels:
                 severity: warning
+      deleteRules:
+        # Grafana's alerting file-provisioner does NOT delete rules just
+        # because they're removed from `groups` above - it only adds/updates
+        # by uid. Rules retired from a group (e.g. pmxdell replaced by
+        # pmxblue/pmxblack) must be listed here explicitly or they keep
+        # firing forever, orphaned from their old host.
+        - orgId: 1
+          uid: proxmox-host-down-pmxdell
 configMaps:
   postgres-init-data:
     enabled: true
