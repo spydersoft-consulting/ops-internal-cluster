@@ -14,3 +14,13 @@ hardcoded `${DS_PROMETHEUS}`, an import-wizard-only placeholder) - rewritten
 to hardcode `mimir-internal` instead, same as garage/vault, since Proxmox
 hosts aren't part of any K8s cluster and have no production/nonproduction
 variant to switch between.
+
+**k8s-views-nodes.json** (dotdc/grafana-dashboards-kubernetes, "Nodes"
+/ grafana.com ID 15759) is wired into `kubernetes-dashboards-configmap.yaml`,
+unmodified, same as Namespaces/Pods. Added 2026-07-24 once node_exporter
+started running on K8s cluster nodes (`cluster-tools/tools/node-exporter`
+in ops-argo) - the keep-list in each cluster's `grafana-alloy`
+`node_exporter_filter` block was built directly from this dashboard's
+actual metric usage, per the `cardinality-cleanup-status.md` methodology
+(scrape only what's referenced by a real dashboard/alert, not the full
+~500-metric default set).

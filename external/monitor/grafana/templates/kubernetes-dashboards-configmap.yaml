@@ -15,14 +15,15 @@ data:
   # `cluster` variable driven by kube_node_info{cluster=...} which Alloy's
   # remote_write external_labels already stamp on every series.
   #
-  # "Global" (15757) and "Nodes" (15759) are intentionally NOT included -
-  # both lean heavily on node_exporter (node_cpu_seconds_total,
-  # node_memory_*, node_filesystem_*, node_network_*) for their headline
-  # panels, and we don't run node_exporter on any K8s node yet, only
-  # kubelet+cAdvisor. Add them once that gap is closed (same node_exporter
-  # follow-up as Proxmox, just on cluster nodes instead of the
-  # hypervisors) - see kube-state-metrics/README or the observability plan
-  # for the tracked gap.
+  # "Nodes" (15759) was added once node_exporter started running on K8s
+  # cluster nodes (2026-07-24, same follow-up as Proxmox, just on cluster
+  # nodes instead of the hypervisors) - see cluster-tools/tools/
+  # grafana-alloy/config/*.alloy's node_exporter_filter block for the
+  # keep-list, built from this exact dashboard's actual metric usage
+  # (cardinality-cleanup-status.md methodology). "Global" (15757) is still
+  # NOT included - it needs a wider node_exporter keep-list plus
+  # kube-state-metrics collectors we haven't enabled; revisit later if
+  # there's a specific need for it.
   #
   # "Namespaces" (15758) is included but a handful of its stat panels
   # (configmap/secret/service/ingress/networkpolicy counts, and anything
@@ -37,5 +38,7 @@ data:
   # panels turns out to matter.
   k8s-views-namespaces.json: |-
 {{ .Files.Get "dashboard-src/k8s-views-namespaces.json" | indent 4 }}
+  k8s-views-nodes.json: |-
+{{ .Files.Get "dashboard-src/k8s-views-nodes.json" | indent 4 }}
   k8s-views-pods.json: |-
 {{ .Files.Get "dashboard-src/k8s-views-pods.json" | indent 4 }}
