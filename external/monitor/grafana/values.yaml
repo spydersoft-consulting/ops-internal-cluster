@@ -335,7 +335,27 @@ grafana:
                 description: Check namespace/persistentvolumeclaim/cluster labels - likely a storage class/provisioner issue.
               labels:
                 severity: warning
-      
+            - uid: node-high-blocked-procs
+              title: Node High Blocked Process Count
+              condition: A
+              for: 5m
+              noDataState: OK
+              data:
+                - refId: A
+                  relativeTimeRange:
+                    from: 300
+                    to: 0
+                  datasourceUid: mimir-internal
+                  model:
+                    expr: node_procs_blocked > 2
+                    intervalMs: 60000
+                    maxDataPoints: 43200
+              annotations:
+                summary: A node has had more than 2 processes stuck in uninterruptible sleep (D-state) for 5+ minutes.
+                description: Check namespace/instance/node/cluster labels on the firing instance. Common cause - a wedged NFS client (e.g. hung nfs4 state-manager thread) blocking I/O for every pod on that node; SSH in and check `ps aux` for D-state processes and `dmesg` for NFS errors. Often requires a node reboot to clear.
+              labels:
+                severity: critical
+
         - orgId: 1
           name: observability-stack-health
           folder: Observability Stack
