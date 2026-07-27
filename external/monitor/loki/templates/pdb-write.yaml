@@ -1,0 +1,15 @@
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: loki-write-standalone
+  namespace: monitoring
+spec:
+  # write.replicas is 1 here, so the chart's own
+  # poddisruptionbudget-write.yaml never renders (it requires >1). This
+  # covers the single-replica case instead.
+  maxUnavailable: 0
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: loki
+      app.kubernetes.io/instance: loki
+      app.kubernetes.io/component: write

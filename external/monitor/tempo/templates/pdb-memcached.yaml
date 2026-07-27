@@ -1,0 +1,15 @@
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: tempo-memcached-standalone
+  namespace: monitoring
+spec:
+  # memcached.replicas is 1 here, so the chart's own
+  # poddisruptionbudget-memcached.yaml never renders (it requires >1).
+  # This covers the single-replica case instead.
+  maxUnavailable: 0
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: tempo
+      app.kubernetes.io/instance: tempo
+      app.kubernetes.io/component: memcached

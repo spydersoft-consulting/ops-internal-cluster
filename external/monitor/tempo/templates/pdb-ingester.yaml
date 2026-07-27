@@ -1,0 +1,15 @@
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: tempo-ingester-standalone
+  namespace: monitoring
+spec:
+  # ingester.replicas is 1 here, so the chart's own ingester pdb.yaml
+  # never renders (it requires >1). This covers the single-replica case
+  # instead.
+  maxUnavailable: 0
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: tempo
+      app.kubernetes.io/instance: tempo
+      app.kubernetes.io/component: ingester

@@ -1,0 +1,15 @@
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: loki-results-cache-standalone
+  namespace: monitoring
+spec:
+  # resultsCache.replicas is 1 here, so the chart's own
+  # poddisruptionbudget-results-cache.yaml never renders (it requires >1).
+  # This covers the single-replica case instead.
+  maxUnavailable: 0
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: loki
+      app.kubernetes.io/instance: loki
+      app.kubernetes.io/component: memcached-results-cache

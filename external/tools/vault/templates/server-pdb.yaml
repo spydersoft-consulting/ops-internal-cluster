@@ -1,0 +1,17 @@
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: vault-server
+  namespace: tools
+spec:
+  # Standalone mode (no HA) - the chart's own server-disruptionbudget.yaml
+  # only renders when server.ha is enabled, so this singleton has no
+  # eviction protection otherwise. maxUnavailable: 0 keeps it out of
+  # descheduler's reach entirely rather than trying to pick a number that
+  # allows some disruption on a single replica.
+  maxUnavailable: 0
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: vault
+      app.kubernetes.io/instance: vault
+      component: server
