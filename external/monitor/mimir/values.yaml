@@ -167,8 +167,13 @@ mimir-distributed:
       limits:
         cpu: 250m
         memory: 512Mi
+    # Was NFS-backed (nfs-client). Index-header/chunk cache rebuilt from
+    # blocks_storage (S3) on restart - nothing here needs to survive a pod
+    # restart. Same NFS-avoidance rationale as ingester above (see its
+    # comment for the mmap deadlock incident this sidesteps), plus it drops
+    # NFS round-trip latency from the query read path.
     persistentVolume:
-      storageClass: nfs-client
+      enabled: false
     zoneAwareReplication:
       enabled: false
     affinity:
@@ -206,8 +211,12 @@ mimir-distributed:
       limits:
         cpu: 500m
         memory: 2Gi
+    # Was NFS-backed (nfs-client). This is scratch space for in-progress
+    # compaction - nothing here is expected to survive past the current
+    # compaction cycle, source blocks come from blocks_storage (S3). Same
+    # NFS-avoidance rationale as ingester/store_gateway above.
     persistentVolume:
-      storageClass: nfs-client
+      enabled: false
     # Had no affinity at all previously (unlike the other heavy components).
     affinity:
       podAntiAffinity:
