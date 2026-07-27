@@ -117,8 +117,16 @@ mimir-distributed:
       limits:
         cpu: "1"
         memory: 3Gi
+    # Was NFS-backed (nfs-client). The 2026-07-27 stuck-node incident traced
+    # to a kernel-level mmap_lock/rw_semaphore deadlock inside a Mimir
+    # process, with NFS-backed storage as the leading suspect trigger (page
+    # fault under mmap_lock blocking on an NFS RPC). WAL/active-block data
+    # here is temporal and acceptable to lose on node loss, so this moves to
+    # emptyDir (local node disk) to remove the NFS dependency from the
+    # latency-sensitive ingest path entirely. See matching change in loki's
+    # write.persistence.
     persistentVolume:
-      storageClass: nfs-client
+      enabled: false
     zoneAwareReplication:
       enabled: false
     affinity:

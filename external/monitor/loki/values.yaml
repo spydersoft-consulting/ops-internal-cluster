@@ -111,10 +111,16 @@ loki:
       - name: runtime-overrides
         mountPath: /etc/loki/runtime-overrides
         readOnly: true
+    # Was NFS-backed (nfs-client, 10Gi) - the "enabled" key above was never
+    # actually read by this chart (the real field is
+    # persistence.volumeClaimsEnabled; "enabled" is silently ignored by
+    # Helm, so this had been a no-op and the PVC was always on regardless).
+    # Moved to emptyDir for the same reason as mimir's ingester (see that
+    # values.yaml): the 2026-07-27 stuck-node incident points at NFS-backed
+    # storage as a trigger for kernel-level mmap_lock stalls, and this WAL
+    # data is temporal/acceptable to lose on node loss.
     persistence:
-      enabled: true
-      storageClass: nfs-client
-      size: 10Gi
+      volumeClaimsEnabled: false
     # Self-monitoring via Alloy's annotation-based discovery (no
     # prometheus-operator here for ServiceMonitor).
     service:
