@@ -14,7 +14,7 @@ data:
     overrides:
       internal:
         metrics_generator:
-          processors: [service-graphs, span-metrics]
+          processors: [service-graphs, span-metrics, local-blocks]
         ingestion:
           rate_limit_bytes: 5000000      # 5MB/s sustained rate
           burst_size_bytes: 10000000     # 10MB burst
@@ -23,7 +23,7 @@ data:
 
       production:
         metrics_generator:
-          processors: [service-graphs, span-metrics]
+          processors: [service-graphs, span-metrics, local-blocks]
         ingestion:
           rate_limit_bytes: 10000000     # 10MB/s sustained rate
           burst_size_bytes: 20000000     # 20MB burst
@@ -32,7 +32,7 @@ data:
 
       nonproduction:
         metrics_generator:
-          processors: [service-graphs, span-metrics]
+          processors: [service-graphs, span-metrics, local-blocks]
         ingestion:
           rate_limit_bytes: 2000000      # 2MB/s sustained rate
           burst_size_bytes: 5000000      # 5MB burst

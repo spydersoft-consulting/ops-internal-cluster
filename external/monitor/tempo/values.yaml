@@ -18,7 +18,7 @@ tempo-distributed:
       overrides:
         defaults:
           metrics_generator:
-            processors: [service-graphs, span-metrics]
+            processors: [service-graphs, span-metrics, local-blocks]
         per_tenant_override_config: /overrides/overrides.yaml
   search:
     enabled: true
@@ -260,6 +260,14 @@ tempo-distributed:
       storage:
         remote_write:
           - url: http://mimir-gateway-internal.monitoring.svc.cluster.local/api/v1/push
+      processor:
+        local_blocks:
+          # Without this, local-blocks only serves TraceQL metrics queries
+          # over its in-memory window (~10-15 min) - historical range
+          # queries (e.g. Traces Drilldown's default lookback) return
+          # nothing. Flushes completed blocks to the same S3 backend Tempo
+          # already uses for trace storage.
+          flush_to_storage: true
     # Measured actual usage is ~17m/26Mi.
     resources:
       requests:
