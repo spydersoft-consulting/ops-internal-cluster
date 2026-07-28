@@ -399,7 +399,13 @@ grafana:
                     to: 0
                   datasourceUid: mimir-internal
                   model:
-                    expr: sum by (reason) (increase(cortex_discarded_samples_total[15m])) > 0
+                    # 2026-07-28: there's a small continuous baseline of
+                    # out-of-order discards (daemonset-clustering scrape
+                    # jitter) plus brief ~1-2k blips on every Alloy pod
+                    # restart - a >0 threshold never actually clears.
+                    # Set above the observed restart-blip ceiling so this
+                    # only fires for a real sustained incident.
+                    expr: sum by (reason) (increase(cortex_discarded_samples_total[15m])) > 5000
                     instant: true
                     intervalMs: 60000
                     maxDataPoints: 43200
