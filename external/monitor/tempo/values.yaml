@@ -18,7 +18,7 @@ tempo-distributed:
       overrides:
         defaults:
           metrics_generator:
-            processors: []
+            processors: [service-graphs, span-metrics]
         per_tenant_override_config: /overrides/overrides.yaml
   search:
     enabled: true
@@ -256,6 +256,10 @@ tempo-distributed:
         metrics.spydersoft.io/path: "/metrics"
   metricsGenerator:
     enabled: true
+    config:
+      storage:
+        remote_write:
+          - url: http://mimir-gateway-internal.monitoring.svc.cluster.local/api/v1/push
     # Measured actual usage is ~17m/26Mi.
     resources:
       requests:
