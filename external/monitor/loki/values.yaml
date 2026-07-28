@@ -54,7 +54,27 @@ loki:
           - selector: '{namespace="argocd"}'
             priority: 1
             period: 24h
-        
+        # Controls how OTLP LogRecord fields land once Alloy's OTLP log path
+        # (grafana-alloy .alloy configs) writes to Loki's native /otlp/v1/logs
+        # endpoint instead of the legacy otelcol.exporter.loki path, which had
+        # no way to avoid JSON-blobbing the whole record into the line.
+        otlp_config:
+          resource_attributes:
+            ignore_defaults: true  # default list includes service.instance.id,
+                                    # which is per-pod and would blow up label
+                                    # cardinality if promoted to an index label
+            attributes_config:
+              - action: index_label
+                attributes: [service.name, cluster, custom_source]
+              - action: structured_metadata
+                regex: ".*"
+          scope_attributes:
+            - action: structured_metadata
+              regex: ".*"
+          log_attributes:
+            - action: structured_metadata
+              regex: ".*"
+
     rulerConfig:
       alertmanager_url: https://mimir.mattgerega.net
       enable_alertmanager_v2: true
