@@ -268,14 +268,15 @@ tempo-distributed:
           # nothing. Flushes completed blocks to the same S3 backend Tempo
           # already uses for trace storage.
           flush_to_storage: true
-    # Measured actual usage is ~17m/26Mi.
+    # 2026-07-28: bumped from 256Mi after repeated OOMKills - active_series
+    # had climbed past 300, well above what the old limit could hold.
     resources:
       requests:
         cpu: 50m
-        memory: 64Mi
+        memory: 96Mi
       limits:
         cpu: 200m
-        memory: 256Mi
+        memory: 512Mi
     extraArgs:
       - -config.expand-env=true
     extraEnvFrom:

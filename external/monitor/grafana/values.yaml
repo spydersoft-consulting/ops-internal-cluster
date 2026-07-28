@@ -268,6 +268,7 @@ grafana:
                   datasourceUid: mimir-internal
                   model:
                     expr: kube_node_status_condition{condition="Ready", status="true"} == 0
+                    instant: true
                     intervalMs: 60000
                     maxDataPoints: 43200
               annotations:
@@ -288,6 +289,7 @@ grafana:
                   datasourceUid: mimir-internal
                   model:
                     expr: kube_pod_container_status_waiting_reason{reason="CrashLoopBackOff"} == 1
+                    instant: true
                     intervalMs: 60000
                     maxDataPoints: 43200
               annotations:
@@ -308,6 +310,7 @@ grafana:
                   datasourceUid: mimir-internal
                   model:
                     expr: kube_deployment_status_replicas_unavailable > 0
+                    instant: true
                     intervalMs: 60000
                     maxDataPoints: 43200
               annotations:
@@ -328,6 +331,7 @@ grafana:
                   datasourceUid: mimir-internal
                   model:
                     expr: kube_persistentvolumeclaim_status_phase{phase="Pending"} == 1
+                    instant: true
                     intervalMs: 60000
                     maxDataPoints: 43200
               annotations:
@@ -348,6 +352,7 @@ grafana:
                   datasourceUid: mimir-internal
                   model:
                     expr: node_procs_blocked > 2
+                    instant: true
                     intervalMs: 60000
                     maxDataPoints: 43200
               annotations:
@@ -374,6 +379,7 @@ grafana:
                   datasourceUid: mimir-internal
                   model:
                     expr: up{job=~".*/(distributor|ingester|compactor|store-gateway|querier|query-frontend|ruler|alertmanager)"} == 0
+                    instant: true
                     intervalMs: 60000
                     maxDataPoints: 43200
               annotations:
@@ -394,6 +400,7 @@ grafana:
                   datasourceUid: mimir-internal
                   model:
                     expr: sum by (reason) (increase(cortex_discarded_samples_total[15m])) > 0
+                    instant: true
                     intervalMs: 60000
                     maxDataPoints: 43200
               annotations:
@@ -414,6 +421,7 @@ grafana:
                   datasourceUid: mimir-internal
                   model:
                     expr: up{job=~".*/loki-(write|read|backend)"} == 0
+                    instant: true
                     intervalMs: 60000
                     maxDataPoints: 43200
               annotations:
@@ -434,6 +442,7 @@ grafana:
                   datasourceUid: mimir-internal
                   model:
                     expr: up{job=~".*/(distributor|ingester|compactor|querier|query-frontend|metrics-generator)"} == 0
+                    instant: true
                     intervalMs: 60000
                     maxDataPoints: 43200
               annotations:
@@ -460,6 +469,7 @@ grafana:
                   datasourceUid: mimir-internal
                   model:
                     expr: (sum(garage_local_disk_total{volume="data"}) - sum(garage_local_disk_avail{volume="data"})) / sum(garage_local_disk_total{volume="data"}) > 0.7
+                    instant: true
                     intervalMs: 60000
                     maxDataPoints: 43200
               annotations:
@@ -480,6 +490,7 @@ grafana:
                   datasourceUid: mimir-internal
                   model:
                     expr: (sum(garage_local_disk_total{volume="data"}) - sum(garage_local_disk_avail{volume="data"})) / sum(garage_local_disk_total{volume="data"}) > 0.85
+                    instant: true
                     intervalMs: 60000
                     maxDataPoints: 43200
               annotations:
@@ -500,6 +511,7 @@ grafana:
                   datasourceUid: mimir-internal
                   model:
                     expr: garage_cluster_healthy < 1
+                    instant: true
                     intervalMs: 60000
                     maxDataPoints: 43200
               annotations:
@@ -520,6 +532,7 @@ grafana:
                   datasourceUid: mimir-internal
                   model:
                     expr: garage_block_resync_errored_blocks > 0
+                    instant: true
                     intervalMs: 60000
                     maxDataPoints: 43200
               annotations:
@@ -562,6 +575,7 @@ grafana:
                   datasourceUid: mimir-internal
                   model:
                     expr: absent_over_time(up{job="node", host="pmxblue"}[10m])
+                    instant: true
                     intervalMs: 60000
                     maxDataPoints: 43200
               annotations:
@@ -582,6 +596,7 @@ grafana:
                   datasourceUid: mimir-internal
                   model:
                     expr: absent_over_time(up{job="node", host="pmxblack"}[10m])
+                    instant: true
                     intervalMs: 60000
                     maxDataPoints: 43200
               annotations:
@@ -602,6 +617,7 @@ grafana:
                   datasourceUid: mimir-internal
                   model:
                     expr: absent_over_time(up{job="node", host="pxhp"}[10m])
+                    instant: true
                     intervalMs: 60000
                     maxDataPoints: 43200
               annotations:
@@ -622,6 +638,7 @@ grafana:
                   datasourceUid: mimir-internal
                   model:
                     expr: max by (id) (pve_cpu_usage_ratio{id=~"node/.+"}) > 0.85
+                    instant: true
                     intervalMs: 60000
                     maxDataPoints: 43200
               annotations:
@@ -642,6 +659,7 @@ grafana:
                   datasourceUid: mimir-internal
                   model:
                     expr: max by (id) (pve_disk_usage_bytes{id=~"storage/.+"} / pve_disk_size_bytes{id=~"storage/.+"}) > 0.7
+                    instant: true
                     intervalMs: 60000
                     maxDataPoints: 43200
               annotations:
@@ -662,6 +680,7 @@ grafana:
                   datasourceUid: mimir-internal
                   model:
                     expr: max by (id) (pve_disk_usage_bytes{id=~"storage/.+"} / pve_disk_size_bytes{id=~"storage/.+"}) > 0.85
+                    instant: true
                     intervalMs: 60000
                     maxDataPoints: 43200
               annotations:
@@ -682,6 +701,7 @@ grafana:
                   datasourceUid: mimir-internal
                   model:
                     expr: max by (id) (pve_up{id=~"qemu/.+|lxc/.+"} and on (id) pve_guest_info{template!="1"}) == 0
+                    instant: true
                     intervalMs: 60000
                     maxDataPoints: 43200
               annotations:
