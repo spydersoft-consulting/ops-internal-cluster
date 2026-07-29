@@ -1,94 +1,90 @@
+ingress:
+  main:
+    enabled: false
+serviceMonitor:
+  main:
+    enabled: false
+    serviceName: '{{ include "bjw-s.common.lib.chart.names.fullname" $ }}'
+    endpoints:
+    - scheme: http
+      path: /metrics
+      scrapeTimeout: 30s
+      port: metrics
+      interval: 1m
 controllers:
   main:
+    revisionHistoryLimit: 3
+    replicas: 1
+    type: deployment
+    enabled: true
+    strategy: Recreate
     containers:
       main:
         envFrom:
         - secretRef:
             name: unifi-poller
-        probes:
-          liveness:
-            custom: false
-            type: TCP
-            enabled: true
-            spec:
-              periodSeconds: 10
-              initialDelaySeconds: 0
-              timeoutSeconds: 1
-              failureThreshold: 3
-          readiness:
-            custom: false
-            type: TCP
-            enabled: true
-            spec:
-              periodSeconds: 10
-              initialDelaySeconds: 0
-              timeoutSeconds: 1
-              failureThreshold: 3
-          startup:
-            custom: false
-            type: TCP
-            enabled: true
-            spec:
-              periodSeconds: 5
-              initialDelaySeconds: 0
-              timeoutSeconds: 1
-              failureThreshold: 30
         image:
+          tag: v3.3.4
           repository: ghcr.io/unpoller/unpoller
           pullPolicy: IfNotPresent
-          tag: v3.3.1
-        env:
-          UP_UNIFI_DEFAULT_URL: https://unifi
-          UP_INFLUXDB_DISABLE: true
-          TZ: America/New_York
-        # No CPU request previously set. Observed usage was bursty
-        # (~1-22m across samples, tracks UniFi controller poll interval).
-        # Requested below the low end of steady-state rather than the
-        # bursts.
         resources:
           requests:
             cpu: 10m
-    replicas: 1
-    enabled: true
-    revisionHistoryLimit: 3
-    strategy: Recreate
-    type: deployment
+        env:
+          TZ: America/New_York
+          UP_INFLUXDB_DISABLE: true
+          UP_UNIFI_DEFAULT_URL: https://unifi
+        probes:
+          liveness:
+            enabled: true
+            custom: false
+            type: TCP
+            spec:
+              periodSeconds: 10
+              timeoutSeconds: 1
+              failureThreshold: 3
+              initialDelaySeconds: 0
+          readiness:
+            enabled: true
+            custom: false
+            type: TCP
+            spec:
+              periodSeconds: 10
+              timeoutSeconds: 1
+              failureThreshold: 3
+              initialDelaySeconds: 0
+          startup:
+            enabled: true
+            custom: false
+            type: TCP
+            spec:
+              periodSeconds: 5
+              timeoutSeconds: 1
+              failureThreshold: 30
+              initialDelaySeconds: 0
 influxdb:
+  architecture: standalone
+  database: unifi
   persistence:
     enabled: false
-  architecture: standalone
   enabled: false
-  database: unifi
   authEnabled: false
-serviceMonitor:
-  main:
-    serviceName: '{{ include "bjw-s.common.lib.chart.names.fullname" $ }}'
-    enabled: false
-    endpoints:
-    - scheme: http
-      interval: 1m
-      path: /metrics
-      scrapeTimeout: 30s
-      port: metrics
 service:
   main:
-    type: ClusterIP
     controller: main
+    type: ClusterIP
+    annotations:
+      metrics.spydersoft.io/scrape: "true"
+      metrics.spydersoft.io/path: /metrics
+      metrics.spydersoft.io/scheme: http
+      metrics.spydersoft.io/port: "9130"
     ports:
       http:
         enabled: false
       metrics:
-        port: 9130
-        protocol: TCP
-        primary: true
         enabled: true
+        port: 9130
+        primary: true
+        protocol: TCP
     primary: true
-    annotations:
-      metrics.spydersoft.io/port: "9130"
-      metrics.spydersoft.io/scrape: "true"
-      metrics.spydersoft.io/path: /metrics
-      metrics.spydersoft.io/scheme: http
-ingress:
-  main:
-    enabled: false
 
