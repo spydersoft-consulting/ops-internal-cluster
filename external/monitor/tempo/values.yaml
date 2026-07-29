@@ -143,13 +143,18 @@ tempo-distributed:
     # readiness/liveness probes failing with 503, kubelet killing it
     # repeatedly). Limit raised well above steady-state to give startup
     # room to burst.
+    # Separately (2026-07-28), the 384Mi memory limit turned out to be too
+    # tight: production-tenant compaction bursts were measured peaking at
+    # ~370-380Mi (via container_memory_working_set_bytes), right against the
+    # cap, causing repeated OOMKills (33 restarts in ~6.5h, exit code 137).
+    # Raised to give headroom above observed peaks.
     resources:
       requests:
         cpu: 50m
         memory: 128Mi
       limits:
         cpu: "1"
-        memory: 384Mi
+        memory: 768Mi
     # See the matching comment on distributor.affinity above.
     affinity: |
       podAntiAffinity:
