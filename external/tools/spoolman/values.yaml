@@ -1,91 +1,91 @@
 route:
   main:
+    kind: HTTPRoute
     hostnames:
     - spoolman.mattgerega.net
+    parentRefs:
+    - name: main
+      kind: Gateway
+      group: gateway.networking.k8s.io
+      namespace: envoy-gateway-system
     rules:
     - matches:
       - path:
           type: PathPrefix
           value: /
       backendRefs:
-      - name: spoolman
+      - kind: Service
         group: ""
-        weight: 1
-        kind: Service
         port: 8000
-    parentRefs:
-    - name: main
-      kind: Gateway
-      group: gateway.networking.k8s.io
-      namespace: envoy-gateway-system
+        name: spoolman
+        weight: 1
     enabled: true
-    kind: HTTPRoute
+persistence:
+  data:
+    size: 2Gi
+    globalMounts:
+    - readOnly: false
+      path: /home/app/.local/share/spoolman
+    accessMode: ReadWriteMany
+    storageClass: nfs-client
+    enabled: true
+    type: persistentVolumeClaim
 controllers:
   main:
-    revisionHistoryLimit: 3
-    replicas: 1
-    type: deployment
-    enabled: true
-    strategy: Recreate
     containers:
       main:
-        image:
-          tag: 0.25.0
-          repository: ghcr.io/donkie/spoolman
-          pullPolicy: IfNotPresent
         resources:
           requests:
             cpu: 5m
         env:
           TZ: America/New_York
         probes:
-          liveness:
-            enabled: true
-            custom: false
-            type: TCP
-            spec:
-              periodSeconds: 10
-              failureThreshold: 3
-              initialDelaySeconds: 0
-              timeoutSeconds: 1
-          readiness:
-            enabled: true
-            custom: false
-            type: TCP
-            spec:
-              periodSeconds: 10
-              failureThreshold: 3
-              initialDelaySeconds: 0
-              timeoutSeconds: 1
           startup:
-            enabled: true
-            custom: false
-            type: TCP
             spec:
               periodSeconds: 5
-              failureThreshold: 30
               initialDelaySeconds: 0
+              failureThreshold: 30
               timeoutSeconds: 1
+            custom: false
+            enabled: true
+            type: TCP
+          liveness:
+            spec:
+              periodSeconds: 10
+              initialDelaySeconds: 0
+              failureThreshold: 3
+              timeoutSeconds: 1
+            custom: false
+            enabled: true
+            type: TCP
+          readiness:
+            spec:
+              periodSeconds: 10
+              initialDelaySeconds: 0
+              failureThreshold: 3
+              timeoutSeconds: 1
+            custom: false
+            enabled: true
+            type: TCP
+        image:
+          tag: 0.26.0
+          pullPolicy: IfNotPresent
+          repository: ghcr.io/donkie/spoolman
         strategy:
           type: Recreate
+    replicas: 1
+    revisionHistoryLimit: 3
+    strategy: Recreate
+    type: deployment
+    enabled: true
 service:
   main:
+    ports:
+      http:
+        primary: true
+        enabled: true
+        port: 8000
     controller: main
     primary: true
     type: ClusterIP
-    ports:
-      http:
-        enabled: true
-        port: 8000
-        primary: true
-persistence:
-  data:
-    size: 2Gi
-    accessMode: ReadWriteMany
-    enabled: true
-    type: persistentVolumeClaim
-    storageClass: nfs-client
-    globalMounts:
-    - readOnly: false
-      path: /home/app/.local/share/spoolman
 
