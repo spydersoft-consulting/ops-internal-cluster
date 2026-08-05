@@ -153,6 +153,14 @@ mimir-distributed:
         metrics.spydersoft.io/scrape: "true"
         metrics.spydersoft.io/port: "8080"
         metrics.spydersoft.io/path: "/metrics"
+    # The ingester logs the offending series (including its job/source
+    # labels) whenever it rejects a push - e.g. sample-out-of-order - but
+    # cortex_discarded_samples_total itself only carries reason/user, not
+    # the source. Collecting these logs into Loki is what actually lets
+    # Grafana answer "who's causing this" instead of requiring kubectl
+    # logs (see Mimir Discarding Samples alert, 2026-08-05).
+    podAnnotations:
+      logs.spydersoft.io/collect: "true"
   store_gateway:
     # Was 3 (zone-a/b/c) for the same reason as ingester above - dropped
     # to match, no zone-level HA benefit on a single physical host.

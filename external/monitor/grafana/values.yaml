@@ -411,7 +411,15 @@ grafana:
                     maxDataPoints: 43200
               annotations:
                 summary: Mimir is discarding samples.
-                description: This is how the 2026-07 WAL-replay/out-of-order incident first showed up - catch it before dashboards go dark instead of after. Check the reason label on the firing instance.
+                description: >-
+                  This is how the 2026-07 WAL-replay/out-of-order incident first showed
+                  up - catch it before dashboards go dark instead of after. The reason
+                  label on the firing instance tells you why, but cortex_discarded_samples_total's
+                  own job/instance labels are just the ingester exposing the counter -
+                  NOT the offending source. To find the actual source series/job, query
+                  Loki (mimir-ingester logs, collected since 2026-08-05):
+                  {namespace="monitoring", pod=~"mimir-ingester.*"} |= "out-of-order"
+                  - the logged error includes the rejected series' full label set.
               labels:
                 severity: warning
             - uid: loki-component-down
