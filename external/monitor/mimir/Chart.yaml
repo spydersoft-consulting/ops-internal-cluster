@@ -1,11 +1,11 @@
-type: application
-apiVersion: v2
-appVersion: 2.6.0
 name: mimir
-version: 6.1.0
+type: application
 dependencies:
-- version: 6.1.0
+- version: 6.2.0
   name: mimir-distributed
   repository: https://grafana.github.io/helm-charts
+apiVersion: v2
+appVersion: 2.6.0
+version: 6.2.0
 
 
