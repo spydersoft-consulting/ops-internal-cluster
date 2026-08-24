@@ -1,90 +1,90 @@
-ingress:
-  main:
-    enabled: false
 controllers:
   main:
-    enabled: true
-    revisionHistoryLimit: 3
-    strategy: Recreate
-    type: deployment
     replicas: 1
+    strategy: Recreate
     containers:
       main:
         probes:
           startup:
-            enabled: true
             custom: false
             type: TCP
+            enabled: true
             spec:
-              timeoutSeconds: 1
               initialDelaySeconds: 0
-              failureThreshold: 30
               periodSeconds: 5
-          readiness:
-            enabled: true
-            custom: false
-            type: TCP
-            spec:
               timeoutSeconds: 1
-              initialDelaySeconds: 0
-              failureThreshold: 3
-              periodSeconds: 10
+              failureThreshold: 30
           liveness:
-            enabled: true
             custom: false
             type: TCP
+            enabled: true
             spec:
-              timeoutSeconds: 1
               initialDelaySeconds: 0
-              failureThreshold: 3
               periodSeconds: 10
-        envFrom:
-        - secretRef:
-            name: unifi-poller
-        image:
-          tag: v4.0.0
-          pullPolicy: IfNotPresent
-          repository: ghcr.io/unpoller/unpoller
-        env:
-          TZ: America/New_York
-          UP_UNIFI_DEFAULT_URL: https://unifi
-          UP_INFLUXDB_DISABLE: true
+              timeoutSeconds: 1
+              failureThreshold: 3
+          readiness:
+            custom: false
+            type: TCP
+            enabled: true
+            spec:
+              initialDelaySeconds: 0
+              periodSeconds: 10
+              timeoutSeconds: 1
+              failureThreshold: 3
         resources:
           requests:
             cpu: 10m
-serviceMonitor:
+        env:
+          UP_UNIFI_DEFAULT_URL: https://unifi
+          UP_INFLUXDB_DISABLE: true
+          TZ: America/New_York
+        image:
+          repository: ghcr.io/unpoller/unpoller
+          pullPolicy: IfNotPresent
+          tag: v4.0.1
+        envFrom:
+        - secretRef:
+            name: unifi-poller
+    enabled: true
+    type: deployment
+    revisionHistoryLimit: 3
+ingress:
   main:
     enabled: false
+influxdb:
+  authEnabled: false
+  persistence:
+    enabled: false
+  database: unifi
+  enabled: false
+  architecture: standalone
+serviceMonitor:
+  main:
+    serviceName: '{{ include "bjw-s.common.lib.chart.names.fullname" $ }}'
     endpoints:
-    - scrapeTimeout: 30s
-      path: /metrics
+    - scheme: http
+      scrapeTimeout: 30s
       port: metrics
       interval: 1m
-      scheme: http
-    serviceName: '{{ include "bjw-s.common.lib.chart.names.fullname" $ }}'
+      path: /metrics
+    enabled: false
 service:
   main:
     controller: main
-    type: ClusterIP
-    primary: true
+    annotations:
+      metrics.spydersoft.io/scheme: http
+      metrics.spydersoft.io/path: /metrics
+      metrics.spydersoft.io/scrape: "true"
+      metrics.spydersoft.io/port: "9130"
     ports:
-      http:
-        enabled: false
       metrics:
+        port: 9130
         enabled: true
         primary: true
         protocol: TCP
-        port: 9130
-    annotations:
-      metrics.spydersoft.io/scheme: http
-      metrics.spydersoft.io/port: "9130"
-      metrics.spydersoft.io/scrape: "true"
-      metrics.spydersoft.io/path: /metrics
-influxdb:
-  architecture: standalone
-  persistence:
-    enabled: false
-  enabled: false
-  authEnabled: false
-  database: unifi
+      http:
+        enabled: false
+    primary: true
+    type: ClusterIP
 
