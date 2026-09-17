@@ -1,0 +1,56 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: ilo-log-poller-pxhp
+  namespace: cluster-tools
+spec:
+  schedule: "*/5 * * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      backoffLimit: 1
+      template:
+        spec:
+          restartPolicy: Never
+          containers:
+            - name: ilo-log-poller
+              image: python:3.12-alpine
+              command: ["python3", "/scripts/poll.py"]
+              env:
+                - name: ILO_HOST
+                  value: "192.168.1.28"
+                - name: HOST_LABEL
+                  value: "pxhp"
+                - name: LOKI_TENANT
+                  value: "self-monitoring"
+                - name: ILO_USER
+                  valueFrom:
+                    secretKeyRef:
+                      name: ilo-pxhp-credentials
+                      key: ILO_USER
+                - name: ILO_PASS
+                  valueFrom:
+                    secretKeyRef:
+                      name: ilo-pxhp-credentials
+                      key: ILO_PASS
+              resources:
+                requests:
+                  cpu: 10m
+                  memory: 32Mi
+                limits:
+                  cpu: 100m
+                  memory: 64Mi
+              volumeMounts:
+                - name: script
+                  mountPath: /scripts
+                - name: state
+                  mountPath: /state
+          volumes:
+            - name: script
+              configMap:
+                name: ilo-log-poller-script
+            - name: state
+              persistentVolumeClaim:
+                claimName: ilo-log-poller-state

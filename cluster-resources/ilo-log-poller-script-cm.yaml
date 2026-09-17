@@ -1,0 +1,140 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ilo-log-poller-script
+  namespace: cluster-tools
+data:
+  poll.py: |
+    import base64
+    import datetime
+    import json
+    import os
+    import ssl
+    import urllib.error
+    import urllib.request
+
+    ILO_HOST = os.environ["ILO_HOST"]
+    ILO_USER = os.environ["ILO_USER"]
+    ILO_PASS = os.environ["ILO_PASS"]
+    LOKI_URL = os.environ.get(
+        "LOKI_URL", "http://loki-write.monitoring.svc.cluster.local:3100/loki/api/v1/push"
+    )
+    LOKI_TENANT = os.environ.get("LOKI_TENANT", "self-monitoring")
+    HOST_LABEL = os.environ.get("HOST_LABEL", "pxhp")
+    STATE_FILE = "/state/ilo-log-state.json"
+    MAX_PAGES = 50
+
+    SSL_CTX = ssl.create_default_context()
+    SSL_CTX.check_hostname = False
+    SSL_CTX.verify_mode = ssl.CERT_NONE
+
+    LOGS = [
+        ("iml", "/redfish/v1/Systems/1/LogServices/IML/Entries/"),
+        ("iel", "/redfish/v1/Managers/1/LogServices/IEL/Entries/"),
+    ]
+
+
+    def ilo_get(path):
+        url = f"https://{ILO_HOST}{path}"
+        req = urllib.request.Request(url)
+        creds = base64.b64encode(f"{ILO_USER}:{ILO_PASS}".encode()).decode()
+        req.add_header("Authorization", f"Basic {creds}")
+        with urllib.request.urlopen(req, context=SSL_CTX, timeout=15) as resp:
+            return json.load(resp)
+
+
+    def fetch_all_entries(base_path):
+        entries = []
+        page = 1
+        for _ in range(MAX_PAGES):
+            data = ilo_get(f"{base_path}?page={page}")
+            entries.extend(data.get("Items", []))
+            next_page = (data.get("links") or {}).get("NextPage")
+            if not next_page or not next_page.get("page"):
+                break
+            page = next_page["page"]
+        return entries
+
+
+    def load_state():
+        try:
+            with open(STATE_FILE) as f:
+                return json.load(f)
+        except Exception:
+            return {}
+
+
+    def save_state(state):
+        with open(STATE_FILE, "w") as f:
+            json.dump(state, f)
+
+
+    def to_ns(iso_ts):
+        dt = datetime.datetime.strptime(iso_ts, "%Y-%m-%dT%H:%M:%SZ").replace(
+            tzinfo=datetime.timezone.utc
+        )
+        return str(int(dt.timestamp() * 1_000_000_000))
+
+
+    def push_to_loki(source, new_entries):
+        if not new_entries:
+            return
+        values = []
+        for e in new_entries:
+            line = json.dumps(
+                {
+                    "id": e.get("Id"),
+                    "message": e.get("Message"),
+                    "type": e.get("EntryType"),
+                }
+            )
+            values.append([to_ns(e["Created"]), line])
+        values.sort(key=lambda v: v[0])
+        payload = {
+            "streams": [
+                {
+                    "stream": {"job": "ilo-events", "host": HOST_LABEL, "source": source},
+                    "values": values,
+                }
+            ]
+        }
+        req = urllib.request.Request(
+            LOKI_URL,
+            data=json.dumps(payload).encode(),
+            method="POST",
+            headers={"Content-Type": "application/json", "X-Scope-OrgID": LOKI_TENANT},
+        )
+        try:
+            with urllib.request.urlopen(req, timeout=15) as resp:
+                print(f"{source}: pushed {len(new_entries)} entries, loki status {resp.status}")
+        except urllib.error.HTTPError as err:
+            body = err.read().decode(errors="replace")
+            raise RuntimeError(f"Loki push failed for {source}: {err.code} {body}")
+
+
+    def main():
+        state = load_state()
+
+        for source, path in LOGS:
+            key = f"{source}_last_id"
+            last_id = state.get(key, 0)
+
+            entries = fetch_all_entries(path)
+            ids = [int(e["Id"]) for e in entries if "Id" in e]
+
+            if ids and max(ids) < last_id:
+                # Log was cleared on the iLO side (IDs restarted lower) - treat everything as new.
+                print(f"{source}: detected log clear (max id {max(ids)} < last seen {last_id}), resetting")
+                last_id = 0
+
+            new_entries = [e for e in entries if int(e.get("Id", 0)) > last_id]
+            push_to_loki(source, new_entries)
+
+            if ids:
+                state[key] = max(ids)
+
+        save_state(state)
+
+
+    if __name__ == "__main__":
+        main()
