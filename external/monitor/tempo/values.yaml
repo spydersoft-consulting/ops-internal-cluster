@@ -197,6 +197,10 @@ tempo-distributed:
         metrics.spydersoft.io/port: "3200"
         metrics.spydersoft.io/path: "/metrics"
   ingester:
+    # Keeps the descheduler off this single-replica pod (DefaultEvictor
+    # noEvictionPolicy: Mandatory) without a PDB, so drains can still evict it.
+    podAnnotations:
+      descheduler.alpha.kubernetes.io/prefer-no-eviction: "true"
     # Chart default is 3 replicas with ring replication_factor 3 (a full
     # copy of every trace on each of 3 ingesters) - zone/replica HA with
     # no second physical node to protect against. Dropped to 1/1.
@@ -302,6 +306,10 @@ tempo-distributed:
         metrics.spydersoft.io/path: "/metrics"
   # Had no requests/limits. Measured actual usage is ~7-9m/68Mi.
   memcached:
+    # Keeps the descheduler off this single-replica pod (DefaultEvictor
+    # noEvictionPolicy: Mandatory) without a PDB, so drains can still evict it.
+    podAnnotations:
+      descheduler.alpha.kubernetes.io/prefer-no-eviction: "true"
     resources:
       requests:
         cpu: 5m

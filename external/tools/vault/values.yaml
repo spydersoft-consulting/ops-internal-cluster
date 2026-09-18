@@ -15,6 +15,7 @@ vault:
     annotations:
       logs.spydersoft.io/collect: "true"
       logs.spydersoft.io/format: "json"
+      descheduler.alpha.kubernetes.io/prefer-no-eviction: "true"
 
     # Sidecar that tails the file audit device to stdout so Alloy can ship
     # it through the standard k8s container-log pipeline. Container name is
