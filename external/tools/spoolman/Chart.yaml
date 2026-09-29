@@ -1,10 +1,12 @@
-name: spoolman
 version: 5.1.0
-apiVersion: v2
+name: spoolman
+description: Spoolman
+appVersion: 0.16.1
 type: application
 dependencies:
 - version: 5.2.0
+  repository: oci://ghcr.io/bjw-s-labs/helm
   name: common
-  repository: "oci://ghcr.io/bjw-s-labs/helm"
-appVersion: 0.16.1
-description: Spoolman
+apiVersion: v2
+
+

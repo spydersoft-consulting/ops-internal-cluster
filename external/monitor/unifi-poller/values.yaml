@@ -1,90 +1,90 @@
-influxdb:
-  database: unifi
-  enabled: false
-  persistence:
-    enabled: false
-  architecture: standalone
-  authEnabled: false
-serviceMonitor:
+service:
   main:
-    enabled: false
-    endpoints:
-    - port: metrics
-      path: /metrics
-      interval: 1m
-      scrapeTimeout: 30s
-      scheme: http
-    serviceName: '{{ include "bjw-s.common.lib.chart.names.fullname" $ }}'
+    annotations:
+      metrics.spydersoft.io/scrape: "true"
+      metrics.spydersoft.io/port: "9130"
+      metrics.spydersoft.io/scheme: http
+      metrics.spydersoft.io/path: /metrics
+    primary: true
+    ports:
+      metrics:
+        enabled: true
+        protocol: TCP
+        primary: true
+        port: 9130
+      http:
+        enabled: false
+    type: ClusterIP
+    controller: main
 controllers:
   main:
-    type: deployment
     strategy: Recreate
-    enabled: true
-    revisionHistoryLimit: 3
     containers:
       main:
+        image:
+          repository: ghcr.io/unpoller/unpoller
+          tag: v5.2.10
+          pullPolicy: IfNotPresent
+        env:
+          UP_INFLUXDB_DISABLE: true
+          TZ: America/New_York
+          UP_UNIFI_DEFAULT_URL: https://unifi
+        resources:
+          requests:
+            cpu: 10m
         envFrom:
         - secretRef:
             name: unifi-poller
         probes:
-          liveness:
-            custom: false
-            type: TCP
-            spec:
-              initialDelaySeconds: 0
-              timeoutSeconds: 1
-              periodSeconds: 10
-              failureThreshold: 3
-            enabled: true
           startup:
+            enabled: true
             custom: false
             type: TCP
             spec:
-              initialDelaySeconds: 0
               timeoutSeconds: 1
+              initialDelaySeconds: 0
               periodSeconds: 5
               failureThreshold: 30
-            enabled: true
           readiness:
+            enabled: true
             custom: false
             type: TCP
             spec:
-              initialDelaySeconds: 0
               timeoutSeconds: 1
+              initialDelaySeconds: 0
               periodSeconds: 10
               failureThreshold: 3
+          liveness:
             enabled: true
-        image:
-          repository: ghcr.io/unpoller/unpoller
-          tag: v5.2.8
-          pullPolicy: IfNotPresent
-        env:
-          UP_UNIFI_DEFAULT_URL: https://unifi
-          UP_INFLUXDB_DISABLE: true
-          TZ: America/New_York
-        resources:
-          requests:
-            cpu: 10m
+            custom: false
+            type: TCP
+            spec:
+              timeoutSeconds: 1
+              initialDelaySeconds: 0
+              periodSeconds: 10
+              failureThreshold: 3
     replicas: 1
+    enabled: true
+    type: deployment
+    revisionHistoryLimit: 3
+serviceMonitor:
+  main:
+    serviceName: '{{ include "bjw-s.common.lib.chart.names.fullname" $ }}'
+    endpoints:
+    - scrapeTimeout: 30s
+      path: /metrics
+      port: metrics
+      interval: 1m
+      scheme: http
+    enabled: false
 ingress:
   main:
     enabled: false
-service:
-  main:
-    ports:
-      metrics:
-        enabled: true
-        primary: true
-        port: 9130
-        protocol: TCP
-      http:
-        enabled: false
-    type: ClusterIP
-    primary: true
-    annotations:
-      metrics.spydersoft.io/port: "9130"
-      metrics.spydersoft.io/scrape: "true"
-      metrics.spydersoft.io/scheme: http
-      metrics.spydersoft.io/path: /metrics
-    controller: main
+influxdb:
+  architecture: standalone
+  enabled: false
+  database: unifi
+  persistence:
+    enabled: false
+  authEnabled: false
 
