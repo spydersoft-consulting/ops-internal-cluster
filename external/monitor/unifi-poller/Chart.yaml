@@ -1,11 +1,11 @@
-version: 5.1.0
-name: unifi-poller
-type: application
 dependencies:
-- version: 5.2.0
-  repository: oci://ghcr.io/bjw-s-labs/helm
+- repository: oci://ghcr.io/bjw-s-labs/helm
   name: common
+  version: 5.2.0
+name: unifi-poller
 appVersion: v2.9.2
+version: 5.1.0
 apiVersion: v2
+type: application
 
 
