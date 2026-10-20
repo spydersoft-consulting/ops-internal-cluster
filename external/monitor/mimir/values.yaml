@@ -429,6 +429,13 @@ mimir-distributed:
         file: /etc/mimir-runtime-overrides/runtime-overrides.yaml
         period: 10s
 
+      # Return 5xx past these limits so Alloy backs off, instead of the
+      # distributor buffering a remote-write replay burst until OOM.
+      distributor:
+        instance_limits:
+          max_inflight_push_requests: 200
+          max_inflight_push_requests_bytes: 536870912
+
       # Reverted to classic architecture (direct distributor->ingester push)
       # - see kafka.enabled: false above for why. push_grpc_method_enabled
       # re-enables the classic push RPC that ingest_storage otherwise
