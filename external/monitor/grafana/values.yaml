@@ -464,6 +464,252 @@ grafana:
                 description: Check the job label on the firing instance for which component.
               labels:
                 severity: critical
+
+        - orgId: 1
+          name: data-freshness
+          folder: Observability Stack
+          interval: 1m
+          rules:
+            - uid: data-stale-metrics-internal
+              title: Metrics Stale (internal)
+              condition: C
+              for: 5m
+              noDataState: Alerting
+              execErrState: Error
+              data:
+                - refId: A
+                  relativeTimeRange:
+                    from: 600
+                    to: 0
+                  datasourceUid: mimir-internal
+                  model:
+                    expr: 'count(up)'
+                    instant: true
+                    intervalMs: 60000
+                    maxDataPoints: 43200
+                - refId: B
+                  datasourceUid: __expr__
+                  model:
+                    type: reduce
+                    expression: A
+                    reducer: last
+                    settings:
+                      mode: dropNN
+                - refId: C
+                  datasourceUid: __expr__
+                  model:
+                    type: threshold
+                    expression: B
+                    conditions:
+                      - evaluator:
+                          type: lt
+                          params: [1]
+              annotations:
+                summary: No metrics received for tenant internal in 5+ minutes.
+                description: >-
+                  No metrics have arrived in the internal Mimir tenant for 5+ minutes. Check the cluster's Alloy remote_write to Mimir and, for nonproduction/production, the linkerd multicluster gateway (internal linkerd-multicluster/linkerd-gateway must be 2/2 with a linkerd-proxy container) and mimir-gateway-internal endpoints.
+              labels:
+                severity: critical
+            - uid: data-stale-logs-internal
+              title: Logs Stale (internal)
+              condition: C
+              for: 5m
+              noDataState: Alerting
+              execErrState: Error
+              data:
+                - refId: A
+                  relativeTimeRange:
+                    from: 600
+                    to: 0
+                  datasourceUid: loki-internal
+                  model:
+                    expr: 'sum(count_over_time({cluster="internal"}[5m]))'
+                    queryType: instant
+                    intervalMs: 60000
+                    maxDataPoints: 43200
+                - refId: B
+                  datasourceUid: __expr__
+                  model:
+                    type: reduce
+                    expression: A
+                    reducer: last
+                    settings:
+                      mode: dropNN
+                - refId: C
+                  datasourceUid: __expr__
+                  model:
+                    type: threshold
+                    expression: B
+                    conditions:
+                      - evaluator:
+                          type: lt
+                          params: [1]
+              annotations:
+                summary: No logs received for tenant internal in 5+ minutes.
+                description: >-
+                  No logs have arrived in the internal Loki tenant for 5+ minutes. Check the cluster's Alloy exporters to Loki, loki-write, and for nonproduction/production the linkerd multicluster gateway and loki-gateway-internal endpoints.
+              labels:
+                severity: critical
+            - uid: data-stale-metrics-nonproduction
+              title: Metrics Stale (nonproduction)
+              condition: C
+              for: 5m
+              noDataState: Alerting
+              execErrState: Error
+              data:
+                - refId: A
+                  relativeTimeRange:
+                    from: 600
+                    to: 0
+                  datasourceUid: mimir-nonproduction
+                  model:
+                    expr: 'count(up)'
+                    instant: true
+                    intervalMs: 60000
+                    maxDataPoints: 43200
+                - refId: B
+                  datasourceUid: __expr__
+                  model:
+                    type: reduce
+                    expression: A
+                    reducer: last
+                    settings:
+                      mode: dropNN
+                - refId: C
+                  datasourceUid: __expr__
+                  model:
+                    type: threshold
+                    expression: B
+                    conditions:
+                      - evaluator:
+                          type: lt
+                          params: [1]
+              annotations:
+                summary: No metrics received for tenant nonproduction in 5+ minutes.
+                description: >-
+                  No metrics have arrived in the nonproduction Mimir tenant for 5+ minutes. Check the cluster's Alloy remote_write to Mimir and, for nonproduction/production, the linkerd multicluster gateway (internal linkerd-multicluster/linkerd-gateway must be 2/2 with a linkerd-proxy container) and mimir-gateway-internal endpoints.
+              labels:
+                severity: critical
+            - uid: data-stale-logs-nonproduction
+              title: Logs Stale (nonproduction)
+              condition: C
+              for: 5m
+              noDataState: Alerting
+              execErrState: Error
+              data:
+                - refId: A
+                  relativeTimeRange:
+                    from: 600
+                    to: 0
+                  datasourceUid: loki-nonproduction
+                  model:
+                    expr: 'sum(count_over_time({cluster="nonproduction"}[5m]))'
+                    queryType: instant
+                    intervalMs: 60000
+                    maxDataPoints: 43200
+                - refId: B
+                  datasourceUid: __expr__
+                  model:
+                    type: reduce
+                    expression: A
+                    reducer: last
+                    settings:
+                      mode: dropNN
+                - refId: C
+                  datasourceUid: __expr__
+                  model:
+                    type: threshold
+                    expression: B
+                    conditions:
+                      - evaluator:
+                          type: lt
+                          params: [1]
+              annotations:
+                summary: No logs received for tenant nonproduction in 5+ minutes.
+                description: >-
+                  No logs have arrived in the nonproduction Loki tenant for 5+ minutes. Check the cluster's Alloy exporters to Loki, loki-write, and for nonproduction/production the linkerd multicluster gateway and loki-gateway-internal endpoints.
+              labels:
+                severity: critical
+            - uid: data-stale-metrics-production
+              title: Metrics Stale (production)
+              condition: C
+              for: 5m
+              noDataState: Alerting
+              execErrState: Error
+              data:
+                - refId: A
+                  relativeTimeRange:
+                    from: 600
+                    to: 0
+                  datasourceUid: mimir-production
+                  model:
+                    expr: 'count(up)'
+                    instant: true
+                    intervalMs: 60000
+                    maxDataPoints: 43200
+                - refId: B
+                  datasourceUid: __expr__
+                  model:
+                    type: reduce
+                    expression: A
+                    reducer: last
+                    settings:
+                      mode: dropNN
+                - refId: C
+                  datasourceUid: __expr__
+                  model:
+                    type: threshold
+                    expression: B
+                    conditions:
+                      - evaluator:
+                          type: lt
+                          params: [1]
+              annotations:
+                summary: No metrics received for tenant production in 5+ minutes.
+                description: >-
+                  No metrics have arrived in the production Mimir tenant for 5+ minutes. Check the cluster's Alloy remote_write to Mimir and, for nonproduction/production, the linkerd multicluster gateway (internal linkerd-multicluster/linkerd-gateway must be 2/2 with a linkerd-proxy container) and mimir-gateway-internal endpoints.
+              labels:
+                severity: critical
+            - uid: data-stale-logs-production
+              title: Logs Stale (production)
+              condition: C
+              for: 5m
+              noDataState: Alerting
+              execErrState: Error
+              data:
+                - refId: A
+                  relativeTimeRange:
+                    from: 600
+                    to: 0
+                  datasourceUid: loki-production
+                  model:
+                    expr: 'sum(count_over_time({cluster="production"}[5m]))'
+                    queryType: instant
+                    intervalMs: 60000
+                    maxDataPoints: 43200
+                - refId: B
+                  datasourceUid: __expr__
+                  model:
+                    type: reduce
+                    expression: A
+                    reducer: last
+                    settings:
+                      mode: dropNN
+                - refId: C
+                  datasourceUid: __expr__
+                  model:
+                    type: threshold
+                    expression: B
+                    conditions:
+                      - evaluator:
+                          type: lt
+                          params: [1]
+              annotations:
+                summary: No logs received for tenant production in 5+ minutes.
+                description: >-
+                  No logs have arrived in the production Loki tenant for 5+ minutes. Check the cluster's Alloy exporters to Loki, loki-write, and for nonproduction/production the linkerd multicluster gateway and loki-gateway-internal endpoints.
+              labels:
+                severity: critical
       
         - orgId: 1
           name: garage-storage
