@@ -79,7 +79,7 @@ mimir-distributed:
         memory: 256Mi
       limits:
         cpu: "1"
-        memory: 2Gi
+        memory: 6Gi
     affinity:
       podAntiAffinity:
         preferredDuringSchedulingIgnoredDuringExecution:
