@@ -57,11 +57,7 @@ mimir-distributed:
         mountPath: /etc/mimir-runtime-overrides
         readOnly: true
   distributor:
-    # Was 2 for HA - live ingestion is ~2000 samples/sec combined across all
-    # 3 tenants (measured 2026-07-14), several orders of magnitude below
-    # what a single distributor handles. There's no second physical node
-    # for a second replica to protect against here anyway.
-    replicas: 1
+    replicas: 2
     revisionHistoryLimit: 1
     # Was 200m/1Gi request, 1 CPU/3Gi limit - measured actual usage is only
     # ~120m/100Mi (~10% of request). Trimmed to match, with headroom for
@@ -79,7 +75,7 @@ mimir-distributed:
         memory: 256Mi
       limits:
         cpu: "1"
-        memory: 6Gi
+        memory: 3Gi
     affinity:
       podAntiAffinity:
         preferredDuringSchedulingIgnoredDuringExecution:
