@@ -1,90 +1,90 @@
-serviceMonitor:
+influxdb:
+  enabled: false
+  database: unifi
+  authEnabled: false
+  persistence:
+    enabled: false
+  architecture: standalone
+ingress:
   main:
     enabled: false
-    endpoints:
-    - scheme: http
-      port: metrics
-      scrapeTimeout: 30s
-      path: /metrics
-      interval: 1m
-    serviceName: '{{ include "bjw-s.common.lib.chart.names.fullname" $ }}'
+controllers:
+  main:
+    enabled: true
+    revisionHistoryLimit: 3
+    replicas: 1
+    containers:
+      main:
+        resources:
+          requests:
+            cpu: 10m
+        envFrom:
+        - secretRef:
+            name: unifi-poller
+        probes:
+          readiness:
+            spec:
+              timeoutSeconds: 1
+              periodSeconds: 10
+              initialDelaySeconds: 0
+              failureThreshold: 3
+            custom: false
+            enabled: true
+            type: TCP
+          startup:
+            spec:
+              timeoutSeconds: 1
+              periodSeconds: 5
+              initialDelaySeconds: 0
+              failureThreshold: 30
+            custom: false
+            enabled: true
+            type: TCP
+          liveness:
+            spec:
+              timeoutSeconds: 1
+              periodSeconds: 10
+              initialDelaySeconds: 0
+              failureThreshold: 3
+            custom: false
+            enabled: true
+            type: TCP
+        image:
+          repository: ghcr.io/unpoller/unpoller
+          pullPolicy: IfNotPresent
+          tag: v5.9.3
+        env:
+          UP_UNIFI_DEFAULT_URL: https://unifi
+          UP_INFLUXDB_DISABLE: true
+          TZ: America/New_York
+    type: deployment
+    strategy: Recreate
 service:
   main:
     ports:
       metrics:
         enabled: true
-        port: 9130
         primary: true
         protocol: TCP
+        port: 9130
       http:
         enabled: false
-    controller: main
+    annotations:
+      metrics.spydersoft.io/scheme: http
+      metrics.spydersoft.io/scrape: "true"
+      metrics.spydersoft.io/port: "9130"
+      metrics.spydersoft.io/path: /metrics
     type: ClusterIP
     primary: true
-    annotations:
-      metrics.spydersoft.io/port: "9130"
-      metrics.spydersoft.io/scrape: "true"
-      metrics.spydersoft.io/path: /metrics
-      metrics.spydersoft.io/scheme: http
-influxdb:
-  persistence:
-    enabled: false
-  enabled: false
-  database: unifi
-  architecture: standalone
-  authEnabled: false
-controllers:
+    controller: main
+serviceMonitor:
   main:
-    replicas: 1
-    revisionHistoryLimit: 3
-    type: deployment
-    enabled: true
-    strategy: Recreate
-    containers:
-      main:
-        envFrom:
-        - secretRef:
-            name: unifi-poller
-        env:
-          UP_INFLUXDB_DISABLE: true
-          UP_UNIFI_DEFAULT_URL: https://unifi
-          TZ: America/New_York
-        image:
-          repository: ghcr.io/unpoller/unpoller
-          tag: v5.9.2
-          pullPolicy: IfNotPresent
-        probes:
-          liveness:
-            enabled: true
-            type: TCP
-            spec:
-              failureThreshold: 3
-              initialDelaySeconds: 0
-              timeoutSeconds: 1
-              periodSeconds: 10
-            custom: false
-          readiness:
-            enabled: true
-            type: TCP
-            spec:
-              failureThreshold: 3
-              initialDelaySeconds: 0
-              timeoutSeconds: 1
-              periodSeconds: 10
-            custom: false
-          startup:
-            enabled: true
-            type: TCP
-            spec:
-              failureThreshold: 30
-              initialDelaySeconds: 0
-              timeoutSeconds: 1
-              periodSeconds: 5
-            custom: false
-        resources:
-          requests:
-            cpu: 10m
-ingress:
-  main:
+    endpoints:
+    - port: metrics
+      interval: 1m
+      scheme: http
+      path: /metrics
+      scrapeTimeout: 30s
     enabled: false
+    serviceName: '{{ include "bjw-s.common.lib.chart.names.fullname" $ }}'
 
