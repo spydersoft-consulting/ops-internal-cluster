@@ -360,6 +360,27 @@ grafana:
                 description: Check namespace/instance/node/cluster labels on the firing instance. Common cause - a wedged NFS client (e.g. hung nfs4 state-manager thread) blocking I/O for every pod on that node; SSH in and check `ps aux` for D-state processes and `dmesg` for NFS errors. Often requires a node reboot to clear.
               labels:
                 severity: critical
+            - uid: linkerd-pod-missing-proxy
+              title: Linkerd Pod Missing Proxy
+              condition: A
+              for: 5m
+              noDataState: OK
+              data:
+                - refId: A
+                  relativeTimeRange:
+                    from: 300
+                    to: 0
+                  datasourceUid: mimir-internal
+                  model:
+                    expr: kube_pod_status_phase{namespace=~"linkerd-multicluster|linkerd-viz",phase="Running"} == 1 unless on(cluster, namespace, pod) kube_pod_init_container_info{container="linkerd-proxy"}
+                    instant: true
+                    intervalMs: 60000
+                    maxDataPoints: 43200
+              annotations:
+                summary: A pod in a Linkerd-meshed namespace is running without a linkerd-proxy sidecar for 5+ minutes.
+                description: Check namespace/pod/cluster labels on the firing instance. The proxy-injector webhook fails open (failurePolicy Ignore), so pods created while it was unavailable (e.g. during node cycling) are admitted uninjected. Verify linkerd-proxy-injector is Ready, then `kubectl rollout restart` the owning deployment.
+              labels:
+                severity: critical
 
         - orgId: 1
           name: observability-stack-health
