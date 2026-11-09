@@ -990,6 +990,33 @@ grafana:
                 description: Check the id label for which guest. Excludes VM/CT templates (pve_guest_info template="1"), which are intentionally never started. Can't distinguish an intentional shutdown from an unexpected one for everything else - silence if expected.
               labels:
                 severity: warning
+
+        - orgId: 1
+          name: 3d-printing-health
+          folder: Home Automation
+          interval: 5m
+          rules:
+            - uid: ams-humidity-high
+              title: AMS Humidity High
+              condition: A
+              for: 30m
+              noDataState: OK
+              data:
+                - refId: A
+                  relativeTimeRange:
+                    from: 600
+                    to: 0
+                  datasourceUid: mimir-production
+                  model:
+                    expr: avg(hass_sensor_humidity_percent{entity="sensor.gunit_p1s_ams_1_humidity"}) > 17.0
+                    instant: true
+                    intervalMs: 60000
+                    maxDataPoints: 43200
+              annotations:
+                summary: AMS humidity has been above 17% for 30+ minutes.
+                description: Filament in the P1S AMS is absorbing moisture - check/replace the desiccant and confirm the AMS lid is sealed.
+              labels:
+                severity: warning
       deleteRules:
         # Grafana's alerting file-provisioner does NOT delete rules just
         # because they're removed from `groups` above - it only adds/updates
