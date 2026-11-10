@@ -1,0 +1,927 @@
+{
+  "uid": "rack-temperatures",
+  "title": "Rack Temperatures",
+  "tags": [
+    "rack",
+    "temperature",
+    "infrastructure"
+  ],
+  "timezone": "browser",
+  "editable": true,
+  "graphTooltip": 1,
+  "refresh": "1m",
+  "schemaVersion": 39,
+  "version": 1,
+  "time": {
+    "from": "now-24h",
+    "to": "now"
+  },
+  "panels": [
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "mimir-internal"
+      },
+      "fieldConfig": {
+        "overrides": [],
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 60
+              },
+              {
+                "color": "orange",
+                "value": 80
+              },
+              {
+                "color": "red",
+                "value": 90
+              }
+            ],
+            "mode": "absolute"
+          },
+          "unit": "celsius",
+          "decimals": 1
+        }
+      },
+      "id": 1,
+      "type": "stat",
+      "title": "UCG Max CPU",
+      "targets": [
+        {
+          "expr": "unpoller_device_temperature_celsius{name=\"Brandywine\",temp_area=\"CPU\"}",
+          "legendFormat": "",
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "mimir-internal"
+          }
+        }
+      ],
+      "options": {
+        "colorMode": "background",
+        "graphMode": "area",
+        "reduceOptions": {
+          "fields": "",
+          "calcs": [
+            "lastNotNull"
+          ],
+          "values": false
+        },
+        "textMode": "value"
+      },
+      "gridPos": {
+        "y": 0,
+        "w": 4,
+        "h": 4,
+        "x": 0
+      }
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "mimir-internal"
+      },
+      "fieldConfig": {
+        "overrides": [],
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 60
+              },
+              {
+                "color": "orange",
+                "value": 80
+              },
+              {
+                "color": "red",
+                "value": 90
+              }
+            ],
+            "mode": "absolute"
+          },
+          "unit": "celsius",
+          "decimals": 1
+        }
+      },
+      "id": 2,
+      "type": "stat",
+      "title": "pmxblue CPU",
+      "targets": [
+        {
+          "expr": "node_hwmon_temp_celsius{instance=\"pmxblue\",chip=~\"pci0000:00_0000:00:18_3\",sensor=\"temp1\"}",
+          "legendFormat": "",
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "mimir-internal"
+          }
+        }
+      ],
+      "options": {
+        "colorMode": "background",
+        "graphMode": "area",
+        "reduceOptions": {
+          "fields": "",
+          "calcs": [
+            "lastNotNull"
+          ],
+          "values": false
+        },
+        "textMode": "value"
+      },
+      "gridPos": {
+        "y": 0,
+        "w": 4,
+        "h": 4,
+        "x": 4
+      }
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "mimir-internal"
+      },
+      "fieldConfig": {
+        "overrides": [],
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 60
+              },
+              {
+                "color": "orange",
+                "value": 80
+              },
+              {
+                "color": "red",
+                "value": 90
+              }
+            ],
+            "mode": "absolute"
+          },
+          "unit": "celsius",
+          "decimals": 1
+        }
+      },
+      "id": 3,
+      "type": "stat",
+      "title": "m5proxy CPU",
+      "targets": [
+        {
+          "expr": "node_thermal_zone_temp{instance=\"m5proxy\",type=\"cpu-thermal\"}",
+          "legendFormat": "",
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "mimir-internal"
+          }
+        }
+      ],
+      "options": {
+        "colorMode": "background",
+        "graphMode": "area",
+        "reduceOptions": {
+          "fields": "",
+          "calcs": [
+            "lastNotNull"
+          ],
+          "values": false
+        },
+        "textMode": "value"
+      },
+      "gridPos": {
+        "y": 0,
+        "w": 4,
+        "h": 4,
+        "x": 8
+      }
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "mimir-production"
+      },
+      "fieldConfig": {
+        "overrides": [],
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 60
+              },
+              {
+                "color": "orange",
+                "value": 80
+              },
+              {
+                "color": "red",
+                "value": 90
+              }
+            ],
+            "mode": "absolute"
+          },
+          "unit": "celsius",
+          "decimals": 1
+        }
+      },
+      "id": 4,
+      "type": "stat",
+      "title": "Home Assistant CPU",
+      "targets": [
+        {
+          "expr": "hass_sensor_temperature_celsius{entity=\"sensor.argon_cpu_temperature\"}",
+          "legendFormat": "",
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "mimir-production"
+          }
+        }
+      ],
+      "options": {
+        "colorMode": "background",
+        "graphMode": "area",
+        "reduceOptions": {
+          "fields": "",
+          "calcs": [
+            "lastNotNull"
+          ],
+          "values": false
+        },
+        "textMode": "value"
+      },
+      "gridPos": {
+        "y": 0,
+        "w": 4,
+        "h": 4,
+        "x": 12
+      }
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "mimir-internal"
+      },
+      "fieldConfig": {
+        "overrides": [],
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 50
+              },
+              {
+                "color": "orange",
+                "value": 60
+              },
+              {
+                "color": "red",
+                "value": 70
+              }
+            ],
+            "mode": "absolute"
+          },
+          "unit": "celsius",
+          "decimals": 1
+        }
+      },
+      "id": 5,
+      "type": "stat",
+      "title": "Synology system",
+      "targets": [
+        {
+          "expr": "temperature{service=\"synology-snmp-exporter-prometheus-snmp-exporter\"}",
+          "legendFormat": "",
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "mimir-internal"
+          }
+        }
+      ],
+      "options": {
+        "colorMode": "background",
+        "graphMode": "area",
+        "reduceOptions": {
+          "fields": "",
+          "calcs": [
+            "lastNotNull"
+          ],
+          "values": false
+        },
+        "textMode": "value"
+      },
+      "gridPos": {
+        "y": 0,
+        "w": 4,
+        "h": 4,
+        "x": 16
+      }
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "mimir-internal"
+      },
+      "fieldConfig": {
+        "overrides": [],
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 40
+              },
+              {
+                "color": "orange",
+                "value": 50
+              },
+              {
+                "color": "red",
+                "value": 55
+              }
+            ],
+            "mode": "absolute"
+          },
+          "unit": "celsius",
+          "decimals": 1
+        }
+      },
+      "id": 6,
+      "type": "stat",
+      "title": "Synology hottest disk",
+      "targets": [
+        {
+          "expr": "max(diskTemperature{diskID=~\"Disk.*\"} > 0)",
+          "legendFormat": "",
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "mimir-internal"
+          }
+        }
+      ],
+      "options": {
+        "colorMode": "background",
+        "graphMode": "area",
+        "reduceOptions": {
+          "fields": "",
+          "calcs": [
+            "lastNotNull"
+          ],
+          "values": false
+        },
+        "textMode": "value"
+      },
+      "gridPos": {
+        "y": 0,
+        "w": 4,
+        "h": 4,
+        "x": 20
+      }
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "mimir-internal"
+      },
+      "fieldConfig": {
+        "overrides": [],
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "thresholds": {
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 60
+              },
+              {
+                "color": "orange",
+                "value": 80
+              },
+              {
+                "color": "red",
+                "value": 90
+              }
+            ],
+            "mode": "absolute"
+          },
+          "unit": "celsius",
+          "custom": {
+            "spanNulls": true,
+            "fillOpacity": 8,
+            "showPoints": "never",
+            "thresholdsStyle": {
+              "mode": "line"
+            },
+            "lineWidth": 2
+          },
+          "decimals": 1
+        }
+      },
+      "id": 7,
+      "type": "timeseries",
+      "title": "Gateway / switches (UniFi)",
+      "targets": [
+        {
+          "expr": "unpoller_device_temperature_celsius",
+          "legendFormat": "{{name}} {{temp_area}}",
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "mimir-internal"
+          }
+        }
+      ],
+      "options": {
+        "tooltip": {
+          "sort": "desc",
+          "mode": "multi"
+        },
+        "legend": {
+          "displayMode": "table",
+          "calcs": [
+            "lastNotNull",
+            "mean",
+            "max"
+          ],
+          "placement": "bottom"
+        }
+      },
+      "gridPos": {
+        "y": 4,
+        "w": 12,
+        "h": 8,
+        "x": 0
+      }
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "mimir-internal"
+      },
+      "fieldConfig": {
+        "overrides": [],
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "thresholds": {
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 60
+              },
+              {
+                "color": "orange",
+                "value": 80
+              },
+              {
+                "color": "red",
+                "value": 90
+              }
+            ],
+            "mode": "absolute"
+          },
+          "unit": "celsius",
+          "custom": {
+            "spanNulls": true,
+            "fillOpacity": 8,
+            "showPoints": "never",
+            "thresholdsStyle": {
+              "mode": "line"
+            },
+            "lineWidth": 2
+          },
+          "decimals": 1
+        }
+      },
+      "id": 8,
+      "type": "timeseries",
+      "title": "pmxblue",
+      "targets": [
+        {
+          "expr": "node_hwmon_temp_celsius{instance=\"pmxblue\",chip!~\"ieee80211.*\",chip!=\"platform_asus_ec_sensors\",sensor!=\"temp3\"} or node_hwmon_temp_celsius{instance=\"pmxblue\",chip=\"nvme_nvme0\",sensor=\"temp3\"}",
+          "legendFormat": "{{chip}} {{sensor}}",
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "mimir-internal"
+          }
+        }
+      ],
+      "options": {
+        "tooltip": {
+          "sort": "desc",
+          "mode": "multi"
+        },
+        "legend": {
+          "displayMode": "table",
+          "calcs": [
+            "lastNotNull",
+            "mean",
+            "max"
+          ],
+          "placement": "bottom"
+        }
+      },
+      "gridPos": {
+        "y": 4,
+        "w": 12,
+        "h": 8,
+        "x": 12
+      }
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "mimir-internal"
+      },
+      "fieldConfig": {
+        "overrides": [],
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "thresholds": {
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 60
+              },
+              {
+                "color": "orange",
+                "value": 80
+              },
+              {
+                "color": "red",
+                "value": 90
+              }
+            ],
+            "mode": "absolute"
+          },
+          "unit": "celsius",
+          "custom": {
+            "spanNulls": true,
+            "fillOpacity": 8,
+            "showPoints": "never",
+            "thresholdsStyle": {
+              "mode": "line"
+            },
+            "lineWidth": 2
+          },
+          "decimals": 1
+        }
+      },
+      "id": 9,
+      "type": "timeseries",
+      "title": "m5proxy",
+      "targets": [
+        {
+          "expr": "node_thermal_zone_temp{instance=\"m5proxy\"}",
+          "legendFormat": "{{type}}",
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "mimir-internal"
+          }
+        }
+      ],
+      "options": {
+        "tooltip": {
+          "sort": "desc",
+          "mode": "multi"
+        },
+        "legend": {
+          "displayMode": "table",
+          "calcs": [
+            "lastNotNull",
+            "mean",
+            "max"
+          ],
+          "placement": "bottom"
+        }
+      },
+      "gridPos": {
+        "y": 12,
+        "w": 12,
+        "h": 8,
+        "x": 0
+      }
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "mimir-production"
+      },
+      "fieldConfig": {
+        "overrides": [],
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "thresholds": {
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 60
+              },
+              {
+                "color": "orange",
+                "value": 80
+              },
+              {
+                "color": "red",
+                "value": 90
+              }
+            ],
+            "mode": "absolute"
+          },
+          "unit": "celsius",
+          "custom": {
+            "spanNulls": true,
+            "fillOpacity": 8,
+            "showPoints": "never",
+            "thresholdsStyle": {
+              "mode": "line"
+            },
+            "lineWidth": 2
+          },
+          "decimals": 1
+        }
+      },
+      "id": 10,
+      "type": "timeseries",
+      "title": "Home Assistant (Argon CPU)",
+      "targets": [
+        {
+          "expr": "hass_sensor_temperature_celsius{entity=\"sensor.argon_cpu_temperature\"}",
+          "legendFormat": "Argon CPU",
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "mimir-production"
+          }
+        }
+      ],
+      "options": {
+        "tooltip": {
+          "sort": "desc",
+          "mode": "multi"
+        },
+        "legend": {
+          "displayMode": "table",
+          "calcs": [
+            "lastNotNull",
+            "mean",
+            "max"
+          ],
+          "placement": "bottom"
+        }
+      },
+      "gridPos": {
+        "y": 12,
+        "w": 12,
+        "h": 8,
+        "x": 12
+      }
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "mimir-internal"
+      },
+      "fieldConfig": {
+        "overrides": [],
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "thresholds": {
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 50
+              },
+              {
+                "color": "orange",
+                "value": 60
+              },
+              {
+                "color": "red",
+                "value": 70
+              }
+            ],
+            "mode": "absolute"
+          },
+          "unit": "celsius",
+          "custom": {
+            "spanNulls": true,
+            "fillOpacity": 8,
+            "showPoints": "never",
+            "thresholdsStyle": {
+              "mode": "line"
+            },
+            "lineWidth": 2
+          },
+          "decimals": 1
+        }
+      },
+      "id": 11,
+      "type": "timeseries",
+      "title": "Synology system",
+      "targets": [
+        {
+          "expr": "temperature{service=\"synology-snmp-exporter-prometheus-snmp-exporter\"}",
+          "legendFormat": "system",
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "mimir-internal"
+          }
+        }
+      ],
+      "options": {
+        "tooltip": {
+          "sort": "desc",
+          "mode": "multi"
+        },
+        "legend": {
+          "displayMode": "table",
+          "calcs": [
+            "lastNotNull",
+            "mean",
+            "max"
+          ],
+          "placement": "bottom"
+        }
+      },
+      "gridPos": {
+        "y": 20,
+        "w": 12,
+        "h": 8,
+        "x": 0
+      }
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "mimir-internal"
+      },
+      "fieldConfig": {
+        "overrides": [],
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "thresholds": {
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 40
+              },
+              {
+                "color": "orange",
+                "value": 50
+              },
+              {
+                "color": "red",
+                "value": 55
+              }
+            ],
+            "mode": "absolute"
+          },
+          "unit": "celsius",
+          "custom": {
+            "spanNulls": true,
+            "fillOpacity": 8,
+            "showPoints": "never",
+            "thresholdsStyle": {
+              "mode": "line"
+            },
+            "lineWidth": 2
+          },
+          "decimals": 1
+        }
+      },
+      "id": 12,
+      "type": "timeseries",
+      "title": "Synology disks",
+      "targets": [
+        {
+          "expr": "diskTemperature > 0",
+          "legendFormat": "{{diskID}}",
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "mimir-internal"
+          }
+        }
+      ],
+      "options": {
+        "tooltip": {
+          "sort": "desc",
+          "mode": "multi"
+        },
+        "legend": {
+          "displayMode": "table",
+          "calcs": [
+            "lastNotNull",
+            "mean",
+            "max"
+          ],
+          "placement": "bottom"
+        }
+      },
+      "gridPos": {
+        "y": 20,
+        "w": 12,
+        "h": 8,
+        "x": 12
+      }
+    }
+  ],
+  "templating": {
+    "list": []
+  },
+  "annotations": {
+    "list": []
+  }
+}

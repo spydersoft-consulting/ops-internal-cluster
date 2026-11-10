@@ -37,3 +37,5 @@ data:
   # internal-tenant source.
   proxmox-via-prometheus.json: |-
 {{ .Files.Get "dashboard-src/proxmox-via-prometheus.json" | indent 4 }}
+  rack-temperatures.json: |-
+{{ .Files.Get "dashboard-src/rack-temperatures.json" | indent 4 }}
