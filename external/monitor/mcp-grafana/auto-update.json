@@ -1,0 +1,9 @@
+{
+    "repositories": [
+        {
+            "repository": "grafana/mcp-grafana",
+            "tagPath": "controllers.main.containers.main.image.tag",
+            "imagePrefix": "v"
+        }
+    ]
+}

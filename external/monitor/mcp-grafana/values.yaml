@@ -1,0 +1,79 @@
+controllers:
+  main:
+    enabled: true
+    type: deployment
+    replicas: 1
+    revisionHistoryLimit: 3
+    containers:
+      main:
+        image:
+          repository: grafana/mcp-grafana
+          tag: v2.2.0
+          pullPolicy: IfNotPresent
+        args:
+          - -t
+          - streamable-http
+          - --address
+          - 0.0.0.0:8000
+          - --disable-write
+        env:
+          GRAFANA_URL: http://grafana.monitoring.svc.cluster.local
+        envFrom:
+          - secretRef:
+              name: mcp-grafana-secret
+        resources:
+          requests:
+            cpu: 10m
+            memory: 64Mi
+        probes:
+          liveness:
+            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /healthz
+                port: 8000
+              periodSeconds: 10
+              timeoutSeconds: 2
+              failureThreshold: 3
+          readiness:
+            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /healthz
+                port: 8000
+              periodSeconds: 10
+              timeoutSeconds: 2
+              failureThreshold: 3
+
+service:
+  main:
+    controller: main
+    primary: true
+    type: ClusterIP
+    ports:
+      http:
+        enabled: true
+        protocol: HTTP
+        port: 8000
+
+route:
+  main:
+    enabled: true
+    kind: HTTPRoute
+    parentRefs:
+      - name: main
+        kind: Gateway
+        namespace: envoy-gateway-system
+        group: gateway.networking.k8s.io
+    hostnames:
+      - mcp-grafana.mattgerega.net
+    rules:
+      - matches:
+          - path:
+              type: PathPrefix
+              value: /
+        backendRefs:
+          - identifier: main
+            port: 8000
