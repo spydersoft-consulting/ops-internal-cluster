@@ -1,7 +1,8 @@
 {
   "uid": "rack-temperatures",
-  "title": "Rack Temperatures",
+  "title": "Equipment Temperatures",
   "tags": [
+    "equipment",
     "rack",
     "temperature",
     "infrastructure"
@@ -11,7 +12,7 @@
   "graphTooltip": 1,
   "refresh": "1m",
   "schemaVersion": 39,
-  "version": 1,
+  "version": 2,
   "time": {
     "from": "now-24h",
     "to": "now"
@@ -81,7 +82,7 @@
       },
       "gridPos": {
         "y": 0,
-        "w": 4,
+        "w": 3,
         "h": 4,
         "x": 0
       }
@@ -150,9 +151,147 @@
       },
       "gridPos": {
         "y": 0,
-        "w": 4,
+        "w": 3,
         "h": 4,
-        "x": 4
+        "x": 3
+      }
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "mimir-internal"
+      },
+      "fieldConfig": {
+        "overrides": [],
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 60
+              },
+              {
+                "color": "orange",
+                "value": 80
+              },
+              {
+                "color": "red",
+                "value": 90
+              }
+            ],
+            "mode": "absolute"
+          },
+          "unit": "celsius",
+          "decimals": 1
+        }
+      },
+      "id": 13,
+      "type": "stat",
+      "title": "pxhp CPU",
+      "targets": [
+        {
+          "expr": "max(node_hwmon_temp_celsius{instance=\"pxhp\",chip=~\"platform_coretemp_.\",sensor=\"temp1\"})",
+          "legendFormat": "",
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "mimir-internal"
+          }
+        }
+      ],
+      "options": {
+        "colorMode": "background",
+        "graphMode": "area",
+        "reduceOptions": {
+          "fields": "",
+          "calcs": [
+            "lastNotNull"
+          ],
+          "values": false
+        },
+        "textMode": "value"
+      },
+      "gridPos": {
+        "y": 0,
+        "w": 3,
+        "h": 4,
+        "x": 6
+      }
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "mimir-internal"
+      },
+      "fieldConfig": {
+        "overrides": [],
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 60
+              },
+              {
+                "color": "orange",
+                "value": 80
+              },
+              {
+                "color": "red",
+                "value": 90
+              }
+            ],
+            "mode": "absolute"
+          },
+          "unit": "celsius",
+          "decimals": 1
+        }
+      },
+      "id": 14,
+      "type": "stat",
+      "title": "pmxblack CPU",
+      "targets": [
+        {
+          "expr": "node_hwmon_temp_celsius{instance=\"pmxblack\",chip=\"platform_coretemp_0\",sensor=\"temp1\"}",
+          "legendFormat": "",
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "mimir-internal"
+          }
+        }
+      ],
+      "options": {
+        "colorMode": "background",
+        "graphMode": "area",
+        "reduceOptions": {
+          "fields": "",
+          "calcs": [
+            "lastNotNull"
+          ],
+          "values": false
+        },
+        "textMode": "value"
+      },
+      "gridPos": {
+        "y": 0,
+        "w": 3,
+        "h": 4,
+        "x": 9
       }
     },
     {
@@ -219,9 +358,9 @@
       },
       "gridPos": {
         "y": 0,
-        "w": 4,
+        "w": 3,
         "h": 4,
-        "x": 8
+        "x": 12
       }
     },
     {
@@ -288,9 +427,9 @@
       },
       "gridPos": {
         "y": 0,
-        "w": 4,
+        "w": 3,
         "h": 4,
-        "x": 12
+        "x": 15
       }
     },
     {
@@ -357,9 +496,9 @@
       },
       "gridPos": {
         "y": 0,
-        "w": 4,
+        "w": 3,
         "h": 4,
-        "x": 16
+        "x": 18
       }
     },
     {
@@ -426,9 +565,9 @@
       },
       "gridPos": {
         "y": 0,
-        "w": 4,
+        "w": 3,
         "h": 4,
-        "x": 20
+        "x": 21
       }
     },
     {
@@ -912,6 +1051,204 @@
       },
       "gridPos": {
         "y": 20,
+        "w": 12,
+        "h": 8,
+        "x": 12
+      }
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "mimir-internal"
+      },
+      "fieldConfig": {
+        "overrides": [],
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "thresholds": {
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 60
+              },
+              {
+                "color": "orange",
+                "value": 80
+              },
+              {
+                "color": "red",
+                "value": 90
+              }
+            ],
+            "mode": "absolute"
+          },
+          "unit": "celsius",
+          "custom": {
+            "spanNulls": true,
+            "fillOpacity": 8,
+            "showPoints": "never",
+            "thresholdsStyle": {
+              "mode": "line"
+            },
+            "lineWidth": 2
+          },
+          "decimals": 1
+        }
+      },
+      "id": 15,
+      "type": "timeseries",
+      "title": "pxhp",
+      "targets": [
+        {
+          "expr": "node_hwmon_temp_celsius{instance=\"pxhp\",chip=~\"platform_coretemp_.\",sensor=\"temp1\"}",
+          "legendFormat": "{{chip}} package",
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "mimir-internal"
+          }
+        },
+        {
+          "expr": "max by (chip) (node_hwmon_temp_celsius{instance=\"pxhp\",chip=~\"platform_coretemp_.\",sensor!=\"temp1\"})",
+          "legendFormat": "{{chip}} hottest core",
+          "refId": "B",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "mimir-internal"
+          }
+        },
+        {
+          "expr": "node_hwmon_temp_celsius{instance=\"pxhp\",chip=\"0000:00:02_0_0000:03:00_0\",sensor=\"temp1\"}",
+          "legendFormat": "PCIe 03:00",
+          "refId": "C",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "mimir-internal"
+          }
+        }
+      ],
+      "options": {
+        "tooltip": {
+          "sort": "desc",
+          "mode": "multi"
+        },
+        "legend": {
+          "displayMode": "table",
+          "calcs": [
+            "lastNotNull",
+            "mean",
+            "max"
+          ],
+          "placement": "bottom"
+        }
+      },
+      "gridPos": {
+        "y": 28,
+        "w": 12,
+        "h": 8,
+        "x": 0
+      }
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "mimir-internal"
+      },
+      "fieldConfig": {
+        "overrides": [],
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "thresholds": {
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 60
+              },
+              {
+                "color": "orange",
+                "value": 80
+              },
+              {
+                "color": "red",
+                "value": 90
+              }
+            ],
+            "mode": "absolute"
+          },
+          "unit": "celsius",
+          "custom": {
+            "spanNulls": true,
+            "fillOpacity": 8,
+            "showPoints": "never",
+            "thresholdsStyle": {
+              "mode": "line"
+            },
+            "lineWidth": 2
+          },
+          "decimals": 1
+        }
+      },
+      "id": 16,
+      "type": "timeseries",
+      "title": "pmxblack",
+      "targets": [
+        {
+          "expr": "node_hwmon_temp_celsius{instance=\"pmxblack\",chip=\"platform_coretemp_0\",sensor=\"temp1\"}",
+          "legendFormat": "{{chip}} package",
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "mimir-internal"
+          }
+        },
+        {
+          "expr": "max by (chip) (node_hwmon_temp_celsius{instance=\"pmxblack\",chip=\"platform_coretemp_0\",sensor!=\"temp1\"})",
+          "legendFormat": "{{chip}} hottest core",
+          "refId": "B",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "mimir-internal"
+          }
+        },
+        {
+          "expr": "node_hwmon_temp_celsius{instance=\"pmxblack\",chip=\"platform_dell_smm_hwmon\"}",
+          "legendFormat": "dell_smm {{sensor}}",
+          "refId": "C",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "mimir-internal"
+          }
+        }
+      ],
+      "options": {
+        "tooltip": {
+          "sort": "desc",
+          "mode": "multi"
+        },
+        "legend": {
+          "displayMode": "table",
+          "calcs": [
+            "lastNotNull",
+            "mean",
+            "max"
+          ],
+          "placement": "bottom"
+        }
+      },
+      "gridPos": {
+        "y": 28,
         "w": 12,
         "h": 8,
         "x": 12
