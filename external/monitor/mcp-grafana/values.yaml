@@ -8,7 +8,7 @@ controllers:
       main:
         image:
           repository: grafana/mcp-grafana
-          tag: v2.2.0
+          tag: 2.2.0
           pullPolicy: IfNotPresent
         args:
           - -t
