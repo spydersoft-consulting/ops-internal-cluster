@@ -1,11 +1,11 @@
+version: 7.6.0
 appVersion: 2.8.4
 apiVersion: v2
-dependencies:
-- version: 7.5.0
-  name: loki
-  repository: https://grafana.github.io/helm-charts
-type: application
 name: loki
-version: 7.5.0
+type: application
+dependencies:
+- repository: https://grafana.github.io/helm-charts
+  version: 7.6.0
+  name: loki
 
 
