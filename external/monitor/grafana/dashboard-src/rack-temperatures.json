@@ -227,7 +227,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "mimir-production"
+        "uid": "mimir-internal"
       },
       "fieldConfig": {
         "overrides": [],
@@ -265,12 +265,12 @@
       "title": "Home Assistant CPU",
       "targets": [
         {
-          "expr": "hass_sensor_temperature_celsius{entity=\"sensor.argon_cpu_temperature\"}",
+          "expr": "node_thermal_zone_temp{servername=\"homeassistant\",type=\"cpu-thermal\"}",
           "legendFormat": "",
           "refId": "A",
           "datasource": {
             "type": "prometheus",
-            "uid": "mimir-production"
+            "uid": "mimir-internal"
           }
         }
       ],
@@ -677,7 +677,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "mimir-production"
+        "uid": "mimir-internal"
       },
       "fieldConfig": {
         "overrides": [],
@@ -721,15 +721,15 @@
       },
       "id": 10,
       "type": "timeseries",
-      "title": "Home Assistant (Argon CPU)",
+      "title": "Home Assistant (CPU)",
       "targets": [
         {
-          "expr": "hass_sensor_temperature_celsius{entity=\"sensor.argon_cpu_temperature\"}",
-          "legendFormat": "Argon CPU",
+          "expr": "node_thermal_zone_temp{servername=\"homeassistant\",type=\"cpu-thermal\"}",
+          "legendFormat": "HA CPU",
           "refId": "A",
           "datasource": {
             "type": "prometheus",
-            "uid": "mimir-production"
+            "uid": "mimir-internal"
           }
         }
       ],
