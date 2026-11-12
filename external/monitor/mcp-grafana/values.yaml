@@ -16,6 +16,10 @@ controllers:
           - --address
           - 0.0.0.0:8000
           - --disable-write
+          - --allowed-hosts
+          - mcp-grafana.mattgerega.net
+          - --healthz-address
+          - 0.0.0.0:8080
         env:
           GRAFANA_URL: http://grafana.monitoring.svc.cluster.local
         envFrom:
@@ -32,7 +36,7 @@ controllers:
             spec:
               httpGet:
                 path: /healthz
-                port: 8000
+                port: 8080
               periodSeconds: 10
               timeoutSeconds: 2
               failureThreshold: 3
@@ -42,7 +46,7 @@ controllers:
             spec:
               httpGet:
                 path: /healthz
-                port: 8000
+                port: 8080
               periodSeconds: 10
               timeoutSeconds: 2
               failureThreshold: 3
