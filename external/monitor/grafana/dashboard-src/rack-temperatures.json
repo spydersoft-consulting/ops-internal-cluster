@@ -82,9 +82,78 @@
       },
       "gridPos": {
         "y": 0,
-        "w": 3,
+        "w": 5,
         "h": 4,
         "x": 0
+      }
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "mimir-internal"
+      },
+      "fieldConfig": {
+        "overrides": [],
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 60
+              },
+              {
+                "color": "orange",
+                "value": 70
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ],
+            "mode": "absolute"
+          },
+          "unit": "celsius",
+          "decimals": 1
+        }
+      },
+      "id": 17.0,
+      "type": "stat",
+      "title": "UniFi switch (Pro 8 PoE)",
+      "targets": [
+        {
+          "expr": "unpoller_device_temperature_celsius{name=\"USW Pro 8 PoE\"}",
+          "legendFormat": "",
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "mimir-internal"
+          }
+        }
+      ],
+      "options": {
+        "colorMode": "background",
+        "graphMode": "area",
+        "reduceOptions": {
+          "fields": "",
+          "calcs": [
+            "lastNotNull"
+          ],
+          "values": false
+        },
+        "textMode": "value"
+      },
+      "gridPos": {
+        "y": 0,
+        "w": 5,
+        "h": 4,
+        "x": 5
       }
     },
     {
@@ -151,9 +220,9 @@
       },
       "gridPos": {
         "y": 0,
-        "w": 3,
+        "w": 5,
         "h": 4,
-        "x": 3
+        "x": 10
       }
     },
     {
@@ -220,9 +289,9 @@
       },
       "gridPos": {
         "y": 0,
-        "w": 3,
+        "w": 5,
         "h": 4,
-        "x": 6
+        "x": 15
       }
     },
     {
@@ -289,9 +358,9 @@
       },
       "gridPos": {
         "y": 0,
-        "w": 3,
+        "w": 4,
         "h": 4,
-        "x": 9
+        "x": 20
       }
     },
     {
@@ -357,10 +426,10 @@
         "textMode": "value"
       },
       "gridPos": {
-        "y": 0,
-        "w": 3,
+        "y": 4,
+        "w": 6,
         "h": 4,
-        "x": 12
+        "x": 0
       }
     },
     {
@@ -426,10 +495,10 @@
         "textMode": "value"
       },
       "gridPos": {
-        "y": 0,
-        "w": 3,
+        "y": 4,
+        "w": 6,
         "h": 4,
-        "x": 15
+        "x": 6
       }
     },
     {
@@ -495,10 +564,10 @@
         "textMode": "value"
       },
       "gridPos": {
-        "y": 0,
-        "w": 3,
+        "y": 4,
+        "w": 6,
         "h": 4,
-        "x": 18
+        "x": 12
       }
     },
     {
@@ -564,10 +633,10 @@
         "textMode": "value"
       },
       "gridPos": {
-        "y": 0,
-        "w": 3,
+        "y": 4,
+        "w": 6,
         "h": 4,
-        "x": 21
+        "x": 18
       }
     },
     {
@@ -645,7 +714,7 @@
         }
       },
       "gridPos": {
-        "y": 4,
+        "y": 8,
         "w": 12,
         "h": 8,
         "x": 0
@@ -726,7 +795,7 @@
         }
       },
       "gridPos": {
-        "y": 4,
+        "y": 8,
         "w": 12,
         "h": 8,
         "x": 12
@@ -807,7 +876,7 @@
         }
       },
       "gridPos": {
-        "y": 12,
+        "y": 16,
         "w": 12,
         "h": 8,
         "x": 0
@@ -888,7 +957,7 @@
         }
       },
       "gridPos": {
-        "y": 12,
+        "y": 16,
         "w": 12,
         "h": 8,
         "x": 12
@@ -969,7 +1038,7 @@
         }
       },
       "gridPos": {
-        "y": 20,
+        "y": 24,
         "w": 12,
         "h": 8,
         "x": 0
@@ -1050,7 +1119,7 @@
         }
       },
       "gridPos": {
-        "y": 20,
+        "y": 24,
         "w": 12,
         "h": 8,
         "x": 12
@@ -1149,7 +1218,7 @@
         }
       },
       "gridPos": {
-        "y": 28,
+        "y": 32,
         "w": 12,
         "h": 8,
         "x": 0
@@ -1248,7 +1317,7 @@
         }
       },
       "gridPos": {
-        "y": 28,
+        "y": 32,
         "w": 12,
         "h": 8,
         "x": 12
