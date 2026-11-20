@@ -992,6 +992,138 @@ grafana:
                 severity: warning
 
         - orgId: 1
+          name: network-health
+          folder: Network
+          interval: 1m
+          rules:
+            - uid: procurve-snmp-scrape-missing
+              title: ProCurve SNMP Metrics Missing
+              condition: A
+              for: 5m
+              noDataState: OK
+              data:
+                - refId: A
+                  relativeTimeRange:
+                    from: 900
+                    to: 0
+                  datasourceUid: mimir-internal
+                  model:
+                    expr: absent_over_time(up{job="integrations/snmp/procurve"}[10m])
+                    instant: true
+                    intervalMs: 60000
+                    maxDataPoints: 43200
+              annotations:
+                summary: No ProCurve SNMP metrics in 10+ minutes.
+                description: Alloy on m5proxy may be down, the m5proxy to ProCurve UDP 161 firewall rule may have changed, or the switch SNMP community changed.
+              labels:
+                severity: warning
+            - uid: procurve-key-port-down
+              title: ProCurve Key Port Down
+              condition: A
+              for: 5m
+              noDataState: OK
+              data:
+                - refId: A
+                  relativeTimeRange:
+                    from: 600
+                    to: 0
+                  datasourceUid: mimir-internal
+                  model:
+                    expr: ifOperStatus{job="integrations/snmp/procurve", ifAlias=~"HP-[1-4]|HP-ILO|NAS-[1-4]|PMXBLACK|UPLINK"} != 1
+                    instant: true
+                    intervalMs: 60000
+                    maxDataPoints: 43200
+              annotations:
+                summary: A ProCurve uplink, server, or NAS port has been down for 5+ minutes.
+                description: Check ifAlias/ifName labels for which port. HP-1..4 are the pxhp Trk1 members (ports 13-16).
+              labels:
+                severity: warning
+            - uid: procurve-key-port-degraded-speed
+              title: ProCurve Key Port Below 1000 Mbps
+              condition: A
+              for: 5m
+              noDataState: OK
+              data:
+                - refId: A
+                  relativeTimeRange:
+                    from: 600
+                    to: 0
+                  datasourceUid: mimir-internal
+                  model:
+                    expr: ifHighSpeed{job="integrations/snmp/procurve", ifAlias=~"HP-[1-4]|NAS-[1-4]|PMXBLACK|UPLINK"} < 1000 and on (ifIndex) ifOperStatus{job="integrations/snmp/procurve"} == 1
+                    instant: true
+                    intervalMs: 60000
+                    maxDataPoints: 43200
+              annotations:
+                summary: A ProCurve gigabit port is linked below 1000 Mbps.
+                description: A port that negotiated down is usually a bad cable or jack. Check ifAlias/ifName labels for which port. Excludes down ports (their speed reads 0).
+              labels:
+                severity: warning
+            - uid: procurve-port-flapping
+              title: ProCurve Port Flapping
+              condition: A
+              for: 5m
+              noDataState: OK
+              data:
+                - refId: A
+                  relativeTimeRange:
+                    from: 600
+                    to: 0
+                  datasourceUid: mimir-internal
+                  model:
+                    expr: changes(ifOperStatus{job="integrations/snmp/procurve", ifAlias=~"HP-[1-4]|HP-ILO|NAS-[1-4]|PMXBLACK|UPLINK"}[1h]) >= 6
+                    instant: true
+                    intervalMs: 60000
+                    maxDataPoints: 43200
+              annotations:
+                summary: A ProCurve port changed link state 6+ times in the last hour.
+                description: Check ifAlias/ifName labels for which port. Polled every 60s, so this counts state changes seen between polls and can under-count fast flaps. A flapping port is usually a bad cable, jack, or NIC port.
+              labels:
+                severity: warning
+            - uid: procurve-trunk-degraded
+              title: ProCurve Trk1 Members Down
+              condition: A
+              for: 5m
+              noDataState: OK
+              data:
+                - refId: A
+                  relativeTimeRange:
+                    from: 600
+                    to: 0
+                  datasourceUid: mimir-internal
+                  model:
+                    expr: sum(ifOperStatus{job="integrations/snmp/procurve", ifAlias=~"HP-[1-4]"} == bool 1) < 3
+                    instant: true
+                    intervalMs: 60000
+                    maxDataPoints: 43200
+              annotations:
+                summary: Fewer than 3 of the 4 pxhp Trk1 links (ports 13-16) are up.
+                description: pxhp is running on half its bond or less. Check which HP-n ports are down with ifOperStatus.
+              labels:
+                severity: critical
+            - uid: procurve-port-errors
+              title: ProCurve Port Errors
+              condition: A
+              for: 15m
+              noDataState: OK
+              data:
+                - refId: A
+                  relativeTimeRange:
+                    from: 600
+                    to: 0
+                  datasourceUid: mimir-internal
+                  model:
+                    expr: (increase(ifInErrors{job="integrations/snmp/procurve"}[1h]) + increase(ifOutErrors{job="integrations/snmp/procurve"}[1h])) > 20
+                    instant: true
+                    intervalMs: 60000
+                    maxDataPoints: 43200
+              annotations:
+                summary: A ProCurve port logged 20+ errors in the last hour.
+                description: Check ifAlias/ifName labels for which port. Rising errors usually mean a bad cable or a duplex or speed mismatch.
+              labels:
+                severity: warning
+
+        - orgId: 1
           name: 3d-printing-health
           folder: Home Automation
           interval: 5m
